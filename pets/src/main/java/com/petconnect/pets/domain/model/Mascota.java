@@ -13,6 +13,7 @@ import lombok.Setter;
 public class Mascota {
     private long pet_id;
     private String name;
+    private String species;
     private String race;
     private Integer age;
     private String sex;

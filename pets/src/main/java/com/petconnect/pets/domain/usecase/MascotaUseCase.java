@@ -64,6 +64,27 @@ public class MascotaUseCase {
             throw new IllegalArgumentException("Todos los campos son obligatorios");
         }
 
+        Mascota mascotaOriginal = mascotaGateway.buscarPorId(mascota.getPet_id());
+
+        if (mascotaOriginal==null){
+            throw new IllegalArgumentException("La mascota no existe");
+        }
+
+        if (!mascotaOriginal.getName().equals(mascota.getName())){
+            throw new IllegalArgumentException("No es posible modificar el nombre de la mascota");
+        }
+
+        if (!mascotaOriginal.getRace().equals(mascota.getRace())){
+            throw new IllegalArgumentException("No es posible modificar la raza de la mascota");
+        }
+
+        if (!mascotaOriginal.getSex().equals(mascota.getSex())){
+            throw new IllegalArgumentException("No es posible modificar el sexo de la mascota");
+        }
+        if (!mascotaOriginal.getSpecies().equals(mascota.getSpecies())){
+            throw new IllegalArgumentException("No es posible modificar la especie de la mascota");
+        }
+
         return mascotaGateway.actualizarMascota(mascota);
     }
 
