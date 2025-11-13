@@ -16,17 +16,17 @@ public class MascotaUseCase {
     public Mascota guardarMascota (Mascota mascota){
     if (mascota == null ||
             Stream.of(
-                    mascota.getNombre(),
-                    mascota.getRaza(),
-                    mascota.getEdad(),
-                    mascota.getSexo(),
-                    mascota.getRecomendadoParaNinos(),
-                    mascota.getRequiereEspacioAmplio(),
-                    mascota.getEsterilizacion(),
-                    mascota.getVacunas(),
-                    mascota.getDescripcion(),
-                    mascota.getImagenUrl(),
-                    mascota.getEstado()
+                    mascota.getName(),
+                    mascota.getRace(),
+                    mascota.getAge(),
+                    mascota.getSex(),
+                    mascota.getChildFriendly(),
+                    mascota.getRequiresAmpleSpace(),
+                    mascota.getSterilization(),
+                    mascota.getVaccines(),
+                    mascota.getDescription(),
+                    mascota.getImageUrl(),
+                    mascota.getState()
             ).anyMatch(Objects::isNull)){
         throw new IllegalArgumentException("Por favor complete todos los campos");
     }
@@ -49,20 +49,21 @@ public class MascotaUseCase {
     public Mascota actualizarMascota(Mascota mascota){
         if (mascota == null ||
                 Stream.of(
-                        mascota.getNombre(),
-                        mascota.getRaza(),
-                        mascota.getEdad(),
-                        mascota.getSexo(),
-                        mascota.getRecomendadoParaNinos(),
-                        mascota.getRequiereEspacioAmplio(),
-                        mascota.getEsterilizacion(),
-                        mascota.getVacunas(),
-                        mascota.getDescripcion(),
-                        mascota.getImagenUrl(),
-                        mascota.getEstado()
+                        mascota.getName(),
+                        mascota.getRace(),
+                        mascota.getAge(),
+                        mascota.getSex(),
+                        mascota.getChildFriendly(),
+                        mascota.getRequiresAmpleSpace(),
+                        mascota.getSterilization(),
+                        mascota.getVaccines(),
+                        mascota.getDescription(),
+                        mascota.getImageUrl(),
+                        mascota.getState()
                 ).anyMatch(Objects::isNull)){
             throw new IllegalArgumentException("Todos los campos son obligatorios");
         }
+
         return mascotaGateway.actualizarMascota(mascota);
     }
 

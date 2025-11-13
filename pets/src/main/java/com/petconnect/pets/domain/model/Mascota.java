@@ -11,18 +11,18 @@ import lombok.Setter;
 @Setter
 @Getter
 public class Mascota {
-    private long id_mascota;
-    private String nombre;
-    private String raza;
-    private Integer edad;
-    private String sexo;
-    private Boolean recomendadoParaNinos;
-    private Boolean requiereEspacioAmplio;
-    private Boolean esterilizacion;
-    private String vacunas;
-    private String descripcion;
-    private String imagenUrl;
-    private String estado;
+    private long pet_id;
+    private String name;
+    private String race;
+    private Integer age;
+    private String sex;
+    private Boolean childFriendly;
+    private Boolean requiresAmpleSpace;
+    private Boolean sterilization;
+    private String vaccines;
+    private String description;
+    private String imageUrl;
+    private String state;
 
 
 
