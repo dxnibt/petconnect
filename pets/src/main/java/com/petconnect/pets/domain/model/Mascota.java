@@ -14,11 +14,11 @@ public class Mascota {
     private long id_mascota;
     private String nombre;
     private String raza;
-    private int edad;
+    private Integer edad;
     private String sexo;
-    private boolean recomendadoParaNiños;
-    private boolean requiereEspacioAmplio;
-    private boolean esterilizacion;
+    private Boolean recomendadoParaNinos;
+    private Boolean requiereEspacioAmplio;
+    private Boolean esterilizacion;
     private String vacunas;
     private String descripcion;
     private String imagenUrl;

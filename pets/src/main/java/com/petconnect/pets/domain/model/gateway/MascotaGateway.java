@@ -8,7 +8,8 @@ public interface MascotaGateway {
 
     Mascota guardar(Mascota mascota);
     Mascota buscarPorId(Long id_mascota);
-    List<Mascota> obtenerTodas();
+    List<Mascota> obtenerTodas(int page, int size);
+    Mascota actualizarMascota(Mascota mascota);
     void eliminar(Long id_mascota);
 
 }
