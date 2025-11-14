@@ -92,7 +92,7 @@ public class MascotaUseCase {
         return mascotaGateway.actualizarMascota(mascota);
     }
 
-    public void eliminarProducto(Long id_mascota){
+    public void eliminarMascota(Long id_mascota){
         mascotaGateway.eliminar(id_mascota);
     }
 

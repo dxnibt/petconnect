@@ -1,6 +1,8 @@
 package com.petconnect.pets.infraestructure.driver_adapters.jpa_repository;
 
 
+import com.petconnect.pets.domain.model.enums.EspecieMascota;
+import com.petconnect.pets.domain.model.enums.EstadoMascota;
 import com.petconnect.pets.domain.model.enums.SexoMascota;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -20,7 +22,7 @@ public class MascotaData {
     private long pet_id;
     private String name;
     @Enumerated(EnumType.STRING)
-    private String species;
+    private EspecieMascota species;
     private String otherspecies;
     private String race;
     private Integer age;
@@ -32,7 +34,8 @@ public class MascotaData {
     private String vaccines;
     private String description;
     private String imageUrl;
-    private String state;
+    @Enumerated(EnumType.STRING)
+    private EstadoMascota state;
 
 
 }
