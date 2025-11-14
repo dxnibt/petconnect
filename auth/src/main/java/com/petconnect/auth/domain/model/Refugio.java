@@ -15,5 +15,23 @@ public class Refugio extends Usuario{
     private String website;
     private Integer currentPets;
     private String supportDocument;
+    private boolean aprobado = false;
+    private String shelterDescription;
+
+    public boolean isValid() {
+        return getName() != null &&
+                getEmail() != null &&
+                getPassword() != null &&
+                getPhoneNumber() != null &&
+                getCity() != null &&
+                getAddress() != null &&
+                getProfilePicture() != null &&
+                getRole() != null &&
+                getNit() != null &&
+                getWebsite() != null &&
+                getCurrentPets() != null &&
+                getSupportDocument() != null &&
+                getShelterDescription() != null;
+    }
 
 }
