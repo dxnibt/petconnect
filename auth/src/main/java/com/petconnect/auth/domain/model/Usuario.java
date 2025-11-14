@@ -1,6 +1,6 @@
 package com.petconnect.auth.domain.model;
 
-import com.petconnect.auth.domain.model.nums.usuario.Role;
+import com.petconnect.auth.domain.model.enums.usuario.Role;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

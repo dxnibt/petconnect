@@ -1,6 +1,6 @@
 package com.petconnect.auth.domain.model;
 
-import com.petconnect.auth.domain.model.nums.adoptante.*;
+import com.petconnect.auth.domain.model.enums.adoptante.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,8 +12,9 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Setter
 @Getter
-public class Adoptante {
+public class Adoptante extends Usuario {
 
+    private String document;
     private Gender gender;
     private String otherGender;
     private LocalDate birthDate;
@@ -28,7 +29,8 @@ public class Adoptante {
     private PreferredAnimalType preferredAnimalType;
     private String otherPreferredAnimalType;
     private PreferredPetSize preferredPetSize;
-    private String personalDescription;
     private ActivityLevel activityLevel;
+    private String personalDescription;
+
 
 }

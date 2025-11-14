@@ -1,4 +1,4 @@
-package com.petconnect.auth.domain.model.nums.adoptante;
+package com.petconnect.auth.domain.model.enums.adoptante;
 
 public enum Gender {
     FEMENINO,
