@@ -17,6 +17,8 @@ public class MascotaUseCase {
     if (mascota == null ||
             Stream.of(
                     mascota.getName(),
+                    mascota.getSpecies(),
+                    mascota.getOtherspecies(),
                     mascota.getRace(),
                     mascota.getAge(),
                     mascota.getSex(),
@@ -50,6 +52,8 @@ public class MascotaUseCase {
         if (mascota == null ||
                 Stream.of(
                         mascota.getName(),
+                        mascota.getSpecies(),
+                        mascota.getOtherspecies(),
                         mascota.getRace(),
                         mascota.getAge(),
                         mascota.getSex(),
