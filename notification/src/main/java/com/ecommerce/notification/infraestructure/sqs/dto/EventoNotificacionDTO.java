@@ -1,5 +1,17 @@
 package com.ecommerce.notification.infraestructure.sqs.dto;
 
-public class EventoNotificacionDTO {
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class EventoNotificacionDTO {
+    private String type;
+    private String email;
+    private String phoneNumber;
+    private String message;
 }
