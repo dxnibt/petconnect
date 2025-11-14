@@ -19,7 +19,7 @@ import lombok.NoArgsConstructor;
 public class MascotaData {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long pet_id;
+    private Long pet_id;
     private String name;
     @Enumerated(EnumType.STRING)
     private EspecieMascota species;

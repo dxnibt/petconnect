@@ -14,7 +14,7 @@ import lombok.Setter;
 @Setter
 @Getter
 public class Mascota {
-    private long pet_id;
+    private Long pet_id;
     private String name;
     private EspecieMascota species;
     private String otherspecies;
