@@ -7,20 +7,20 @@ import org.springframework.stereotype.Component;
 @Component
 public class UsuarioMapper {
 
-
     public Usuario toUsuario(UsuarioData usuarioData){
 
         return new Usuario(
                 usuarioData.getId(),
-                usuarioData.getNombre(),
+                usuarioData.getName(),
                 usuarioData.getEmail(),
                 usuarioData.getPassword(),
-                usuarioData.getFechaNacimiento(),
-                usuarioData.getTelefono(),
-                usuarioData.getCiudad(),
-                usuarioData.getDireccion(),
-                usuarioData.getFotoPerfil(),
-                usuarioData.getRole()
+                usuarioData.getPhoneNumber(),
+                usuarioData.getCity(),
+                usuarioData.getAddress(),
+                usuarioData.getProfilePicture(),
+                usuarioData.getRole(),
+                usuarioData.getRegistrationDate(),
+                usuarioData.getLastLogin()
         );
     }
 
@@ -28,15 +28,16 @@ public class UsuarioMapper {
 
         return new UsuarioData(
                 usuario.getId(),
-                usuario.getNombre(),
+                usuario.getName(),
                 usuario.getEmail(),
                 usuario.getPassword(),
-                usuario.getFechaNacimiento(),
-                usuario.getTelefono(),
-                usuario.getCiudad(),
-                usuario.getDireccion(),
-                usuario.getFotoPerfil(),
-                usuario.getRole()
+                usuario.getPhoneNumber(),
+                usuario.getCity(),
+                usuario.getAddress(),
+                usuario.getProfilePicture(),
+                usuario.getRole(),
+                usuario.getRegistrationDate(),
+                usuario.getLastLogin()
         );
     }
 
