@@ -21,19 +21,24 @@ public class MascotaData {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long pet_id;
     private String name;
+
     @Enumerated(EnumType.STRING)
     private EspecieMascota species;
+
     private String otherspecies;
     private String race;
     private Integer age;
+
     @Enumerated(EnumType.STRING)
     private SexoMascota sex;
+
     private Boolean childFriendly;
     private Boolean requiresAmpleSpace;
     private Boolean sterilization;
     private String vaccines;
     private String description;
     private String imageUrl;
+
     @Enumerated(EnumType.STRING)
     private EstadoMascota state;
 

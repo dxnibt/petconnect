@@ -2,6 +2,7 @@ package com.petconnect.pets.infraestructure.driver_adapters.jpa_repository;
 
 
 import com.petconnect.pets.domain.exception.MascotaExisteException;
+import com.petconnect.pets.domain.exception.MascotaNoEncontradaException;
 import com.petconnect.pets.domain.model.Mascota;
 import com.petconnect.pets.domain.model.gateway.MascotaGateway;
 import com.petconnect.pets.infraestructure.mapper.MascotaMapper;
@@ -26,19 +27,16 @@ public class MascotaDataGatewayImpl implements MascotaGateway {
 
     @Override
     public Mascota guardar(Mascota mascota) {
-        Optional<MascotaData> nombreExiste = repository.findByName(mascota.getName());
-        Optional<MascotaData> especieExiste = repository.findBySpecies(mascota.getRace());
-        if (nombreExiste.isPresent() && especieExiste.isPresent()){
-          throw new MascotaExisteException("No puede agregar una mascota con el mismo nombre y especie");
-        }
         MascotaData mascotaData = mascotaMapper.toData(mascota);
         return mascotaMapper.toMascota(repository.save(mascotaData));
     }
 
     @Override
-    public Mascota buscarPorId(Long id_mascota) {
-        return repository.findById(id_mascota).map(mascotaMapper::toMascota)
-                .orElseThrow(RuntimeException::new);
+    public Mascota buscarPorId(Long pet_id) {
+        return repository.findById(pet_id)
+                .map(mascotaData -> mascotaMapper.toMascota(mascotaData))
+                .orElseThrow(() -> new RuntimeException());
+
     }
 
     @Override
@@ -61,11 +59,6 @@ public class MascotaDataGatewayImpl implements MascotaGateway {
         MascotaData mascotaDataActualizar = mascotaMapper.toData(mascota);
         if (!repository.existsById(mascotaDataActualizar.getPet_id())){
             throw new RuntimeException("Mascota con id "+mascotaDataActualizar.getPet_id()+ " no existe");
-        }
-        Optional<MascotaData>  nombreExiste = repository.findByName(mascota.getName());
-        Optional<MascotaData> especieExiste = repository.findBySpecies(mascota.getRace());
-        if (nombreExiste.isPresent() && especieExiste.isPresent()){
-            throw new MascotaExisteException("No puede agregar una mascota con el mismo nombre y especie");
         }
         return mascotaMapper.toMascota(repository.save(mascotaDataActualizar));
     }

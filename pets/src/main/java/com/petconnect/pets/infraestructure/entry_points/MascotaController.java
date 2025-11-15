@@ -27,23 +27,23 @@ public class MascotaController {
             Mascota mascotaConvertida = mascotaMapper.toMascota(mascotaData);
             Mascota mascota = mascotaUseCase.guardarMascota(mascotaConvertida);
             return new ResponseEntity<>(mascota, HttpStatus.OK);
-        } catch (MascotaExisteException error){
+        } catch (IllegalArgumentException error){
             return new ResponseEntity<>(error.getMessage(),HttpStatus.OK);
-        } catch (Exception e){
-            return new ResponseEntity<>("Error al registrar la mascota", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @GetMapping("/{pet_id}")
-    public ResponseEntity findByIdMascota (@PathVariable Long pet_id){
+    public ResponseEntity <?> findByIdMascota (@PathVariable Long pet_id){
+
         Mascota mascota = mascotaUseCase.buscarPorId(pet_id);
+
         if (mascota.getPet_id()!=null){
             return new ResponseEntity<>(mascota, HttpStatus.OK);
         }
-        return new ResponseEntity<>("Mascota no encontrada", HttpStatus.OK);
+        return new ResponseEntity<>("La mascota no existe",HttpStatus.BAD_REQUEST);
     }
 
-    @GetMapping("/mascotas")
+    @GetMapping("/List")
     public ResponseEntity<?> listarMascotas(@RequestParam(defaultValue ="-1") int page, @RequestParam(defaultValue = "2") int size){
         List<Mascota> mascotas = mascotaUseCase.obtenerTodas(page,size);
         if (mascotas.isEmpty()){
@@ -67,7 +67,7 @@ public class MascotaController {
     public ResponseEntity<String> deleteMascota(@PathVariable Long pet_id){
         try {
             mascotaUseCase.eliminarMascota(pet_id);
-            return new ResponseEntity<>("Producto Eliminado", HttpStatus.OK);
+            return new ResponseEntity<>("Mascota Eliminada", HttpStatus.OK);
         }catch (Exception error){
             return new ResponseEntity<>(error.getMessage(),HttpStatus.OK);
         }
