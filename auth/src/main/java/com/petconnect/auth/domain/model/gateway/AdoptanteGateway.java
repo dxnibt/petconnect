@@ -5,5 +5,5 @@ import com.petconnect.auth.domain.model.Adoptante;
 public interface AdoptanteGateway {
 
     Adoptante guardarAdoptante(Adoptante adoptante);
-
+    Adoptante buscarPorId(Long id);
 }

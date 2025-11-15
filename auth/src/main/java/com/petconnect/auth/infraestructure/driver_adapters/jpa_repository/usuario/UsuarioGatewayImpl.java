@@ -3,6 +3,8 @@ package com.petconnect.auth.infraestructure.driver_adapters.jpa_repository.usuar
 import com.petconnect.auth.domain.model.Usuario;
 import com.petconnect.auth.domain.model.gateway.EncrypterGateway;
 import com.petconnect.auth.domain.model.gateway.UsuarioGateway;
+import com.petconnect.auth.infraestructure.driver_adapters.jpa_repository.refugio.RefugioDataJpaRepository;
+import com.petconnect.auth.infraestructure.mapper.RefugioMapper;
 import com.petconnect.auth.infraestructure.mapper.UsuarioMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -13,10 +15,19 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UsuarioGatewayImpl implements UsuarioGateway {
 
+    private final UsuarioMapper usuarioMapper;
+    private final UsuarioDataJpaRepository repository;
+
+    @Override
+    public Usuario buscarPorId(Long id) {
+        return repository.findById(id)
+                .map(usuarioData -> usuarioMapper.toUsuario(usuarioData))
+                .orElseThrow(() -> new RuntimeException());
+    }
 
     @Override
     public String loginUsuario(Usuario usuario) {
-        return "";
+        return null;
     }
 }
 

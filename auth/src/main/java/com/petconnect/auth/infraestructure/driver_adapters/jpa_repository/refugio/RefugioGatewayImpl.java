@@ -31,4 +31,11 @@ public class RefugioGatewayImpl implements RefugioGateway {
         return refugioMapper.toRefugio(repository.save(refugioData));
     }
 
+    @Override
+    public Refugio buscarPorId(Long id) {
+        return repository.findById(id)
+                .map(refugioData -> refugioMapper.toRefugio(refugioData))
+                .orElseThrow(() -> new RuntimeException());
+    }
+
 }

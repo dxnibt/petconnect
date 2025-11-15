@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/refugios")
+@RequestMapping("/api/petconnect/refugios")
 @RequiredArgsConstructor
 public class RefugioController {
 

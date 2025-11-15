@@ -14,6 +14,17 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class UsuarioController {
 
+    private final UsuarioUseCase usuarioUseCase;
+    private final UsuarioMapper usuarioMapper;
 
+    @GetMapping("/{id}")
+    public ResponseEntity<?> findByIdUsuario(@PathVariable Long id) {
 
+        Usuario usuario = usuarioUseCase.buscarUsuarioPorId(id);
+
+        if (usuario.getId() != null) {
+            return new ResponseEntity<>(usuario, HttpStatus.OK);
+        }
+        return new ResponseEntity<>("Usuario no encontrado", HttpStatus.NOT_FOUND);
+    }
 }

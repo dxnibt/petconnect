@@ -14,8 +14,8 @@ import org.springframework.context.annotation.Configuration;
 public class UseCaseConfig {
 
     @Bean
-    public UsuarioUseCase usuarioUseCase(UsuarioGateway usuarioGateway, EncrypterGateway encrypterGateway){
-        return new UsuarioUseCase(usuarioGateway, encrypterGateway);
+    public UsuarioUseCase usuarioUseCase(UsuarioGateway usuarioGateway, EncrypterGateway encrypterGateway , RefugioGateway refugioGateway, AdoptanteGateway adoptanteGateway){
+        return new UsuarioUseCase(usuarioGateway, encrypterGateway, refugioGateway, adoptanteGateway);
     }
 
     @Bean

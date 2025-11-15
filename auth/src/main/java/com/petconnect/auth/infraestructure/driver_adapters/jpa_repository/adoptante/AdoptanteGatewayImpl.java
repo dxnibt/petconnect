@@ -33,4 +33,11 @@ public class AdoptanteGatewayImpl implements AdoptanteGateway {
 
     }
 
+    @Override
+    public Adoptante buscarPorId(Long id) {
+        return repository.findById(id)
+                .map(adoptanteData -> adoptanteMapper.toAdoptante(adoptanteData))
+                .orElseThrow(() -> new RuntimeException());
+    }
+
 }

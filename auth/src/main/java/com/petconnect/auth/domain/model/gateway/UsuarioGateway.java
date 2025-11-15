@@ -3,6 +3,7 @@ import com.petconnect.auth.domain.model.Usuario;
 
 public interface UsuarioGateway {
 
+    Usuario buscarPorId(Long id);
     String loginUsuario(Usuario usuario);
 
 }
