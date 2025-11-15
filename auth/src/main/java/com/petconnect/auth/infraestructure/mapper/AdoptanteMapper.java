@@ -7,9 +7,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class AdoptanteMapper {
 
-    public Adoptante toAdoptante(AdoptanteData adoptanteData){
+    public Adoptante toAdoptante(AdoptanteData adoptanteData) {
+        if (adoptanteData == null) return null;
 
-        return new Adoptante(
+        Adoptante adoptante = new Adoptante(
                 adoptanteData.getDocument(),
                 adoptanteData.getGender(),
                 adoptanteData.getOtherGender(),
@@ -28,11 +29,24 @@ public class AdoptanteMapper {
                 adoptanteData.getActivityLevel(),
                 adoptanteData.getPersonalDescription()
         );
+
+        adoptante.setId(adoptanteData.getId());
+        adoptante.setName(adoptanteData.getName());
+        adoptante.setEmail(adoptanteData.getEmail());
+        adoptante.setPassword(adoptanteData.getPassword());
+        adoptante.setPhoneNumber(adoptanteData.getPhoneNumber());
+        adoptante.setCity(adoptanteData.getCity());
+        adoptante.setAddress(adoptanteData.getAddress());
+        adoptante.setProfilePicture(adoptanteData.getProfilePicture());
+        adoptante.setRole(adoptanteData.getRole());
+
+        return adoptante;
     }
 
-    public AdoptanteData toData(Adoptante adoptante){
+    public AdoptanteData toData(Adoptante adoptante) {
+        if (adoptante == null) return null;
 
-        return new AdoptanteData(
+        AdoptanteData adoptanteData = new AdoptanteData(
                 adoptante.getDocument(),
                 adoptante.getGender(),
                 adoptante.getOtherGender(),
@@ -51,7 +65,17 @@ public class AdoptanteMapper {
                 adoptante.getActivityLevel(),
                 adoptante.getPersonalDescription()
         );
+
+        adoptanteData.setId(adoptante.getId());
+        adoptanteData.setName(adoptante.getName());
+        adoptanteData.setEmail(adoptante.getEmail());
+        adoptanteData.setPassword(adoptante.getPassword());
+        adoptanteData.setPhoneNumber(adoptante.getPhoneNumber());
+        adoptanteData.setCity(adoptante.getCity());
+        adoptanteData.setAddress(adoptante.getAddress());
+        adoptanteData.setProfilePicture(adoptante.getProfilePicture());
+        adoptanteData.setRole(adoptante.getRole());
+
+        return adoptanteData;
     }
-
 }
-

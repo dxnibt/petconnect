@@ -8,6 +8,7 @@ import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 import java.time.LocalDateTime;
 
 @Entity
@@ -49,7 +50,9 @@ public class UsuarioData {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    @CreationTimestamp
     private LocalDateTime registrationDate;
+
     private LocalDateTime lastLogin;
 
 }

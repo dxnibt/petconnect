@@ -5,6 +5,7 @@ import com.petconnect.auth.domain.model.gateway.AdoptanteGateway;
 import com.petconnect.auth.domain.model.gateway.EncrypterGateway;
 import lombok.RequiredArgsConstructor;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.Period;
 
 @RequiredArgsConstructor
@@ -18,7 +19,10 @@ public class AdoptanteUseCase {
 
     public Adoptante guardarAdoptante(Adoptante adoptante){
 
-        if (!usuarioUseCase.isValidUsuario(adoptante) || !isValidAdoptante(adoptante)) {
+        boolean usuarioValido = usuarioUseCase.isValidUsuario(adoptante);
+        boolean adoptanteValido = isValidAdoptante(adoptante);
+
+        if (!usuarioValido || !adoptanteValido) {
             throw new IllegalArgumentException("Por favor, complete todos los campos");
         }
 
@@ -29,11 +33,14 @@ public class AdoptanteUseCase {
         if (adoptante.getMonthlySalary() < salario_minimo) {
             throw new IllegalArgumentException("Debe contar con ingresos iguales o superiores al salario mínimo vigente en Colombia.");
         }
+        adoptante.setRegistrationDate(LocalDateTime.now());
+        adoptante.setLastLogin(LocalDateTime.now());
+
 
         String passwordEncrypt = encrypterGateway.encrypt(adoptante.getPassword());
         adoptante.setPassword(passwordEncrypt);
-        return adoptanteGateway.guardarAdoptante(adoptante);
 
+        return adoptanteGateway.guardarAdoptante(adoptante);
     }
 
     private boolean esMayorDeEdad(LocalDate birthDate) {

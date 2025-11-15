@@ -8,8 +8,8 @@ import org.springframework.stereotype.Component;
 public class RefugioMapper {
 
     public Refugio toRefugio(RefugioData refugioData){
-
-        return new Refugio(
+        if (refugioData == null) return null;
+        Refugio refugio = new Refugio(
                 refugioData.getNit(),
                 refugioData.getWebsite(),
                 refugioData.getCurrentPets(),
@@ -17,11 +17,23 @@ public class RefugioMapper {
                 refugioData.isAprobado(),
                 refugioData.getShelterDescription()
         );
+
+        refugio.setId(refugioData.getId());
+        refugio.setName(refugioData.getName());
+        refugio.setEmail(refugioData.getEmail());
+        refugio.setPassword(refugioData.getPassword());
+        refugio.setPhoneNumber(refugioData.getPhoneNumber());
+        refugio.setCity(refugioData.getCity());
+        refugio.setAddress(refugioData.getAddress());
+        refugio.setProfilePicture(refugioData.getProfilePicture());
+        refugio.setRole(refugioData.getRole());
+
+        return refugio;
     }
 
     public RefugioData toData(Refugio refugio){
 
-        return new RefugioData(
+        RefugioData refugioData = new RefugioData(
                 refugio.getNit(),
                 refugio.getWebsite(),
                 refugio.getCurrentPets(),
@@ -29,6 +41,17 @@ public class RefugioMapper {
                 refugio.isAprobado(),
                 refugio.getShelterDescription()
         );
+        refugioData.setId(refugio.getId());
+        refugioData.setName(refugio.getName());
+        refugioData.setEmail(refugio.getEmail());
+        refugioData.setPassword(refugio.getPassword());
+        refugioData.setPhoneNumber(refugio.getPhoneNumber());
+        refugioData.setCity(refugio.getCity());
+        refugioData.setAddress(refugio.getAddress());
+        refugioData.setProfilePicture(refugio.getProfilePicture());
+        refugioData.setRole(refugio.getRole());
+
+        return refugioData;
     }
 
 }
