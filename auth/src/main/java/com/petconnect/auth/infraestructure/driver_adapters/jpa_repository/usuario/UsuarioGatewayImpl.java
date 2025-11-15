@@ -1,4 +1,4 @@
-package com.petconnect.auth.infraestructure.driver_adapters.jpa_repository;
+package com.petconnect.auth.infraestructure.driver_adapters.jpa_repository.usuario;
 
 import com.petconnect.auth.domain.model.Usuario;
 import com.petconnect.auth.domain.model.gateway.EncrypterGateway;

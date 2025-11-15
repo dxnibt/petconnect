@@ -1,4 +1,4 @@
-package com.petconnect.auth.infraestructure.driver_adapters.jpa_repository;
+package com.petconnect.auth.infraestructure.driver_adapters.jpa_repository.usuario;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;

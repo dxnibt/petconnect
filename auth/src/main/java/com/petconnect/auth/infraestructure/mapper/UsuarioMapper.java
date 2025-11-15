@@ -1,7 +1,7 @@
 package com.petconnect.auth.infraestructure.mapper;
 
 import com.petconnect.auth.domain.model.Usuario;
-import com.petconnect.auth.infraestructure.driver_adapters.jpa_repository.UsuarioData;
+import com.petconnect.auth.infraestructure.driver_adapters.jpa_repository.usuario.UsuarioData;
 import org.springframework.stereotype.Component;
 
 @Component

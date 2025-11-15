@@ -14,7 +14,9 @@ public class AdoptanteUseCase {
     private final EncrypterGateway encrypterGateway;
     private final UsuarioUseCase usuarioUseCase;
 
-    public Adoptante guardarAdoptante (Adoptante adoptante){
+    private static final double salario_minimo = 1423500;
+
+    public Adoptante guardarAdoptante(Adoptante adoptante){
 
         if (!usuarioUseCase.isValidUsuario(adoptante) || !isValidAdoptante(adoptante)) {
             throw new IllegalArgumentException("Por favor, complete todos los campos");
@@ -22,6 +24,10 @@ public class AdoptanteUseCase {
 
         if (!esMayorDeEdad(adoptante.getBirthDate())) {
             throw new IllegalArgumentException("El usuario debe ser mayor de edad.");
+        }
+
+        if (adoptante.getMonthlySalary() < salario_minimo) {
+            throw new IllegalArgumentException("Debe contar con ingresos iguales o superiores al salario mínimo vigente en Colombia.");
         }
 
         String passwordEncrypt = encrypterGateway.encrypt(adoptante.getPassword());
