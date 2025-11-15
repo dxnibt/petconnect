@@ -27,4 +27,14 @@ public class UsuarioController {
         }
         return new ResponseEntity<>("Usuario no encontrado", HttpStatus.NOT_FOUND);
     }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> deleteUsuario(@PathVariable Long id) {
+        try {
+            usuarioUseCase.eliminarUsuario(id);
+            return new ResponseEntity<>("Usuario eliminado", HttpStatus.OK);
+        } catch (Exception error) {
+            return new ResponseEntity<>(error.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
 }

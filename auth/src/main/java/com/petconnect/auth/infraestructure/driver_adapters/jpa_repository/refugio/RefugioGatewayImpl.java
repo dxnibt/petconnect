@@ -38,4 +38,12 @@ public class RefugioGatewayImpl implements RefugioGateway {
                 .orElseThrow(() -> new RuntimeException());
     }
 
+    @Override
+    public void eliminarPorId(Long id) {
+        if (!repository.existsById(id)) {
+            throw new IllegalArgumentException("El refugio no existe");
+        }
+        repository.deleteById(id);
+    }
+
 }

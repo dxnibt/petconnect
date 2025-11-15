@@ -6,4 +6,5 @@ public interface RefugioGateway {
 
     Refugio guardarRefugio(Refugio refugio);
     Refugio buscarPorId(Long id);
+    void eliminarPorId(Long id);
 }

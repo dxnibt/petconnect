@@ -6,4 +6,5 @@ public interface AdoptanteGateway {
 
     Adoptante guardarAdoptante(Adoptante adoptante);
     Adoptante buscarPorId(Long id);
+    void eliminarPorId(Long id);
 }

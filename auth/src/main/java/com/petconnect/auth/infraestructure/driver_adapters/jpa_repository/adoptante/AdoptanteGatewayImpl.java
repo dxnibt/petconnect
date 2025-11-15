@@ -40,4 +40,12 @@ public class AdoptanteGatewayImpl implements AdoptanteGateway {
                 .orElseThrow(() -> new RuntimeException());
     }
 
+    @Override
+    public void eliminarPorId(Long id) {
+        if (!repository.existsById(id)) {
+            throw new IllegalArgumentException("El usuario no existe");
+        }
+        repository.deleteById(id);
+    }
+
 }

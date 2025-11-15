@@ -32,7 +32,19 @@ public class UsuarioUseCase {
             return new Usuario();
         }
     }
+    public void eliminarUsuario(Long id) {
+        Usuario usuario = usuarioGateway.buscarPorId(id);
 
+        if (usuario == null) {
+            throw new IllegalArgumentException("Usuario no encontrado");
+        }
+
+        switch (usuario.getRole()) {
+            case REFUGIO -> refugioGateway.eliminarPorId(id);
+            case ADOPTANTE -> adoptanteGateway.eliminarPorId(id);
+            default -> usuarioGateway.eliminarPorId(id);
+        }
+    }
     public boolean isValidUsuario(Usuario usuario) {
         return usuario.getName() != null &&
                 usuario.getEmail() != null &&
