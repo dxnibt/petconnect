@@ -1,4 +1,11 @@
 package com.petconnect.auth.infraestructure.driver_adapters.jpa_repository.refugio;
 
-public interface RefugioDataJpaRepository {
+import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.Optional;
+
+public interface RefugioDataJpaRepository extends JpaRepository<RefugioData,Long> {
+
+    Optional<RefugioData> findByEmail(String email);
+    Optional<RefugioData> findByNit(String nit);
+
 }
