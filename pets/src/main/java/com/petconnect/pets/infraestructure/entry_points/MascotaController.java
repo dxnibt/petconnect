@@ -1,13 +1,12 @@
 package com.petconnect.pets.infraestructure.entry_points;
 
-import com.petconnect.pets.domain.exception.MascotaExisteException;
 import com.petconnect.pets.domain.model.Mascota;
 import com.petconnect.pets.domain.usecase.MascotaUseCase;
-import com.petconnect.pets.infraestructure.driver_adapters.jpa_repository.MascotaData;
+import com.petconnect.pets.infraestructure.driver_adapters.jpa_repository.mascotas.ActualizationData;
+import com.petconnect.pets.infraestructure.driver_adapters.jpa_repository.mascotas.MascotaData;
 import com.petconnect.pets.infraestructure.mapper.MascotaMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -52,16 +51,30 @@ public class MascotaController {
         return ResponseEntity.ok(mascotas);
     }
 
-    @PutMapping("/update")
-    public ResponseEntity<?> actualizarMascota(@RequestBody MascotaData mascotaData){
+    @PatchMapping("/update/{pet_id}")
+    public ResponseEntity<?> actualizarMascota(
+            @PathVariable Long pet_id,
+            @RequestBody ActualizationData data) {
+
         try {
-            Mascota mascota = mascotaMapper.toMascota(mascotaData);
-            Mascota mascotaValidadaAct = mascotaUseCase.actualizarMascota(mascota);
+            Mascota mascotaActualizada = mascotaUseCase.actualizarMascota(pet_id, data);
+            return ResponseEntity.ok(mascotaActualizada);
+
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    /*@PutMapping("/update")
+    public ResponseEntity<?> actualizarMascota(@PathVariable Long pet_id, @RequestBody ActualizationData data){
+        try {
+            Mascota mascota = mascotaMapper.toMascota(data);
+            Mascota mascotaValidadaAct = mascotaUseCase.actualizarMascota(pet_id,data);
             return new ResponseEntity<>(mascotaValidadaAct,HttpStatus.OK);
         }catch (Exception e){
             return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_REQUEST);
         }
-    }
+    }*/
 
     @DeleteMapping("/delete/{pet_id}")
     public ResponseEntity<String> deleteMascota(@PathVariable Long pet_id){

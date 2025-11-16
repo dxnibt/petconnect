@@ -1,7 +1,6 @@
-package com.petconnect.pets.infraestructure.driver_adapters.jpa_repository;
+package com.petconnect.pets.infraestructure.driver_adapters.jpa_repository.mascotas;
 
 
-import com.petconnect.pets.domain.exception.MascotaExisteException;
 import com.petconnect.pets.domain.exception.MascotaNoEncontradaException;
 import com.petconnect.pets.domain.model.Mascota;
 import com.petconnect.pets.domain.model.gateway.MascotaGateway;
@@ -13,7 +12,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
@@ -35,7 +33,7 @@ public class MascotaDataGatewayImpl implements MascotaGateway {
     public Mascota buscarPorId(Long pet_id) {
         return repository.findById(pet_id)
                 .map(mascotaData -> mascotaMapper.toMascota(mascotaData))
-                .orElseThrow(() -> new RuntimeException());
+                .orElseThrow(() -> new MascotaNoEncontradaException("Mascota Inexistente"));
 
     }
 
@@ -57,16 +55,13 @@ public class MascotaDataGatewayImpl implements MascotaGateway {
     @Override
     public Mascota actualizarMascota(Mascota mascota) {
         MascotaData mascotaDataActualizar = mascotaMapper.toData(mascota);
-        if (!repository.existsById(mascotaDataActualizar.getPet_id())){
-            throw new RuntimeException("Mascota con id "+mascotaDataActualizar.getPet_id()+ " no existe");
-        }
         return mascotaMapper.toMascota(repository.save(mascotaDataActualizar));
     }
 
     @Override
     public void eliminar(Long id_mascota) {
     if (!repository.existsById(id_mascota)){
-        throw new MascotaExisteException("La mascota no existe");
+        throw new MascotaNoEncontradaException("La mascota no existe");
     }
     repository.deleteById(id_mascota);
     }

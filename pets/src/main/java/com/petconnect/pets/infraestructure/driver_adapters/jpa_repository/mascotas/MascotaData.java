@@ -1,4 +1,4 @@
-package com.petconnect.pets.infraestructure.driver_adapters.jpa_repository;
+package com.petconnect.pets.infraestructure.driver_adapters.jpa_repository.mascotas;
 
 
 import com.petconnect.pets.domain.model.enums.EspecieMascota;
