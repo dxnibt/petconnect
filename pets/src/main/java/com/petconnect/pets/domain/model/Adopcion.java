@@ -12,7 +12,7 @@ import lombok.Setter;
 @NoArgsConstructor
 
 public class Adopcion {
-    private Long id;
+    private Long idAdoption;
     private Long userId;
     private Long petId;
     private Long shelterId;
