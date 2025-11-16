@@ -3,6 +3,7 @@ package com.petconnect.pets.domain.usecase;
 import com.petconnect.pets.domain.exception.*;
 import com.petconnect.pets.domain.model.Mascota;
 import com.petconnect.pets.domain.model.gateway.MascotaGateway;
+import com.petconnect.pets.infraestructure.driver_adapters.jpa_repository.mascotas.ActualizationData;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
@@ -40,34 +41,26 @@ public class MascotaUseCase {
         return mascotaGateway.obtenerTodas(page, size);
     }
 
-    public Mascota actualizarMascota(Mascota mascota){
-        if (mascota.getName()==null || mascota.getSpecies()==null|| mascota.getRace()==null||
-                mascota.getAge()==null||mascota.getSex()==null || mascota.getChildFriendly()==
-                null || mascota.getRequiresAmpleSpace() == null|| mascota.getSterilization() ==
-                null || mascota.getVaccines() == null || mascota.getDescription() == null ||
-                mascota.getImageUrl() == null || mascota.getState() == null){
-            throw new IllegalArgumentException("Todos los campos son obligatorios");
-        }
+    public Mascota actualizarMascota(Long pet_id, ActualizationData data) {
 
-        Mascota mascotaOriginal = mascotaGateway.buscarPorId(mascota.getPet_id());
-        if (mascotaOriginal==null){
-            throw new MascotaNoEncontradaException("La mascota no existe");
-        }
+            Mascota mascota = mascotaGateway.buscarPorId(pet_id);
 
-        if (!mascotaOriginal.getName().equals(mascota.getName())){
-            throw new NombreNoPuedeModificarseException("No es posible modificar el nombre de la mascota");
-        }
-        if (!mascotaOriginal.getRace().equals(mascota.getRace())){
-            throw new RazaNoPuedeModificarseException("No es posible modificar la raza de la mascota");
-        }
-        if (!mascotaOriginal.getSex().equals(mascota.getSex())){
-            throw new SexoNoPuedeModificarseException("No es posible modificar el sexo de la mascota");
-        }
-        if (!mascotaOriginal.getSpecies().equals(mascota.getSpecies())){
-            throw new EspecieNoPuedeModificarseException("No es posible modificar la especie de la mascota");
-        }
+            if (mascota == null) {
+                throw new MascotaNoEncontradaException("Mascota con id " + pet_id + " no existe");
+            }
 
-        return mascotaGateway.actualizarMascota(mascota);
+
+            if (data.getAge() != null) mascota.setAge(data.getAge());
+            if (data.getChildFriendly() != null) mascota.setChildFriendly(data.getChildFriendly());
+            if (data.getRequiresAmpleSpace() != null) mascota.setRequiresAmpleSpace(data.getRequiresAmpleSpace());
+            if (data.getSterilization() != null) mascota.setSterilization(data.getSterilization());
+            if (data.getVaccines() != null) mascota.setVaccines(data.getVaccines());
+            if (data.getDescription() != null) mascota.setDescription(data.getDescription());
+            if (data.getImageUrl() != null) mascota.setImageUrl(data.getImageUrl());
+            if (data.getState() != null) mascota.setState(data.getState());
+
+            return mascotaGateway.actualizarMascota(mascota);
+
     }
 
     public void eliminarMascota(Long id_mascota){
