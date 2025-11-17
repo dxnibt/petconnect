@@ -69,7 +69,7 @@ public class AdopcionUseCase {
         // Actualizar mascota
         Mascota mascota = mascotaGateway.buscarPorId(adopcion.getPetId());
         if (mascota != null) {
-            mascota.setState(EstadoMascota.NO_DISPONIBLE);
+            mascota.setState(EstadoMascota.DISPONIBLE);
             mascotaGateway.actualizarMascota(mascota);
         }
         try {
