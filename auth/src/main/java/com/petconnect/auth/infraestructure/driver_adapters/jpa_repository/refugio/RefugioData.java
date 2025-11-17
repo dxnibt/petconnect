@@ -22,11 +22,13 @@ public class RefugioData extends UsuarioData {
     @Pattern(regexp = "^[0-9]{8,12}$", message = "El NIT debe contener solo números y entre 8 y 12 dígitos")
     private String nit;
 
-    @Pattern(regexp = "^(https?:\\/\\/)?([\\w-]+\\.)+[\\w-]{2,}(\\/.*)?$", message = "La URL proporcionada no es válida")
+    @Pattern(regexp = "^(https?:\\/\\/)?([\\w\\-]+\\.)+[\\w\\-]+(\\/[^\\s]*)?$", message = "La URL proporcionada no es válida")
     private String website;
 
+    @Column(nullable = false)
     private Integer currentPets = 0;
 
+    @Column(length = 500)
     private String supportDocument;
 
     @Column(nullable = false)

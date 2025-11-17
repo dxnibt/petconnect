@@ -3,10 +3,7 @@ package com.petconnect.auth.infraestructure.driver_adapters.jpa_repository.adopt
 import com.petconnect.auth.domain.model.enums.adoptante.*;
 import com.petconnect.auth.infraestructure.driver_adapters.jpa_repository.usuario.UsuarioData;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -28,18 +25,27 @@ public class AdoptanteData extends UsuarioData {
     private Gender gender;
 
     private String otherGender;
+
+    @Past(message = "La fecha de nacimiento debe ser anterior a la actual")
     private LocalDate birthDate;
 
-    @Min(value = 1423500, message = "Debe tener ingresos al menos del salario mínimo vigente")
+    @DecimalMin(value = "1423500", message = "Debe tener ingresos al menos del salario mínimo vigente")
     private Double monthlySalary;
 
     @Enumerated(EnumType.STRING)
     private HousingType housingType;
 
-    private boolean hasYard;
-    private boolean petExperience;
-    private boolean hasOtherPets;
-    private boolean hasChildren;
+    @Column(nullable = false)
+    private Boolean hasYard;
+
+    @Column(nullable = false)
+    private Boolean petExperience;
+
+    @Column(nullable = false)
+    private Boolean hasOtherPets;
+
+    @Column(nullable = false)
+    private Boolean hasChildren;
 
     @Min(value = 0, message = "Las horas no pueden ser negativas")
     @Max(value = 24, message = "Las horas no pueden ser mayores a 24")

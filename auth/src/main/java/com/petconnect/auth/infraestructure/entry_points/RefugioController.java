@@ -36,7 +36,7 @@ public class RefugioController {
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<?> actualizarRefugio(@PathVariable Long id, @RequestBody RefugioActualizarDto dto) {
+    public ResponseEntity<?> actualizarRefugio(@Valid @PathVariable Long id, @RequestBody RefugioActualizarDto dto) {
 
         try {
             Refugio refugioActualizado = refugioUseCase.actualizarRefugio(id, dto);

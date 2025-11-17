@@ -59,6 +59,7 @@ public class RefugioGatewayImpl implements RefugioGateway {
             throw new RuntimeException("Refugio con id " + refugioDataActualizar.getId() + " no existe");
         }
 
+
         return refugioMapper.toRefugio(repository.save(refugioDataActualizar));
     }
 

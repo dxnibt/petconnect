@@ -20,10 +20,10 @@ public class Adoptante extends Usuario {
     private LocalDate birthDate;
     private Double monthlySalary;
     private HousingType housingType;
-    private boolean hasYard;
-    private boolean petExperience;
-    private boolean hasOtherPets;
-    private boolean hasChildren;
+    private Boolean hasYard;
+    private Boolean petExperience;
+    private Boolean hasOtherPets;
+    private Boolean hasChildren;
     private Integer hoursAwayFromHome;
     private PreferredAnimalType preferredAnimalType;
     private String otherPreferredAnimalType;

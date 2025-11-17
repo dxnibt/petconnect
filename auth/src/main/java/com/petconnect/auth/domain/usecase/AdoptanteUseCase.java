@@ -34,9 +34,11 @@ public class AdoptanteUseCase {
         if (adoptante.getMonthlySalary() < salario_minimo) {
             throw new IllegalArgumentException("Debe contar con ingresos iguales o superiores al salario mínimo vigente en Colombia.");
         }
-        adoptante.setRegistrationDate(LocalDateTime.now());
+
         String passwordEncrypt = encrypterGateway.encrypt(adoptante.getPassword());
         adoptante.setPassword(passwordEncrypt);
+
+        adoptante.setRegistrationDate(LocalDateTime.now());
 
         return adoptanteGateway.guardarAdoptante(adoptante);
     }
@@ -64,6 +66,10 @@ public class AdoptanteUseCase {
                 adoptante.getBirthDate() != null &&
                 adoptante.getMonthlySalary() != null &&
                 adoptante.getHousingType() != null &&
+                adoptante.getHasYard() != null &&
+                adoptante.getPetExperience() != null &&
+                adoptante.getHasOtherPets() != null &&
+                adoptante.getHasChildren() != null &&
                 adoptante.getHoursAwayFromHome() != null &&
                 adoptante.getPreferredAnimalType() != null &&
                 adoptante.getPreferredPetSize() != null &&
@@ -75,10 +81,10 @@ public class AdoptanteUseCase {
     private void actualizarAdoptanteDto(Adoptante adoptante, AdoptanteActualizarDto dto){
         if (dto.getMonthlySalary() != null) adoptante.setMonthlySalary(dto.getMonthlySalary());
         if (dto.getHousingType() != null) adoptante.setHousingType(dto.getHousingType());
-        adoptante.setHasYard(dto.isHasYard());
-        adoptante.setPetExperience(dto.isPetExperience());
-        adoptante.setHasOtherPets(dto.isHasOtherPets());
-        adoptante.setHasChildren(dto.isHasChildren());
+        if (dto.getHasYard() != null) adoptante.setHasYard(dto.getHasYard());
+        if (dto.getPetExperience() != null) adoptante.setPetExperience(dto.getPetExperience());
+        if (dto.getHasOtherPets() != null) adoptante.setHasOtherPets(dto.getHasOtherPets());
+        if (dto.getHasChildren() != null) adoptante.setHasChildren(dto.getHasChildren());
         if (dto.getHoursAwayFromHome() != null) adoptante.setHoursAwayFromHome(dto.getHoursAwayFromHome());
         if (dto.getPreferredAnimalType() != null) adoptante.setPreferredAnimalType(dto.getPreferredAnimalType());
         if (dto.getOtherPreferredAnimalType() != null) adoptante.setOtherPreferredAnimalType(dto.getOtherPreferredAnimalType());

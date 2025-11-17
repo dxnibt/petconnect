@@ -32,7 +32,7 @@ public class RefugioMapper {
     }
 
     public RefugioData toData(Refugio refugio){
-
+        if (refugio == null) return null;
         RefugioData refugioData = new RefugioData(
                 refugio.getNit(),
                 refugio.getWebsite(),

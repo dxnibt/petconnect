@@ -1,11 +1,9 @@
 package com.petconnect.auth.infraestructure.entry_points;
 
 import com.petconnect.auth.domain.model.Adoptante;
-import com.petconnect.auth.domain.model.Refugio;
 import com.petconnect.auth.domain.usecase.AdoptanteUseCase;
 import com.petconnect.auth.infraestructure.driver_adapters.jpa_repository.adoptante.AdoptanteActualizarDto;
 import com.petconnect.auth.infraestructure.driver_adapters.jpa_repository.adoptante.AdoptanteData;
-import com.petconnect.auth.infraestructure.driver_adapters.jpa_repository.refugio.RefugioActualizarDto;
 import com.petconnect.auth.infraestructure.mapper.AdoptanteMapper;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -38,7 +36,7 @@ public class AdoptanteController {
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<?> actualizarAdoptante(@PathVariable Long id, @RequestBody AdoptanteActualizarDto dto) {
+    public ResponseEntity<?> actualizarAdoptante(@Valid @PathVariable Long id, @RequestBody AdoptanteActualizarDto dto) {
 
         try {
             Adoptante adoptanteActualizado = adoptanteUseCase.actualizarAdoptante(id, dto);

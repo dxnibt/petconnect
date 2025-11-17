@@ -42,9 +42,12 @@ public class UsuarioUseCase {
         }
 
         switch (usuario.getRole()) {
-            case REFUGIO -> refugioGateway.eliminarPorId(id);
-            case ADOPTANTE -> adoptanteGateway.eliminarPorId(id);
-            default -> usuarioGateway.eliminarPorId(id);
+            case REFUGIO:
+                refugioGateway.eliminarPorId(id);
+            case ADOPTANTE:
+                adoptanteGateway.eliminarPorId(id);
+            default:
+                usuarioGateway.eliminarPorId(id);
         }
     }
     public boolean isValidUsuario(Usuario usuario) {
@@ -71,5 +74,7 @@ public class UsuarioUseCase {
             if (dto.getProfilePicture() != null) usuario.setProfilePicture(dto.getProfilePicture());
         }
     }
+
+
 
 }
