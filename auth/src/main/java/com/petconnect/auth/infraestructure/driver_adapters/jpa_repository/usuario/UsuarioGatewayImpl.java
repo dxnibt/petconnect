@@ -6,6 +6,7 @@ import com.petconnect.auth.infraestructure.mapper.UsuarioMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Repository
@@ -31,8 +32,19 @@ public class UsuarioGatewayImpl implements UsuarioGateway {
     }
 
     @Override
-    public String loginUsuario(Usuario usuario) {
-        return null;
+    public Usuario buscarPorEmail(String email) {
+        return repository.findByEmail(email)
+                .map(usuarioMapper::toUsuario)
+                .orElse(null);
     }
+
+    @Override
+    public void actualizarLastLogin(Long id, LocalDateTime fecha) {
+        UsuarioData usuarioData = repository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
+        usuarioData.setLastLogin(fecha);
+        repository.save(usuarioData);
+    }
+
 }
 

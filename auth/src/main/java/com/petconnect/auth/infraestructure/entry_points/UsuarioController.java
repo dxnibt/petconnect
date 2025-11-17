@@ -2,6 +2,8 @@ package com.petconnect.auth.infraestructure.entry_points;
 
 import com.petconnect.auth.domain.model.Usuario;
 import com.petconnect.auth.domain.usecase.UsuarioUseCase;
+import com.petconnect.auth.infraestructure.driver_adapters.jpa_repository.usuario.LoginDto;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,6 +37,16 @@ public class UsuarioController {
 
         } catch (RuntimeException error) {
             return new ResponseEntity<>(error.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@Valid @RequestBody LoginDto dto) {
+        try {
+            String mensaje = usuarioUseCase.loginUsuario(dto);
+            return ResponseEntity.ok(mensaje);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         }
     }
 }

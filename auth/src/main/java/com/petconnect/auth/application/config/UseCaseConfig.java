@@ -4,6 +4,7 @@ import com.petconnect.auth.domain.model.gateway.AdoptanteGateway;
 import com.petconnect.auth.domain.model.gateway.EncrypterGateway;
 import com.petconnect.auth.domain.model.gateway.RefugioGateway;
 import com.petconnect.auth.domain.model.gateway.UsuarioGateway;
+import com.petconnect.auth.domain.usecase.AdminUseCase;
 import com.petconnect.auth.domain.usecase.AdoptanteUseCase;
 import com.petconnect.auth.domain.usecase.RefugioUseCase;
 import com.petconnect.auth.domain.usecase.UsuarioUseCase;
@@ -28,5 +29,9 @@ public class UseCaseConfig {
         return new RefugioUseCase(refugioGateway, encrypterGateway, usuarioUseCase);
     }
 
+    @Bean
+    public AdminUseCase adminUseCase(RefugioGateway refugioGateway){
+        return new AdminUseCase(refugioGateway);
+    }
 }
 

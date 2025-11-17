@@ -5,8 +5,11 @@ import com.petconnect.auth.domain.model.gateway.AdoptanteGateway;
 import com.petconnect.auth.domain.model.gateway.EncrypterGateway;
 import com.petconnect.auth.domain.model.gateway.RefugioGateway;
 import com.petconnect.auth.domain.model.gateway.UsuarioGateway;
+import com.petconnect.auth.infraestructure.driver_adapters.jpa_repository.usuario.LoginDto;
 import com.petconnect.auth.infraestructure.driver_adapters.jpa_repository.usuario.UsuarioActualizarDto;
 import lombok.RequiredArgsConstructor;
+
+import java.time.LocalDateTime;
 
 @RequiredArgsConstructor
 public class UsuarioUseCase {
@@ -50,6 +53,24 @@ public class UsuarioUseCase {
                 usuarioGateway.eliminarPorId(id);
         }
     }
+
+    public String loginUsuario(LoginDto dto){
+
+        if (dto.getEmail() == null || dto.getPassword() == null) {
+            throw new IllegalArgumentException("El email y la contraseña son obligatorios");
+        }
+        Usuario usuario = usuarioGateway.buscarPorEmail(dto.getEmail());
+        if (usuario == null) {
+            throw new IllegalArgumentException("Usuario no encontrado");
+        }
+        boolean passwordValid = encrypterGateway.checkPassword(dto.getPassword(), usuario.getPassword());
+        if (!passwordValid) {
+            throw new IllegalArgumentException("Contraseña incorrecta");
+        }
+        usuarioGateway.actualizarLastLogin(usuario.getId(), LocalDateTime.now());
+        return "Bienvenido";
+    }
+
     public boolean isValidUsuario(Usuario usuario) {
         return usuario.getName() != null &&
                 usuario.getEmail() != null &&
