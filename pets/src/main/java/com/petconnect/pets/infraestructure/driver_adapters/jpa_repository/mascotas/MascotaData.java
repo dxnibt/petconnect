@@ -1,6 +1,7 @@
 package com.petconnect.pets.infraestructure.driver_adapters.jpa_repository.mascotas;
 
 
+
 import com.petconnect.pets.domain.model.enums.EspecieMascota;
 import com.petconnect.pets.domain.model.enums.EstadoMascota;
 import com.petconnect.pets.domain.model.enums.SexoMascota;
