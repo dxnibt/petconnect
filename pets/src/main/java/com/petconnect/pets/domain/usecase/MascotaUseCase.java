@@ -2,6 +2,7 @@ package com.petconnect.pets.domain.usecase;
 
 import com.petconnect.pets.domain.exception.*;
 import com.petconnect.pets.domain.model.Mascota;
+import com.petconnect.pets.domain.model.enums.EstadoMascota;
 import com.petconnect.pets.domain.model.gateway.MascotaGateway;
 import com.petconnect.pets.infraestructure.driver_adapters.jpa_repository.mascotas.ActualizationData;
 import lombok.RequiredArgsConstructor;
@@ -44,10 +45,39 @@ public class MascotaUseCase {
     public Mascota actualizarMascota(Long pet_id, ActualizationData data) {
 
             Mascota mascota = mascotaGateway.buscarPorId(pet_id);
+            Mascota mascotaOriginal = mascotaGateway.buscarPorId(pet_id);
+
 
             if (mascota == null) {
                 throw new MascotaNoEncontradaException("Mascota con id " + pet_id + " no existe");
             }
+
+            if (data.getSterilization() != null) {
+            boolean nuevoEstado = data.getSterilization();
+            if (mascota.getSterilization() != null && mascota.getSterilization() && !nuevoEstado) {
+                throw new ActualizacionEsterilizacionInvalidaException(
+                        "No se puede cambiar el estado de esterilización de true a false."
+                );
+            }
+            mascota.setSterilization(nuevoEstado);
+            }
+            if (data.getState()!=null){
+                EstadoMascota estadoActual = mascota.getState();
+                EstadoMascota nuevoEstado = data.getState();
+                boolean transicionValida = switch (estadoActual){
+                    case DISPONIBLE -> nuevoEstado == EstadoMascota.EN_PROCESO || nuevoEstado == EstadoMascota.DISPONIBLE;
+                    case EN_PROCESO -> nuevoEstado == EstadoMascota.ADOPTADA|| nuevoEstado == EstadoMascota.EN_PROCESO;
+                    case ADOPTADA -> nuevoEstado == EstadoMascota.DISPONIBLE;
+                };
+                if (!transicionValida){
+                    throw new ActualizacionEstadoInvalidoException(
+                            "No se puede cambiar el estado de "+estadoActual+" a "+nuevoEstado
+                    );
+                }
+                mascota.setState(nuevoEstado);
+            }
+
+
 
 
             if (data.getAge() != null) mascota.setAge(data.getAge());

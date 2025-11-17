@@ -1,5 +1,6 @@
 package com.petconnect.pets.infraestructure.entry_points;
 
+import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 import com.petconnect.pets.domain.model.Mascota;
 import com.petconnect.pets.domain.usecase.MascotaUseCase;
 import com.petconnect.pets.infraestructure.driver_adapters.jpa_repository.mascotas.ActualizationData;
@@ -21,31 +22,31 @@ public class MascotaController {
     private final MascotaUseCase mascotaUseCase;
 
     @PostMapping("/save")
-    public ResponseEntity<?> saveMascota(@RequestBody MascotaData mascotaData){
+    public ResponseEntity<?> saveMascota(@RequestBody MascotaData mascotaData) {
         try {
             Mascota mascotaConvertida = mascotaMapper.toMascota(mascotaData);
             Mascota mascota = mascotaUseCase.guardarMascota(mascotaConvertida);
             return new ResponseEntity<>(mascota, HttpStatus.OK);
-        } catch (IllegalArgumentException error){
-            return new ResponseEntity<>(error.getMessage(),HttpStatus.OK);
+        } catch (IllegalArgumentException error) {
+            return new ResponseEntity<>(error.getMessage(), HttpStatus.OK);
         }
     }
 
     @GetMapping("/{pet_id}")
-    public ResponseEntity <?> findByIdMascota (@PathVariable Long pet_id){
+    public ResponseEntity<?> findByIdMascota(@PathVariable Long pet_id) {
 
         Mascota mascota = mascotaUseCase.buscarPorId(pet_id);
 
-        if (mascota.getPet_id()!=null){
+        if (mascota.getPet_id() != null) {
             return new ResponseEntity<>(mascota, HttpStatus.OK);
         }
-        return new ResponseEntity<>("La mascota no existe",HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>("La mascota no existe", HttpStatus.BAD_REQUEST);
     }
 
     @GetMapping("/List")
-    public ResponseEntity<?> listarMascotas(@RequestParam(defaultValue ="-1") int page, @RequestParam(defaultValue = "2") int size){
-        List<Mascota> mascotas = mascotaUseCase.obtenerTodas(page,size);
-        if (mascotas.isEmpty()){
+    public ResponseEntity<?> listarMascotas(@RequestParam(defaultValue = "-1") int page, @RequestParam(defaultValue = "2") int size) {
+        List<Mascota> mascotas = mascotaUseCase.obtenerTodas(page, size);
+        if (mascotas.isEmpty()) {
             return ResponseEntity.ok("No hay más productos disponibles");
         }
         return ResponseEntity.ok(mascotas);
@@ -65,16 +66,18 @@ public class MascotaController {
         }
     }
 
-    /*@PutMapping("/update")
-    public ResponseEntity<?> actualizarMascota(@PathVariable Long pet_id, @RequestBody ActualizationData data){
-        try {
-            Mascota mascota = mascotaMapper.toMascota(data);
-            Mascota mascotaValidadaAct = mascotaUseCase.actualizarMascota(pet_id,data);
-            return new ResponseEntity<>(mascotaValidadaAct,HttpStatus.OK);
-        }catch (Exception e){
-            return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_REQUEST);
+    @RestControllerAdvice(assignableTypes = MascotaController.class)
+    public class MascotaControllerAdvice {
+
+        @ExceptionHandler(UnrecognizedPropertyException.class)
+        public ResponseEntity<?> manejarCampoNoPermitido(UnrecognizedPropertyException e) {
+
+            String campo = e.getPropertyName();
+            String mensaje = "El campo '" + campo + "' no está permitido para actualización.";
+
+            return ResponseEntity.badRequest().body(mensaje);
         }
-    }*/
+    }
 
     @DeleteMapping("/delete/{pet_id}")
     public ResponseEntity<String> deleteMascota(@PathVariable Long pet_id){

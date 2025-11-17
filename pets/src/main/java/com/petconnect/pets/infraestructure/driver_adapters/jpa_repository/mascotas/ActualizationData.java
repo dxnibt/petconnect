@@ -1,5 +1,6 @@
 package com.petconnect.pets.infraestructure.driver_adapters.jpa_repository.mascotas;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.petconnect.pets.domain.model.enums.EstadoMascota;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -10,6 +11,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown = false)
 public class ActualizationData {
 
 

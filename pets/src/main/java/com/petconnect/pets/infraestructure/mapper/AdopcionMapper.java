@@ -1,6 +1,8 @@
 package com.petconnect.pets.infraestructure.mapper;
 
 import com.petconnect.pets.domain.model.Adopcion;
+import com.petconnect.pets.domain.model.Mascota;
+import com.petconnect.pets.infraestructure.driver_adapters.jpa_repository.mascotas.MascotaData;
 import com.petconnect.pets.infraestructure.driver_adapters.jpa_repository.adopcion.AdopcionData;
 import org.springframework.stereotype.Component;
 
