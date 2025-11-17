@@ -45,8 +45,6 @@ public class AdoptanteData extends UsuarioData {
     @Max(value = 24, message = "Las horas no pueden ser mayores a 24")
     private Integer hoursAwayFromHome;
 
-    private boolean hasAnimalExperience;
-
     @Enumerated(EnumType.STRING)
     private PreferredAnimalType preferredAnimalType;
 

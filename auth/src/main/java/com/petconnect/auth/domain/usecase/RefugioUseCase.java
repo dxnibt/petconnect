@@ -27,7 +27,6 @@ public class RefugioUseCase {
     private boolean isValidRefugio(Refugio refugio){
         return  refugio.getNit() != null &&
                 refugio.getWebsite() != null &&
-                refugio.getCurrentPets() != null &&
                 refugio.getSupportDocument() != null &&
                 refugio.getShelterDescription() != null;
     }

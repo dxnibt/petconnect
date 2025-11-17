@@ -33,7 +33,7 @@ public class UsuarioController {
         try {
             usuarioUseCase.eliminarUsuario(id);
             return new ResponseEntity<>("Usuario eliminado", HttpStatus.OK);
-        } catch (Exception error) {
+        } catch (RuntimeException error) {
             return new ResponseEntity<>(error.getMessage(), HttpStatus.NOT_FOUND);
         }
     }

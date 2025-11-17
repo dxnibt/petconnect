@@ -25,7 +25,6 @@ public class Adoptante extends Usuario {
     private boolean hasOtherPets;
     private boolean hasChildren;
     private Integer hoursAwayFromHome;
-    private boolean hasAnimalExperience;
     private PreferredAnimalType preferredAnimalType;
     private String otherPreferredAnimalType;
     private PreferredPetSize preferredPetSize;
