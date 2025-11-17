@@ -5,6 +5,8 @@ import com.petconnect.auth.domain.model.gateway.RefugioGateway;
 import com.petconnect.auth.infraestructure.mapper.RefugioMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -61,6 +63,14 @@ public class RefugioGatewayImpl implements RefugioGateway {
 
 
         return refugioMapper.toRefugio(repository.save(refugioDataActualizar));
+    }
+
+    @Override
+    public List<Refugio> listarNoAprobados(boolean aprobado) {
+        return repository.findByAprobado(aprobado)
+                .stream()
+                .map(refugioMapper::toRefugio)
+                .toList();
     }
 
 }
