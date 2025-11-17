@@ -18,7 +18,7 @@ public class MascotaUseCase {
     private final MascotaGateway mascotaGateway;
 
     public Mascota guardarMascota (Mascota mascota){
-    if (mascota.getName()==null || mascota.getSpecies()==null|| mascota.getRace()==null||
+    if (mascota.getName()==null || mascota.getRace()==null||
             mascota.getAge()==null||mascota.getSex()==null || mascota.getChildFriendly()==
             null || mascota.getRequiresAmpleSpace() == null|| mascota.getSterilization() ==
             null || mascota.getVaccines() == null || mascota.getDescription() == null ||
@@ -76,8 +76,6 @@ public class MascotaUseCase {
                 }
                 mascota.setState(nuevoEstado);
             }
-
-
 
 
             if (data.getAge() != null) mascota.setAge(data.getAge());
