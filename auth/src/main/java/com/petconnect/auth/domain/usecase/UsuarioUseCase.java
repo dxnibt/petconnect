@@ -32,6 +32,7 @@ public class UsuarioUseCase {
             return new Usuario();
         }
     }
+
     public void eliminarUsuario(Long id) {
         Usuario usuario = usuarioGateway.buscarPorId(id);
 

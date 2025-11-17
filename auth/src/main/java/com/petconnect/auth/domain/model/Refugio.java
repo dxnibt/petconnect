@@ -13,7 +13,7 @@ public class Refugio extends Usuario{
 
     private String nit;
     private String website;
-    private Integer currentPets;
+    private Integer currentPets = 0;
     private String supportDocument;
     private boolean aprobado = false;
     private String shelterDescription;
