@@ -3,6 +3,7 @@ package com.petconnect.auth.domain.usecase;
 import com.petconnect.auth.domain.model.Adoptante;
 import com.petconnect.auth.domain.model.gateway.AdoptanteGateway;
 import com.petconnect.auth.domain.model.gateway.EncrypterGateway;
+import com.petconnect.auth.infraestructure.driver_adapters.jpa_repository.adoptante.AdoptanteActualizarDto;
 import lombok.RequiredArgsConstructor;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -34,13 +35,22 @@ public class AdoptanteUseCase {
             throw new IllegalArgumentException("Debe contar con ingresos iguales o superiores al salario mínimo vigente en Colombia.");
         }
         adoptante.setRegistrationDate(LocalDateTime.now());
-        adoptante.setLastLogin(LocalDateTime.now());
-
-
         String passwordEncrypt = encrypterGateway.encrypt(adoptante.getPassword());
         adoptante.setPassword(passwordEncrypt);
 
         return adoptanteGateway.guardarAdoptante(adoptante);
+    }
+
+    public Adoptante actualizarAdoptante(Long id, AdoptanteActualizarDto dto){
+        Adoptante adoptante = adoptanteGateway.buscarPorId(id);
+        if (adoptante == null) {
+            throw new IllegalArgumentException("Adoptante no encontrado");
+        }
+        actualizarAdoptanteDto(adoptante, dto);
+        if (dto.getUsuarioActualizarDto() != null) {
+            usuarioUseCase.actualizarUsuarioDto(adoptante, dto.getUsuarioActualizarDto());
+        }
+        return adoptanteGateway.actualizarAdoptante(adoptante);
     }
 
     private boolean esMayorDeEdad(LocalDate birthDate) {
@@ -60,6 +70,21 @@ public class AdoptanteUseCase {
                 adoptante.getActivityLevel() != null &&
                 adoptante.getPersonalDescription() != null &&
                 !adoptante.getPersonalDescription().isBlank();
+    }
+
+    private void actualizarAdoptanteDto(Adoptante adoptante, AdoptanteActualizarDto dto){
+        if (dto.getMonthlySalary() != null) adoptante.setMonthlySalary(dto.getMonthlySalary());
+        if (dto.getHousingType() != null) adoptante.setHousingType(dto.getHousingType());
+        adoptante.setHasYard(dto.isHasYard());
+        adoptante.setPetExperience(dto.isPetExperience());
+        adoptante.setHasOtherPets(dto.isHasOtherPets());
+        adoptante.setHasChildren(dto.isHasChildren());
+        if (dto.getHoursAwayFromHome() != null) adoptante.setHoursAwayFromHome(dto.getHoursAwayFromHome());
+        if (dto.getPreferredAnimalType() != null) adoptante.setPreferredAnimalType(dto.getPreferredAnimalType());
+        if (dto.getOtherPreferredAnimalType() != null) adoptante.setOtherPreferredAnimalType(dto.getOtherPreferredAnimalType());
+        if (dto.getPreferredPetSize() != null) adoptante.setPreferredPetSize(dto.getPreferredPetSize());
+        if (dto.getActivityLevel() != null) adoptante.setActivityLevel(dto.getActivityLevel());
+        if (dto.getPersonalDescription() != null) adoptante.setPersonalDescription(dto.getPersonalDescription());
     }
 
 }

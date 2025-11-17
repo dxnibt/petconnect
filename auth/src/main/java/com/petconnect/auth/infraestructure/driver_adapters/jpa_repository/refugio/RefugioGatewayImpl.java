@@ -46,4 +46,20 @@ public class RefugioGatewayImpl implements RefugioGateway {
         repository.deleteById(id);
     }
 
+    @Override
+    public Refugio actualizarRefugio(Refugio refugio) {
+        Optional<RefugioData> emailExiste = repository.findByEmail(refugio.getEmail());
+        if (emailExiste.isPresent() && !emailExiste.get().getId().equals(refugio.getId())) {
+            throw new IllegalArgumentException("El email ya está registrado");
+        }
+
+        RefugioData refugioDataActualizar = refugioMapper.toData(refugio);
+
+        if (!repository.existsById(refugioDataActualizar.getId())) {
+            throw new RuntimeException("Refugio con id " + refugioDataActualizar.getId() + " no existe");
+        }
+
+        return refugioMapper.toRefugio(repository.save(refugioDataActualizar));
+    }
+
 }

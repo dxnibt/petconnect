@@ -2,16 +2,14 @@ package com.petconnect.auth.infraestructure.entry_points;
 
 import com.petconnect.auth.domain.model.Refugio;
 import com.petconnect.auth.domain.usecase.RefugioUseCase;
+import com.petconnect.auth.infraestructure.driver_adapters.jpa_repository.refugio.RefugioActualizarDto;
 import com.petconnect.auth.infraestructure.driver_adapters.jpa_repository.refugio.RefugioData;
 import com.petconnect.auth.infraestructure.mapper.RefugioMapper;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/petconnect/refugios")
@@ -34,6 +32,18 @@ public class RefugioController {
 
         } catch (Exception e) {
             return new ResponseEntity<>("Error al guardar refugio: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PutMapping("/update/{id}")
+    public ResponseEntity<?> actualizarRefugio(@PathVariable Long id, @RequestBody RefugioActualizarDto dto) {
+
+        try {
+            Refugio refugioActualizado = refugioUseCase.actualizarRefugio(id, dto);
+            return ResponseEntity.ok(refugioActualizado);
+
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 }

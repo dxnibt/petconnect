@@ -5,6 +5,7 @@ import com.petconnect.auth.domain.model.gateway.AdoptanteGateway;
 import com.petconnect.auth.domain.model.gateway.EncrypterGateway;
 import com.petconnect.auth.domain.model.gateway.RefugioGateway;
 import com.petconnect.auth.domain.model.gateway.UsuarioGateway;
+import com.petconnect.auth.infraestructure.driver_adapters.jpa_repository.usuario.UsuarioActualizarDto;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -55,6 +56,20 @@ public class UsuarioUseCase {
                 usuario.getAddress() != null &&
                 usuario.getProfilePicture() != null &&
                 usuario.getRole() != null;
+    }
+
+    public void actualizarUsuarioDto(Usuario usuario, UsuarioActualizarDto dto){
+        if (dto != null) {
+            if (dto.getEmail() != null) usuario.setEmail(dto.getEmail());
+            if (dto.getPassword() != null) {
+                String passwordEncrypt = encrypterGateway.encrypt(dto.getPassword());
+                usuario.setPassword(passwordEncrypt);
+            }
+            if (dto.getPhoneNumber() != null) usuario.setPhoneNumber(dto.getPhoneNumber());
+            if (dto.getCity() != null) usuario.setCity(dto.getCity());
+            if (dto.getAddress() != null) usuario.setAddress(dto.getAddress());
+            if (dto.getProfilePicture() != null) usuario.setProfilePicture(dto.getProfilePicture());
+        }
     }
 
 }

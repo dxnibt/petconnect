@@ -3,7 +3,11 @@ package com.petconnect.auth.domain.usecase;
 import com.petconnect.auth.domain.model.Refugio;
 import com.petconnect.auth.domain.model.gateway.EncrypterGateway;
 import com.petconnect.auth.domain.model.gateway.RefugioGateway;
+import com.petconnect.auth.infraestructure.driver_adapters.jpa_repository.refugio.RefugioActualizarDto;
 import lombok.RequiredArgsConstructor;
+
+import java.sql.Ref;
+import java.time.LocalDateTime;
 
 @RequiredArgsConstructor
 public class RefugioUseCase {
@@ -20,8 +24,22 @@ public class RefugioUseCase {
 
         String passwordEncrypt = encrypterGateway.encrypt(refugio.getPassword());
         refugio.setPassword(passwordEncrypt);
+        refugio.setRegistrationDate(LocalDateTime.now());
         return refugioGateway.guardarRefugio(refugio);
 
+    }
+
+    public Refugio actualizarRefugio(Long id, RefugioActualizarDto dto) {
+        Refugio refugio = refugioGateway.buscarPorId(id);
+        if (refugio == null) {
+            throw new IllegalArgumentException("Refugio no encontrado");
+        }
+        actualizarRefugioDto(refugio, dto);
+        if (dto.getUsuarioActualizarDto() != null) {
+            usuarioUseCase.actualizarUsuarioDto(refugio, dto.getUsuarioActualizarDto());
+        }
+
+        return refugioGateway.actualizarRefugio(refugio);
     }
 
     private boolean isValidRefugio(Refugio refugio){
@@ -29,5 +47,11 @@ public class RefugioUseCase {
                 refugio.getWebsite() != null &&
                 refugio.getSupportDocument() != null &&
                 refugio.getShelterDescription() != null;
+    }
+
+    private void actualizarRefugioDto(Refugio refugio, RefugioActualizarDto dto){
+
+        if (dto.getWebsite() != null) refugio.setWebsite(dto.getWebsite());
+        if (dto.getShelterDescription() != null) refugio.setShelterDescription(dto.getShelterDescription());
     }
 }

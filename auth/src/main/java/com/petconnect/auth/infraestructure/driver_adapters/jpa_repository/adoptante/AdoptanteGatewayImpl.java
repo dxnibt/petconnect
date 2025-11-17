@@ -48,4 +48,20 @@ public class AdoptanteGatewayImpl implements AdoptanteGateway {
         repository.deleteById(id);
     }
 
+    @Override
+    public Adoptante actualizarAdoptante(Adoptante adoptante) {
+        Optional<AdoptanteData> emailExiste = repository.findByEmail(adoptante.getEmail());
+        if (emailExiste.isPresent() && !emailExiste.get().getId().equals(adoptante.getId())) {
+            throw new IllegalArgumentException("El email ya está registrado");
+        }
+
+        AdoptanteData adoptanteDataActualizar = adoptanteMapper.toData(adoptante);
+
+        if (!repository.existsById(adoptanteDataActualizar.getId())) {
+            throw new RuntimeException("Adoptante con id " + adoptanteDataActualizar.getId() + " no existe");
+        }
+
+        return adoptanteMapper.toAdoptante(repository.save(adoptanteDataActualizar));
+    }
+
 }
