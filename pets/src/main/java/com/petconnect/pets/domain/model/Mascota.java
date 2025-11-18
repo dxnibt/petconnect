@@ -30,7 +30,7 @@ public class Mascota {
     private String vaccines;
     private String description;
     private String imageUrl;
-    private EstadoMascota state;
+    private EstadoMascota state = EstadoMascota.DISPONIBLE;
 
 
 
