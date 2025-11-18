@@ -1,16 +1,15 @@
 package com.petconnect.pets.domain.usecase;
 
-import com.petconnect.pets.domain.exception.AdopcionNoEncontradaException;
-import com.petconnect.pets.domain.exception.ErrorRefugioException;
-import com.petconnect.pets.domain.exception.MascotaNoDisponibleException;
-import com.petconnect.pets.domain.exception.MascotaNoEncontradaException;
+import com.petconnect.pets.domain.exception.*;
 import com.petconnect.pets.domain.model.Adopcion;
 import com.petconnect.pets.domain.model.Mascota;
 import com.petconnect.pets.domain.model.enums.EstadoAdopcion;
 import com.petconnect.pets.domain.model.enums.EstadoMascota;
 import com.petconnect.pets.domain.model.gateway.AdopcionGateway;
+import com.petconnect.pets.domain.model.gateway.AdoptanteGateway;
 import com.petconnect.pets.domain.model.gateway.MascotaGateway;
 import com.petconnect.pets.domain.model.gateway.RefugioGateway;
+import com.petconnect.pets.domain.model.gateway.UsuarioGateway;
 import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDate;
@@ -21,9 +20,19 @@ public class AdopcionUseCase {
     private final AdopcionGateway gateway;
     private final MascotaGateway mascotaGateway;
     private final RefugioGateway refugioGateway;
+    private final UsuarioGateway usuarioGateway;
+    private final AdoptanteGateway adoptanteGateway;
 
-    // Crear adopción (solo Adoptante)
     public Adopcion crear(Adopcion adopcion) {
+        // Validar que el usuario existe
+        if (!usuarioGateway.usuarioExiste(adopcion.getUserId())) {
+            throw new UsuarioNoEncontradoException("El usuario no existe");
+        }
+
+        // Validar que el usuario tiene rol de adoptante
+        if (!adoptanteGateway.esAdoptante(adopcion.getUserId())) {
+            throw new UsuarioNoAdoptanteException("Solo los adoptantes pueden realizar adopciones");
+        }
 
         // Validar mascota
         Mascota mascota = mascotaGateway.buscarPorId(adopcion.getPetId());
@@ -31,9 +40,12 @@ public class AdopcionUseCase {
             throw new MascotaNoEncontradaException("La mascota no existe");
         }
         if (mascota.getState() != EstadoMascota.DISPONIBLE) {
-            throw new MascotaNoDisponibleException("La mascota no está disponible");
+            throw new MascotaNoDisponibleException("La mascota no está disponible para adopción");
         }
 
+        // Cambiar estado de la mascota a EN_PROCESO
+        mascota.setState(EstadoMascota.EN_PROCESO);
+        mascotaGateway.actualizarMascota(mascota);
 
         // Completar solicitud
         adopcion.setRequestDate(LocalDate.now().toString());
@@ -42,53 +54,80 @@ public class AdopcionUseCase {
         return gateway.crear(adopcion);
     }
 
-    // Buscar por ID
     public Adopcion obtenerPorId(Long id) {
-        return gateway.obtenerAdopcionPorId(id);
-    }
-
-    // Buscar por usuario
-    public Adopcion obtenerPorUserId(Long userId) {
-        return gateway.buscarPorUserId(userId);
-    }
-
-    // Eliminar
-    public void eliminar(Long id) {
-        gateway.eliminarAdopcion(id);
-    }
-
-    // Aceptar solicitud (solo refugio)
-    public Adopcion aceptar(Long aId) {
-        Adopcion adopcion = gateway.obtenerAdopcionPorId(aId);
+        Adopcion adopcion = gateway.obtenerAdopcionPorId(id);
         if (adopcion == null) {
             throw new AdopcionNoEncontradaException("La adopción no existe");
         }
+        return adopcion;
+    }
+
+    public Adopcion obtenerPorUserId(Long userId) {
+        Adopcion adopcion = gateway.buscarPorUserId(userId);
+        if (adopcion == null) {
+            throw new AdopcionNoEncontradaException("El usuario no tiene solicitudes de adopción");
+        }
+        return adopcion;
+    }
+
+    public void eliminar(Long id) {
+        Adopcion adopcion = obtenerPorId(id);
+
+        // Si la adopción está en proceso, liberar la mascota
+        if (adopcion.getStatus() == EstadoAdopcion.EN_PROCESO) {
+            Mascota mascota = mascotaGateway.buscarPorId(adopcion.getPetId());
+            if (mascota != null) {
+                mascota.setState(EstadoMascota.DISPONIBLE);
+                mascotaGateway.actualizarMascota(mascota);
+            }
+        }
+
+        gateway.eliminarAdopcion(id);
+    }
+
+    public Adopcion aceptar(Long aId) {
+        Adopcion adopcion = obtenerPorId(aId);
+
+        if (adopcion.getStatus() != EstadoAdopcion.EN_PROCESO) {
+            throw new IllegalStateException("Solo se pueden aceptar adopciones en proceso");
+        }
+
         // Cambiar estado
         adopcion.setStatus(EstadoAdopcion.ACEPTADA);
         adopcion.setResponseDate(LocalDate.now().toString());
-        // Actualizar mascota
+
+        // Cambiar estado de la mascota a ADOPTADA
         Mascota mascota = mascotaGateway.buscarPorId(adopcion.getPetId());
         if (mascota != null) {
-            mascota.setState(EstadoMascota.DISPONIBLE);
+            mascota.setState(EstadoMascota.ADOPTADA);
             mascotaGateway.actualizarMascota(mascota);
         }
+
         try {
             refugioGateway.restarMascota(adopcion.getShelterId());
         } catch (Exception e) {
             throw new ErrorRefugioException("Error al actualizar refugio");
         }
+
         return gateway.actualizar(adopcion);
     }
 
-    // Rechazar solicitud (solo refugio)
     public Adopcion rechazar(Long aId) {
-        Adopcion adopcion = gateway.obtenerAdopcionPorId(aId);
-        if (adopcion == null) {
-            throw new RuntimeException("La adopción no existe");
+        Adopcion adopcion = obtenerPorId(aId);
+
+        if (adopcion.getStatus() != EstadoAdopcion.EN_PROCESO) {
+            throw new IllegalStateException("Solo se pueden rechazar adopciones en proceso");
         }
 
         adopcion.setStatus(EstadoAdopcion.RECHAZADA);
         adopcion.setResponseDate(LocalDate.now().toString());
+
+        // Liberar la mascota para que esté disponible nuevamente
+        Mascota mascota = mascotaGateway.buscarPorId(adopcion.getPetId());
+        if (mascota != null) {
+            mascota.setState(EstadoMascota.DISPONIBLE);
+            mascotaGateway.actualizarMascota(mascota);
+        }
 
         return gateway.actualizar(adopcion);
     }

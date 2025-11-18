@@ -1,9 +1,7 @@
 package com.petconnect.pets.application.config;
 
 import com.petconnect.pets.domain.model.Adopcion;
-import com.petconnect.pets.domain.model.gateway.AdopcionGateway;
-import com.petconnect.pets.domain.model.gateway.MascotaGateway;
-import com.petconnect.pets.domain.model.gateway.RefugioGateway;
+import com.petconnect.pets.domain.model.gateway.*;
 import com.petconnect.pets.domain.usecase.AdopcionUseCase;
 import com.petconnect.pets.domain.usecase.MascotaUseCase;
 import org.springframework.context.annotation.Bean;
@@ -21,9 +19,11 @@ public class UseCaseConfig {
     public AdopcionUseCase adopcionUseCase(
             AdopcionGateway adopcionGateway,
             MascotaGateway mascotaGateway,
-            RefugioGateway refugioGateway
+            RefugioGateway refugioGateway,
+            UsuarioGateway usuarioGateway,
+            AdoptanteGateway adoptanteGateway
     ){
-        return new AdopcionUseCase(adopcionGateway, mascotaGateway, refugioGateway);
+        return new AdopcionUseCase(adopcionGateway, mascotaGateway, refugioGateway, usuarioGateway, adoptanteGateway);
     }
 
 }
