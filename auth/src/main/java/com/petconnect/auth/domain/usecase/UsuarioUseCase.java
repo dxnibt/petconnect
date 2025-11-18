@@ -1,5 +1,8 @@
 package com.petconnect.auth.domain.usecase;
 
+import com.petconnect.auth.domain.exception.CamposIncompletosException;
+import com.petconnect.auth.domain.exception.ContraseñaIncorrectaException;
+import com.petconnect.auth.domain.exception.UsuarioNoEncontradoException;
 import com.petconnect.auth.domain.model.Usuario;
 import com.petconnect.auth.domain.model.gateway.AdoptanteGateway;
 import com.petconnect.auth.domain.model.gateway.EncrypterGateway;
@@ -41,7 +44,7 @@ public class UsuarioUseCase {
         Usuario usuario = usuarioGateway.buscarPorId(id);
 
         if (usuario == null) {
-            throw new IllegalArgumentException("Usuario no encontrado");
+            throw new UsuarioNoEncontradoException("Usuario no encontrado");
         }
 
         switch (usuario.getRole()) {
@@ -57,15 +60,15 @@ public class UsuarioUseCase {
     public String loginUsuario(LoginDto dto){
 
         if (dto.getEmail() == null || dto.getPassword() == null) {
-            throw new IllegalArgumentException("El email y la contraseña son obligatorios");
+            throw new CamposIncompletosException("El email y la contraseña son obligatorios");
         }
         Usuario usuario = usuarioGateway.buscarPorEmail(dto.getEmail());
         if (usuario == null) {
-            throw new IllegalArgumentException("Usuario no encontrado");
+            throw new UsuarioNoEncontradoException("Usuario no encontrado");
         }
         boolean passwordValid = encrypterGateway.checkPassword(dto.getPassword(), usuario.getPassword());
         if (!passwordValid) {
-            throw new IllegalArgumentException("Contraseña incorrecta");
+            throw new ContraseñaIncorrectaException("Contraseña incorrecta");
         }
         usuarioGateway.actualizarLastLogin(usuario.getId(), LocalDateTime.now());
         return "Bienvenido";

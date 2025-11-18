@@ -1,5 +1,9 @@
 package com.petconnect.auth.infraestructure.entry_points;
 
+import com.petconnect.auth.domain.exception.AdoptanteMenorEdadException;
+import com.petconnect.auth.domain.exception.AdoptanteNoEncontradoException;
+import com.petconnect.auth.domain.exception.CamposIncompletosException;
+import com.petconnect.auth.domain.exception.SalarioNoAprobadoException;
 import com.petconnect.auth.domain.model.Adoptante;
 import com.petconnect.auth.domain.usecase.AdoptanteUseCase;
 import com.petconnect.auth.infraestructure.driver_adapters.jpa_repository.adoptante.AdoptanteActualizarDto;
@@ -27,8 +31,8 @@ public class AdoptanteController {
             Adoptante adoptante = adoptanteUseCase.guardarAdoptante(nuevoAdoptante);
             return new ResponseEntity<>(adoptante, HttpStatus.CREATED);
 
-        } catch (IllegalArgumentException error){
-            return new ResponseEntity<>(error.getMessage(),HttpStatus.BAD_REQUEST);
+        } catch (CamposIncompletosException | AdoptanteMenorEdadException | SalarioNoAprobadoException error) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error.getMessage());
 
         } catch (Exception e) {
             return new ResponseEntity<>("Error al guardar adoptante: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -42,9 +46,12 @@ public class AdoptanteController {
             Adoptante adoptanteActualizado = adoptanteUseCase.actualizarAdoptante(id, dto);
             return ResponseEntity.ok(adoptanteActualizado);
 
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-    }
+        } catch (AdoptanteNoEncontradoException error) {
+            return ResponseEntity.badRequest().body(error.getMessage());
 
+        } catch (Exception e) {
+            return new ResponseEntity<>("Error al guardar adoptante: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+    }
 }

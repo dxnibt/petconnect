@@ -1,5 +1,7 @@
 package com.petconnect.auth.infraestructure.entry_points;
 
+import com.petconnect.auth.domain.exception.CamposIncompletosException;
+import com.petconnect.auth.domain.exception.RefugioNoEncontradoException;
 import com.petconnect.auth.domain.model.Refugio;
 import com.petconnect.auth.domain.usecase.RefugioUseCase;
 import com.petconnect.auth.infraestructure.driver_adapters.jpa_repository.refugio.RefugioActualizarDto;
@@ -27,7 +29,7 @@ public class RefugioController {
             Refugio refugio = refugioUseCase.guardarRefugio(nuevoRefugio);
             return new ResponseEntity<>(refugio, HttpStatus.CREATED);
 
-        } catch (IllegalArgumentException error){
+        } catch (CamposIncompletosException error){
             return new ResponseEntity<>(error.getMessage(),HttpStatus.BAD_REQUEST);
 
         } catch (Exception e) {
@@ -42,8 +44,10 @@ public class RefugioController {
             Refugio refugioActualizado = refugioUseCase.actualizarRefugio(id, dto);
             return ResponseEntity.ok(refugioActualizado);
 
+        } catch (RefugioNoEncontradoException error) {
+            return ResponseEntity.badRequest().body(error.getMessage());
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+        return new ResponseEntity<>("Error al guardar refugio: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

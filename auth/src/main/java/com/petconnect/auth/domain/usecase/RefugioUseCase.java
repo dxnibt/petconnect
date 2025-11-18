@@ -1,12 +1,13 @@
 package com.petconnect.auth.domain.usecase;
 
+import com.petconnect.auth.domain.exception.CamposIncompletosException;
+import com.petconnect.auth.domain.exception.RefugioNoEncontradoException;
 import com.petconnect.auth.domain.model.Refugio;
 import com.petconnect.auth.domain.model.gateway.EncrypterGateway;
 import com.petconnect.auth.domain.model.gateway.RefugioGateway;
 import com.petconnect.auth.infraestructure.driver_adapters.jpa_repository.refugio.RefugioActualizarDto;
 import lombok.RequiredArgsConstructor;
 
-import java.sql.Ref;
 import java.time.LocalDateTime;
 
 @RequiredArgsConstructor
@@ -19,7 +20,7 @@ public class RefugioUseCase {
     public Refugio guardarRefugio(Refugio refugio) {
 
         if (!usuarioUseCase.isValidUsuario(refugio) || !isValidRefugio(refugio)) {
-            throw new IllegalArgumentException("Por favor, complete todos los campos");
+            throw new CamposIncompletosException("Por favor, complete todos los campos");
         }
 
         String passwordEncrypt = encrypterGateway.encrypt(refugio.getPassword());
@@ -32,7 +33,7 @@ public class RefugioUseCase {
     public Refugio actualizarRefugio(Long id, RefugioActualizarDto dto) {
         Refugio refugio = refugioGateway.buscarPorId(id);
         if (refugio == null) {
-            throw new IllegalArgumentException("Refugio no encontrado");
+            throw new RefugioNoEncontradoException("Refugio no encontrado");
         }
         actualizarRefugioDto(refugio, dto);
         if (dto.getUsuarioActualizarDto() != null) {

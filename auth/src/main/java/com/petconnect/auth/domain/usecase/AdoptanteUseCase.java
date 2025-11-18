@@ -1,5 +1,9 @@
 package com.petconnect.auth.domain.usecase;
 
+import com.petconnect.auth.domain.exception.AdoptanteMenorEdadException;
+import com.petconnect.auth.domain.exception.AdoptanteNoEncontradoException;
+import com.petconnect.auth.domain.exception.CamposIncompletosException;
+import com.petconnect.auth.domain.exception.SalarioNoAprobadoException;
 import com.petconnect.auth.domain.model.Adoptante;
 import com.petconnect.auth.domain.model.gateway.AdoptanteGateway;
 import com.petconnect.auth.domain.model.gateway.EncrypterGateway;
@@ -24,15 +28,15 @@ public class AdoptanteUseCase {
         boolean adoptanteValido = isValidAdoptante(adoptante);
 
         if (!usuarioValido || !adoptanteValido) {
-            throw new IllegalArgumentException("Por favor, complete todos los campos");
+            throw new CamposIncompletosException("Por favor, complete todos los campos");
         }
 
         if (!esMayorDeEdad(adoptante.getBirthDate())) {
-            throw new IllegalArgumentException("El usuario debe ser mayor de edad.");
+            throw new AdoptanteMenorEdadException("El usuario debe ser mayor de edad.");
         }
 
         if (adoptante.getMonthlySalary() < salario_minimo) {
-            throw new IllegalArgumentException("Debe contar con ingresos iguales o superiores al salario mínimo vigente en Colombia.");
+            throw new SalarioNoAprobadoException("Debe contar con ingresos iguales o superiores al salario mínimo vigente en Colombia.");
         }
 
         String passwordEncrypt = encrypterGateway.encrypt(adoptante.getPassword());
@@ -46,7 +50,7 @@ public class AdoptanteUseCase {
     public Adoptante actualizarAdoptante(Long id, AdoptanteActualizarDto dto){
         Adoptante adoptante = adoptanteGateway.buscarPorId(id);
         if (adoptante == null) {
-            throw new IllegalArgumentException("Adoptante no encontrado");
+            throw new AdoptanteNoEncontradoException("Adoptante no encontrado");
         }
         actualizarAdoptanteDto(adoptante, dto);
         if (dto.getUsuarioActualizarDto() != null) {
