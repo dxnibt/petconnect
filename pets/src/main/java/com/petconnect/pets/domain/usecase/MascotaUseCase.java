@@ -33,6 +33,11 @@ public class MascotaUseCase {
 
         throw new IllegalArgumentException("Por favor complete todos los campos");
     }
+        if (mascota.getState()!=EstadoMascota.DISPONIBLE){
+            throw new EstadoInicialNoValidoException("El estado no puede ser diferente de Disponible");
+        }
+
+        mascota.setState(EstadoMascota.DISPONIBLE);
 
         return mascotaGateway.guardar(mascota);
     }
@@ -91,13 +96,31 @@ public class MascotaUseCase {
     }
 
     private String calcularEdad(LocalDate birthDate) {
-        Period periodo = Period.between(birthDate, LocalDate.now());
+        LocalDate hoy = LocalDate.now();
+        Period periodo = Period.between(birthDate, hoy);
 
-        if (periodo.getYears() > 0) {
-            return periodo.getYears() + " años";
+        int years = periodo.getYears();
+        int months = periodo.getMonths();
+        int days = periodo.getDays();
+
+        StringBuilder edad = new StringBuilder();
+
+        if (years > 0) {
+            edad.append(years).append(years == 1 ? " año" : " years");
+            if (months > 0) edad.append(", ").append(months).append(months == 1 ? " mes" : " months");
+            if (days > 0) edad.append(", ").append(days).append(days == 1 ? " día" : " días");
+            return edad.toString();
         }
-        return periodo.getMonths() + " meses";
+
+        if (months > 0) {
+            edad.append(months).append(months == 1 ? " mes" : " months");
+            if (days > 0) edad.append(", ").append(days).append(days == 1 ? " día" : " días");
+            return edad.toString();
+        }
+
+        return days + (days == 1 ? " día" : " días");
     }
+
 
     private void validarFechaDeNacimiento(LocalDate birthDate) {
 

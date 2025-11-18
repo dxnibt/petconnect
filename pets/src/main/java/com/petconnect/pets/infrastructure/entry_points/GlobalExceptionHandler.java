@@ -30,6 +30,13 @@ public class GlobalExceptionHandler {
                 .body(ex.getMessage());
     }
 
+    @ExceptionHandler(EstadoInicialNoValidoException.class)
+    public ResponseEntity<?> handleInicialState(EstadoInicialNoValidoException ex) {
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(ex.getMessage());
+    }
+
     @ExceptionHandler(NombreNoPuedeModificarseException.class)
     public ResponseEntity<?> handleName(NombreNoPuedeModificarseException ex) {
         return ResponseEntity
