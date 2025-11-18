@@ -1,4 +1,4 @@
-package com.petconnect.pets.infraestructure.driver_adapters.jpa_repository.mascotas;
+package com.petconnect.pets.infrastructure.driver_adapters.jpa_repository.mascotas;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.petconnect.pets.domain.model.enums.EstadoMascota;
@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 public class ActualizationData {
 
 
-        private Integer age;
+        private String age;
         private Boolean childFriendly;
         private Boolean requiresAmpleSpace;
         private Boolean sterilization;

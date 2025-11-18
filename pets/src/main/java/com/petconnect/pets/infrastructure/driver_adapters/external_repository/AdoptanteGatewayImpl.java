@@ -1,7 +1,7 @@
-package com.petconnect.pets.infraestructure.driver_adapters.external_repository;
+package com.petconnect.pets.infrastructure.driver_adapters.external_repository;
 
 import com.petconnect.pets.domain.model.gateway.AdoptanteGateway;
-import com.petconnect.pets.infraestructure.dtos.UsuarioResponse;
+import com.petconnect.pets.infrastructure.dtos.UsuarioResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;

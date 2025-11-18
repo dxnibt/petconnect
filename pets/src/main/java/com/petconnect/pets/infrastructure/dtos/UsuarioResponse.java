@@ -1,4 +1,4 @@
-package com.petconnect.pets.infraestructure.dtos;
+package com.petconnect.pets.infrastructure.dtos;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;

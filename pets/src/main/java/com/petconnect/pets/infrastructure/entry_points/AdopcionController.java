@@ -1,4 +1,4 @@
-package com.petconnect.pets.infraestructure.entry_points;
+package com.petconnect.pets.infrastructure.entry_points;
 
 import com.petconnect.pets.domain.exception.AdopcionNoEncontradaException;
 import com.petconnect.pets.domain.exception.ErrorRefugioException;

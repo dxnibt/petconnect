@@ -1,7 +1,7 @@
-package com.petconnect.pets.infraestructure.mapper;
+package com.petconnect.pets.infrastructure.mapper;
 
 import com.petconnect.pets.domain.model.Mascota;
-import com.petconnect.pets.infraestructure.driver_adapters.jpa_repository.mascotas.MascotaData;
+import com.petconnect.pets.infrastructure.driver_adapters.jpa_repository.mascotas.MascotaData;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -15,6 +15,7 @@ public class MascotaMapper {
                 mascotaData.getSpecies(),
                 mascotaData.getOtherspecies(),
                 mascotaData.getRace(),
+                mascotaData.getBirthDate(),
                 mascotaData.getAge(),
                 mascotaData.getSex(),
                 mascotaData.getChildFriendly(),
@@ -34,6 +35,7 @@ public class MascotaMapper {
                 mascota.getSpecies(),
                 mascota.getOtherspecies(),
                 mascota.getRace(),
+                mascota.getBirthDate(),
                 mascota.getAge(),
                 mascota.getSex(),
                 mascota.getChildFriendly(),

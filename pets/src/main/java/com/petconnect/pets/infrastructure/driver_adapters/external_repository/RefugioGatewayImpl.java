@@ -1,4 +1,4 @@
-package com.petconnect.pets.infraestructure.driver_adapters.external_repository;
+package com.petconnect.pets.infrastructure.driver_adapters.external_repository;
 
 import com.petconnect.pets.domain.model.gateway.RefugioGateway;
 import org.springframework.stereotype.Repository;

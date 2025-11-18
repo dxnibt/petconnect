@@ -1,4 +1,4 @@
-package com.petconnect.pets.infraestructure.driver_adapters.jpa_repository.adopcion;
+package com.petconnect.pets.infrastructure.driver_adapters.jpa_repository.adopcion;
 
 import com.petconnect.pets.domain.model.enums.EstadoAdopcion;
 import jakarta.persistence.*;

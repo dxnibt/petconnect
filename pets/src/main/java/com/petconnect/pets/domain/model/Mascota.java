@@ -9,6 +9,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Setter
@@ -19,7 +21,8 @@ public class Mascota {
     private EspecieMascota species;
     private String otherspecies;
     private String race;
-    private Integer age;
+    private LocalDate birthDate;
+    private String age;
     private SexoMascota sex;
     private Boolean childFriendly;
     private Boolean requiresAmpleSpace;

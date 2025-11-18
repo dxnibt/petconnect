@@ -1,11 +1,12 @@
-package com.petconnect.pets.infraestructure.entry_points;
+package com.petconnect.pets.infrastructure.entry_points;
 
 import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 import com.petconnect.pets.domain.model.Mascota;
 import com.petconnect.pets.domain.usecase.MascotaUseCase;
-import com.petconnect.pets.infraestructure.driver_adapters.jpa_repository.mascotas.ActualizationData;
-import com.petconnect.pets.infraestructure.driver_adapters.jpa_repository.mascotas.MascotaData;
-import com.petconnect.pets.infraestructure.mapper.MascotaMapper;
+import com.petconnect.pets.infrastructure.driver_adapters.jpa_repository.mascotas.ActualizationData;
+import com.petconnect.pets.infrastructure.driver_adapters.jpa_repository.mascotas.MascotaData;
+import com.petconnect.pets.infrastructure.mapper.MascotaMapper;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +23,7 @@ public class MascotaController {
     private final MascotaUseCase mascotaUseCase;
 
     @PostMapping("/save")
-    public ResponseEntity<?> saveMascota(@RequestBody MascotaData mascotaData) {
+    public ResponseEntity<?> saveMascota(@RequestBody @Valid MascotaData mascotaData) {
         try {
             Mascota mascotaConvertida = mascotaMapper.toMascota(mascotaData);
             Mascota mascota = mascotaUseCase.guardarMascota(mascotaConvertida);
@@ -66,18 +67,6 @@ public class MascotaController {
         }
     }
 
-    @RestControllerAdvice(assignableTypes = MascotaController.class)
-    public class MascotaControllerAdvice {
-
-        @ExceptionHandler(UnrecognizedPropertyException.class)
-        public ResponseEntity<?> manejarCampoNoPermitido(UnrecognizedPropertyException e) {
-
-            String campo = e.getPropertyName();
-            String mensaje = "El campo '" + campo + "' no está permitido para actualización.";
-
-            return ResponseEntity.badRequest().body(mensaje);
-        }
-    }
 
     @DeleteMapping("/delete/{pet_id}")
     public ResponseEntity<String> deleteMascota(@PathVariable Long pet_id){

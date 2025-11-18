@@ -1,8 +1,8 @@
-package com.petconnect.pets.infraestructure.driver_adapters.jpa_repository.adopcion;
+package com.petconnect.pets.infrastructure.driver_adapters.jpa_repository.adopcion;
 
 import com.petconnect.pets.domain.model.Adopcion;
 import com.petconnect.pets.domain.model.gateway.AdopcionGateway;
-import com.petconnect.pets.infraestructure.mapper.AdopcionMapper;
+import com.petconnect.pets.infrastructure.mapper.AdopcionMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 

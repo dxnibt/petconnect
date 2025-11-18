@@ -1,10 +1,10 @@
-package com.petconnect.pets.infraestructure.driver_adapters.jpa_repository.mascotas;
+package com.petconnect.pets.infrastructure.driver_adapters.jpa_repository.mascotas;
 
 
 import com.petconnect.pets.domain.exception.MascotaNoEncontradaException;
 import com.petconnect.pets.domain.model.Mascota;
 import com.petconnect.pets.domain.model.gateway.MascotaGateway;
-import com.petconnect.pets.infraestructure.mapper.MascotaMapper;
+import com.petconnect.pets.infrastructure.mapper.MascotaMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

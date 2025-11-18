@@ -4,21 +4,28 @@ import com.petconnect.pets.domain.exception.*;
 import com.petconnect.pets.domain.model.Mascota;
 import com.petconnect.pets.domain.model.enums.EstadoMascota;
 import com.petconnect.pets.domain.model.gateway.MascotaGateway;
-import com.petconnect.pets.infraestructure.driver_adapters.jpa_repository.mascotas.ActualizationData;
+import com.petconnect.pets.infrastructure.driver_adapters.jpa_repository.mascotas.ActualizationData;
 import lombok.RequiredArgsConstructor;
 
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Stream;
+
 
 @RequiredArgsConstructor
 
 public class MascotaUseCase {
     private final MascotaGateway mascotaGateway;
 
+
+
     public Mascota guardarMascota (Mascota mascota){
-    if (mascota.getName()==null || mascota.getRace()==null||
+
+        validarFechaDeNacimiento(mascota.getBirthDate());
+        String edadCalculada = calcularEdad(mascota.getBirthDate());
+        mascota.setAge(edadCalculada);
+
+        if (mascota.getName()==null || mascota.getRace()==null|| mascota.getBirthDate()==null||
             mascota.getAge()==null||mascota.getSex()==null || mascota.getChildFriendly()==
             null || mascota.getRequiresAmpleSpace() == null|| mascota.getSterilization() ==
             null || mascota.getVaccines() == null || mascota.getDescription() == null ||
@@ -26,7 +33,8 @@ public class MascotaUseCase {
 
         throw new IllegalArgumentException("Por favor complete todos los campos");
     }
-    return mascotaGateway.guardar(mascota);
+
+        return mascotaGateway.guardar(mascota);
     }
 
     public Mascota buscarPorId(Long pet_id){
@@ -77,6 +85,9 @@ public class MascotaUseCase {
                 mascota.setState(nuevoEstado);
             }
 
+            validarFechaDeNacimiento(mascota.getBirthDate());
+            String edadCalculada = calcularEdad(mascota.getBirthDate());
+            mascota.setAge(edadCalculada);
 
             if (data.getAge() != null) mascota.setAge(data.getAge());
             if (data.getChildFriendly() != null) mascota.setChildFriendly(data.getChildFriendly());
@@ -94,6 +105,36 @@ public class MascotaUseCase {
     public void eliminarMascota(Long id_mascota){
         mascotaGateway.eliminar(id_mascota);
     }
+
+    private String calcularEdad(LocalDate birthDate) {
+        Period periodo = Period.between(birthDate, LocalDate.now());
+
+        if (periodo.getYears() > 0) {
+            return periodo.getYears() + " años";
+        }
+        return periodo.getMonths() + " meses";
+    }
+
+    private void validarFechaDeNacimiento(LocalDate birthDate) {
+
+        if (birthDate == null) {
+            throw new FechaDeNacimientoObligatoriaException("La fecha de nacimiento es obligatoria.");
+        }
+
+        LocalDate today = LocalDate.now();
+
+        // 1. No puede ser en el futuro
+        if (birthDate.isAfter(today)) {
+            throw new FechaDeNacimientoInvalidaException("La fecha de nacimiento no puede ser futura.");
+        }
+
+        // 2. No puede ser demasiado antigua (mascota de más de 30 años)
+        int years = Period.between(birthDate, today).getYears();
+        if (years > 30) { // 30 años para perros/gatos es exagerado
+            throw new EdadNoPermitidaException("La fecha de nacimiento ingresada no es válida.");
+        }
+    }
+
 
 
 }
