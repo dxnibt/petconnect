@@ -1,9 +1,6 @@
 package com.petconnect.auth.infraestructure.entry_points;
 
-import com.petconnect.auth.domain.exception.AdoptanteMenorEdadException;
-import com.petconnect.auth.domain.exception.AdoptanteNoEncontradoException;
-import com.petconnect.auth.domain.exception.CamposIncompletosException;
-import com.petconnect.auth.domain.exception.SalarioNoAprobadoException;
+import com.petconnect.auth.domain.exception.*;
 import com.petconnect.auth.domain.model.Adoptante;
 import com.petconnect.auth.domain.usecase.AdoptanteUseCase;
 import com.petconnect.auth.infraestructure.driver_adapters.jpa_repository.adoptante.AdoptanteActualizarDto;
@@ -31,7 +28,9 @@ public class AdoptanteController {
             Adoptante adoptante = adoptanteUseCase.guardarAdoptante(nuevoAdoptante);
             return new ResponseEntity<>(adoptante, HttpStatus.CREATED);
 
-        } catch (CamposIncompletosException | AdoptanteMenorEdadException | SalarioNoAprobadoException error) {
+        } catch (CamposIncompletosException | AdoptanteMenorEdadException |
+                 SalarioNoAprobadoException | FechaNacimientoFuturaException |
+                 SalarioMenorIgualCeroException | HorasFueraCasaInvalidasException error) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error.getMessage());
 
         } catch (Exception e) {

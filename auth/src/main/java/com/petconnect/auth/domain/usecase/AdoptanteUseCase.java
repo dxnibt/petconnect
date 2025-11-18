@@ -1,9 +1,6 @@
 package com.petconnect.auth.domain.usecase;
 
-import com.petconnect.auth.domain.exception.AdoptanteMenorEdadException;
-import com.petconnect.auth.domain.exception.AdoptanteNoEncontradoException;
-import com.petconnect.auth.domain.exception.CamposIncompletosException;
-import com.petconnect.auth.domain.exception.SalarioNoAprobadoException;
+import com.petconnect.auth.domain.exception.*;
 import com.petconnect.auth.domain.model.Adoptante;
 import com.petconnect.auth.domain.model.gateway.AdoptanteGateway;
 import com.petconnect.auth.domain.model.gateway.EncrypterGateway;
@@ -37,6 +34,18 @@ public class AdoptanteUseCase {
 
         if (adoptante.getMonthlySalary() < salario_minimo) {
             throw new SalarioNoAprobadoException("Debe contar con ingresos iguales o superiores al salario mínimo vigente en Colombia.");
+        }
+
+        if (adoptante.getBirthDate().isAfter(LocalDate.now())) {
+            throw new FechaNacimientoFuturaException("La fecha de nacimiento no puede ser en el futuro");
+        }
+
+        if (adoptante.getMonthlySalary() <= 0) {
+            throw new SalarioMenorIgualCeroException("El salario debe ser mayor a cero");
+        }
+
+        if (adoptante.getHoursAwayFromHome() < 0 || adoptante.getHoursAwayFromHome() > 24) {
+            throw new HorasFueraCasaInvalidasException("Las horas fuera de casa deben estar entre 0 y 24");
         }
 
         String passwordEncrypt = encrypterGateway.encrypt(adoptante.getPassword());
