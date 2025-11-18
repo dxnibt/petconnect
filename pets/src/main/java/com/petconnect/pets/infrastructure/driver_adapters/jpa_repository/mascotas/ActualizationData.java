@@ -23,9 +23,4 @@ public class ActualizationData {
         private String description;
         private String imageUrl;
 
-        @Enumerated(EnumType.STRING)
-        private EstadoMascota state;
-
-
-
 }

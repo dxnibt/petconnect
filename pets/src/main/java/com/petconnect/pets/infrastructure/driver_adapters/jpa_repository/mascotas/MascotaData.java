@@ -46,6 +46,6 @@ public class MascotaData {
     private String imageUrl;
 
     @Enumerated(EnumType.STRING)
-    private EstadoMascota state;
+    private EstadoMascota state = EstadoMascota.DISPONIBLE;
 
 }

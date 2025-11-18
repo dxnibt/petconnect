@@ -29,7 +29,7 @@ public class MascotaUseCase {
             mascota.getAge()==null||mascota.getSex()==null || mascota.getChildFriendly()==
             null || mascota.getRequiresAmpleSpace() == null|| mascota.getSterilization() ==
             null || mascota.getVaccines() == null || mascota.getDescription() == null ||
-            mascota.getImageUrl() == null || mascota.getState() == null){
+            mascota.getImageUrl() == null){
 
         throw new IllegalArgumentException("Por favor complete todos los campos");
     }
@@ -69,21 +69,6 @@ public class MascotaUseCase {
             }
             mascota.setSterilization(nuevoEstado);
             }
-            if (data.getState()!=null){
-                EstadoMascota estadoActual = mascota.getState();
-                EstadoMascota nuevoEstado = data.getState();
-                boolean transicionValida = switch (estadoActual){
-                    case DISPONIBLE -> nuevoEstado == EstadoMascota.EN_PROCESO || nuevoEstado == EstadoMascota.DISPONIBLE;
-                    case EN_PROCESO -> nuevoEstado == EstadoMascota.ADOPTADA|| nuevoEstado == EstadoMascota.EN_PROCESO;
-                    case ADOPTADA -> nuevoEstado == EstadoMascota.DISPONIBLE;
-                };
-                if (!transicionValida){
-                    throw new ActualizacionEstadoInvalidoException(
-                            "No se puede cambiar el estado de "+estadoActual+" a "+nuevoEstado
-                    );
-                }
-                mascota.setState(nuevoEstado);
-            }
 
             validarFechaDeNacimiento(mascota.getBirthDate());
             String edadCalculada = calcularEdad(mascota.getBirthDate());
@@ -96,7 +81,6 @@ public class MascotaUseCase {
             if (data.getVaccines() != null) mascota.setVaccines(data.getVaccines());
             if (data.getDescription() != null) mascota.setDescription(data.getDescription());
             if (data.getImageUrl() != null) mascota.setImageUrl(data.getImageUrl());
-            if (data.getState() != null) mascota.setState(data.getState());
 
             return mascotaGateway.actualizarMascota(mascota);
 
