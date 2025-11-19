@@ -69,7 +69,6 @@ function AdoptanteForm() {
         hasOtherPets: false,
         hasChildren: false,
         hoursAwayFromHome: "",
-        hasAnimalExperience: false,
         preferredAnimalType: "",
         otherPreferredAnimalType: "",
         preferredPetSize: "",
@@ -120,7 +119,6 @@ function AdoptanteForm() {
         <label><input type="checkbox" name="hasChildren" onChange={handleChange} /> ¿Tiene hijos?</label>
 
         <input type="number" name="hoursAwayFromHome" placeholder="Horas fuera de casa" onChange={handleChange} />
-        <label><input type="checkbox" name="hasAnimalExperience" onChange={handleChange} /> ¿Tiene experiencia con animales?</label>
 
         <select name="preferredAnimalType" onChange={handleChange}>
           <option value="">Tipo de animal preferido</option>

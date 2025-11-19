@@ -1,7 +1,7 @@
 /* Contenedor principal */
 .adoptante-container {
-  max-width: 700px;
-  margin: 80px auto 40px auto; /* más espacio arriba */
+  max-width: 1000px;
+  margin: 90px auto 60px auto; /* más espacio arriba */
   padding: 30px;
   background-color: #f9f9f9;
   border-radius: 12px;
@@ -44,7 +44,7 @@
 .adoptante-container input:focus,
 .adoptante-container select:focus,
 .adoptante-container textarea:focus {
-  border-color: #5a9bd8;
+  border-color: #FF6B6B;
   outline: none;
 }
 
@@ -63,10 +63,9 @@
   resize: vertical;
 }
 
-/* Botón de enviar */
 .adoptante-container button[type="submit"] {
   padding: 12px;
-  background-color: #5a9bd8;
+  background-color: #FF6B6B;
   color: white;
   border: none;
   border-radius: 8px;
@@ -76,13 +75,12 @@
 }
 
 .adoptante-container button[type="submit"]:hover {
-  background-color: #4783c9;
+  background-color: #FF6B6B;
 }
 
-/* Responsivo: en móviles */
 @media (max-width: 768px) {
   .adoptante-container {
-    margin: 50px 15px; /* más espacio y no pegado a los bordes */
+    margin: 50px 15px; 
     padding: 20px;
   }
 }

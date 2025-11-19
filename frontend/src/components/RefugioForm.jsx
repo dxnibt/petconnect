@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import "../styles/adoptante/adoptante.css"; 
+import "../styles/refugio/refugio.css"; 
 
 function RefugioForm(){ 
   const [datosBasicos, setDatosBasicos] = useState({});
@@ -26,7 +26,7 @@ useEffect(() => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const adoptante = { ...datosBasicos, ...form };
+    const refugio = { ...datosBasicos, ...form };
 
     try {
       const response = await axios.post(
@@ -48,5 +48,50 @@ useEffect(() => {
       alert("Error al registrar refugio");
     }
   };
+return (
+    <div className="form-container">
+      <h2>Registro de Refugio</h2>
+
+      <form onSubmit={handleSubmit} className="form-refugio">
+
+        <label>NIT</label>
+        <input
+          type="text"
+          name="nit"
+          value={form.nit}
+          onChange={handleChange}
+          required
+        />
+
+        <label>Sitio Web</label>
+        <input
+          type="text"
+          name="website"
+          value={form.website}
+          onChange={handleChange}
+        />
+
+        <label>Documento de Soporte</label>
+        <input
+          type="text"
+          name="supportDocument"
+          value={form.supportDocument}
+          onChange={handleChange}
+          required
+        />
+
+        <label>Descripción del Refugio</label>
+        <textarea
+          name="shelterDescription"
+          value={form.shelterDescription}
+          onChange={handleChange}
+          required
+        ></textarea>
+
+        <button type="submit">Registrar Refugio</button>
+      </form>
+    </div>
+  );
 }
+
 export default RefugioForm;
