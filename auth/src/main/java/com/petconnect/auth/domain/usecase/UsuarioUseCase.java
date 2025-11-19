@@ -52,8 +52,7 @@ public class UsuarioUseCase {
                 refugioGateway.eliminarPorId(id);
             case ADOPTANTE:
                 adoptanteGateway.eliminarPorId(id);
-            default:
-                usuarioGateway.eliminarPorId(id);
+
         }
     }
 
