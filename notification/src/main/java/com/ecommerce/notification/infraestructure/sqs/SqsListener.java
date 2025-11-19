@@ -24,36 +24,49 @@ public class SqsListener {
     private final SnsSmsSender smsSender;
     private final SesEmailSender emailSender;
 
-    private final String QUEUE_URL = "https://sqs.us-east-1.amazonaws.com/563076671467/notificaciones_petconnect";
+    private final String QUEUE_URL = "https://sqs.us-east-1.amazonaws.com/563076671467/notificaciones";
 
     @PostConstruct
     public void escucharMensajes() {
         Executors.newSingleThreadExecutor().submit(() -> {
             while (true) {
-                ReceiveMessageRequest receiveRequest = ReceiveMessageRequest.builder()
-                        .queueUrl(QUEUE_URL)
-                        .maxNumberOfMessages(5)
-                        .waitTimeSeconds(10)
-                        .build();
+                try {
+                    ReceiveMessageRequest receiveRequest = ReceiveMessageRequest.builder()
+                            .queueUrl(QUEUE_URL)
+                            .maxNumberOfMessages(3)
+                            .waitTimeSeconds(5)
+                            .build();
 
-                List<Message> messages = sqsClient.receiveMessage(receiveRequest).messages();
+                    List<Message> messages = sqsClient.receiveMessage(receiveRequest).messages();
 
-                for (Message message : messages) {
-                    try {
-                        EventoNotificacionDTO evento = objectMapper.readValue(message.body(), EventoNotificacionDTO.class);
+                    for (Message message : messages) {
+                        try {
+                            System.out.println("Mensaje recibido de SQS: " + message.body());
 
-                        smsSender.enviarSms(evento.getMessage(), evento.getPhoneNumber());
-                        emailSender.enviarEmail(evento.getEmail(), evento.getType(), evento.getMessage());
+                            EventoNotificacionDTO evento = objectMapper.readValue(message.body(), EventoNotificacionDTO.class);
 
-                        sqsClient.deleteMessage(DeleteMessageRequest.builder()
-                                .queueUrl(QUEUE_URL)
-                                .receiptHandle(message.receiptHandle())
-                                .build());
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                            // Procesar notificación
+                            smsSender.enviarSms(evento.getMensaje(), evento.getPhoneNumber());
+                            emailSender.enviarEmail(evento.getEmail(), evento.getTipo(), evento.getMensaje());
+
+                            // ✅ Eliminar de la cola SOLO si todo salió bien
+                            sqsClient.deleteMessage(DeleteMessageRequest.builder()
+                                    .queueUrl(QUEUE_URL)
+                                    .receiptHandle(message.receiptHandle())
+                                    .build());
+
+                            System.out.println("Mensaje eliminado de la cola: " + message.messageId());
+                        } catch (Exception e) {
+                            System.err.println("Error procesando mensaje: " + message.messageId());
+                            e.printStackTrace();
+                            // (Opcional) podrías reenviar a una Dead Letter Queue
+                        }
                     }
+                } catch (Exception generalError) {
+                    generalError.printStackTrace();
                 }
             }
         });
     }
+
 }
