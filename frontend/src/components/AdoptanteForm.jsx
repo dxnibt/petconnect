@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import "../styles/adoptante/adoptante.css"; // tu CSS completo aquí
+import "../styles/adoptante/adoptante.css"; 
 
 function AdoptanteForm() {
   const [datosBasicos, setDatosBasicos] = useState({});
