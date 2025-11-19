@@ -18,7 +18,7 @@ public class AwsConfig {
                         StaticCredentialsProvider.create(
                                 AwsBasicCredentials.create(
                                         "accessKeyId",
-                                        "secretAcessKey"
+                                        "secretAccessKey"
                                 )
                         )
                 )
