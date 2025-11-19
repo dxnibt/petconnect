@@ -20,7 +20,7 @@ public class AwsConfig {
                         StaticCredentialsProvider.create(
                                 AwsBasicCredentials.create(
                                         "accessKeyId",
-                                        "secretAccessKey"
+                                        "secretAcessKey"
                                 )
                         )
                 )                .build();
@@ -34,12 +34,11 @@ public class AwsConfig {
                         StaticCredentialsProvider.create(
                                 AwsBasicCredentials.create(
                                         "accessKeyId",
-                                        "secretAccessKey"
+                                        "secretAcessKey"
                                 )
                         )
                 )                .build();
     }
-
     @Bean
     public SesClient sesClient() {
         return SesClient.builder()
@@ -53,4 +52,5 @@ public class AwsConfig {
                         )
                 )                .build();
     }
+
 }

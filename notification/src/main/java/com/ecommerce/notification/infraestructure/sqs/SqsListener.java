@@ -24,7 +24,7 @@ public class SqsListener {
     private final SnsSmsSender smsSender;
     private final SesEmailSender emailSender;
 
-    private final String QUEUE_URL = "URL-COLA";
+    private final String QUEUE_URL = "https://sqs.us-east-1.amazonaws.com/563076671467/notificaciones_petconnect";
 
     @PostConstruct
     public void escucharMensajes() {
