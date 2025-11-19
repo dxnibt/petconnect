@@ -1,9 +1,6 @@
 package com.petconnect.pets.infrastructure.entry_points;
 
-import com.petconnect.pets.domain.exception.AdopcionNoEncontradaException;
-import com.petconnect.pets.domain.exception.ErrorRefugioException;
-import com.petconnect.pets.domain.exception.MascotaNoDisponibleException;
-import com.petconnect.pets.domain.exception.MascotaNoEncontradaException;
+import com.petconnect.pets.domain.exception.*;
 import com.petconnect.pets.domain.model.Adopcion;
 import com.petconnect.pets.domain.usecase.AdopcionUseCase;
 import lombok.RequiredArgsConstructor;
@@ -24,8 +21,12 @@ public class AdopcionController {
         try {
             Adopcion creada = useCase.crear(adopcion);
             return new ResponseEntity<>(creada, HttpStatus.OK);
+        } catch (UsuarioProcesoAdopcionException | UsuarioNoEncontradoException |
+                 UsuarioNoAdoptanteException | MascotaNoEncontradaException |
+                 MascotaNoDisponibleException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

@@ -30,6 +30,11 @@ public class AdopcionUseCase {
             throw new UsuarioNoAdoptanteException("Solo los adoptantes pueden realizar adopciones");
         }
 
+        Adopcion adopcionExistente = gateway.buscarPorUserId(adopcion.getUserId());
+        if (adopcionExistente != null && adopcionExistente.getStatus() == EstadoAdopcion.EN_PROCESO) {
+            throw new UsuarioProcesoAdopcionException("Ya tienes una solicitud de adopción en proceso");
+        }
+
         // Validar mascota
         Mascota mascota = mascotaGateway.buscarPorId(adopcion.getPetId());
         if (mascota == null) {
