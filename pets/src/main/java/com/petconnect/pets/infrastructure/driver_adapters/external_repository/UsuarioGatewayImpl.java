@@ -1,6 +1,7 @@
 package com.petconnect.pets.infrastructure.driver_adapters.external_repository;
 
 import com.petconnect.pets.domain.model.gateway.UsuarioGateway;
+import com.petconnect.pets.infrastructure.dtos.UsuarioResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
@@ -15,12 +16,27 @@ public class UsuarioGatewayImpl implements UsuarioGateway {
     @Override
     public boolean usuarioExiste(Long userId) {
         try {
-            restTemplate.getForEntity("http://localhost:9090/api/petconnect/usuario/" + userId, Void.class);
+            restTemplate.getForEntity("http://localhost:8181/api/petconnect/usuario/" + userId, Void.class);
             return true;
         } catch (HttpClientErrorException.NotFound e) {
             return false;
-        } catch (Exception errorMensaje) {
-            throw new RuntimeException("Error al consultar el servicio de usuarios", errorMensaje);
+        } catch (Exception error) {
+            throw new RuntimeException("Error al consultar el servicio de usuarios", error);
+        }
+    }
+
+    @Override
+    public boolean tieneRol(Long userId, String rol) {
+        try {
+            UsuarioResponse usuario = restTemplate.getForObject(
+                    "http://localhost:8181/api/petconnect/usuario/" + userId,
+                    UsuarioResponse.class
+            );
+            return usuario != null && rol.equals(usuario.getRole());
+        } catch (HttpClientErrorException.NotFound e) {
+            return false;
+        } catch (Exception error) {
+            throw new RuntimeException("Error al consultar el servicio de usuarios", error);
         }
     }
 }

@@ -30,11 +30,9 @@ public class UseCaseConfig {
     public AdopcionUseCase adopcionUseCase(
             AdopcionGateway adopcionGateway,
             MascotaGateway mascotaGateway,
-            RefugioGateway refugioGateway,
-            UsuarioGateway usuarioGateway,
-            AdoptanteGateway adoptanteGateway
+            UsuarioGateway usuarioGateway
     ){
-        return new AdopcionUseCase(adopcionGateway, mascotaGateway, refugioGateway, usuarioGateway, adoptanteGateway);
+        return new AdopcionUseCase(adopcionGateway, mascotaGateway,usuarioGateway);
     }
 
 }

@@ -6,9 +6,7 @@ import com.petconnect.pets.domain.model.Mascota;
 import com.petconnect.pets.domain.model.enums.EstadoAdopcion;
 import com.petconnect.pets.domain.model.enums.EstadoMascota;
 import com.petconnect.pets.domain.model.gateway.AdopcionGateway;
-import com.petconnect.pets.domain.model.gateway.AdoptanteGateway;
 import com.petconnect.pets.domain.model.gateway.MascotaGateway;
-import com.petconnect.pets.domain.model.gateway.RefugioGateway;
 import com.petconnect.pets.domain.model.gateway.UsuarioGateway;
 import lombok.RequiredArgsConstructor;
 
@@ -19,9 +17,7 @@ public class AdopcionUseCase {
 
     private final AdopcionGateway gateway;
     private final MascotaGateway mascotaGateway;
-    private final RefugioGateway refugioGateway;
     private final UsuarioGateway usuarioGateway;
-    private final AdoptanteGateway adoptanteGateway;
 
     public Adopcion crear(Adopcion adopcion) {
         // Validar que el usuario existe
@@ -30,7 +26,7 @@ public class AdopcionUseCase {
         }
 
         // Validar que el usuario tiene rol de adoptante
-        if (!adoptanteGateway.esAdoptante(adopcion.getUserId())) {
+        if (!usuarioGateway.tieneRol(adopcion.getUserId(), "ADOPTANTE")) {
             throw new UsuarioNoAdoptanteException("Solo los adoptantes pueden realizar adopciones");
         }
 
@@ -103,11 +99,11 @@ public class AdopcionUseCase {
             mascotaGateway.actualizarMascota(mascota);
         }
 
-        try {
-            refugioGateway.restarMascota(adopcion.getShelterId());
-        } catch (Exception e) {
-            throw new ErrorRefugioException("Error al actualizar refugio");
-        }
+//        try {
+//            refugioGateway.restarMascota(adopcion.getShelterId());
+//        } catch (Exception e) {
+//            throw new ErrorRefugioException("Error al actualizar refugio");
+//        }
 
         return gateway.actualizar(adopcion);
     }
