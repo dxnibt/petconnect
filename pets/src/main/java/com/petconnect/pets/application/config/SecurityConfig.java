@@ -17,18 +17,16 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http
-                .csrf(csrf -> csrf.disable())   // Nueva forma de deshabilitar CSRF
-                .sessionManagement(session ->
-                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                )
+                .csrf(csrf -> csrf.disable())
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**").permitAll()       // Login, registro
-                        .requestMatchers(HttpMethod.POST, "/mascotas/**")
-                        .hasAnyAuthority("REFUGIO", "ADMIN")       // Protegido por roles
+                        .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/mascotas/**").hasAnyAuthority("ROLE_REFUGIO", "ROLE_ADMIN")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
+
 }
