@@ -1,5 +1,9 @@
 package com.petconnect.auth.infraestructure.entry_points;
 
+import com.petconnect.auth.domain.exception.CamposIncompletosException;
+import com.petconnect.auth.domain.exception.ContraseñaIncorrectaException;
+import com.petconnect.auth.domain.exception.RefugioNoEncontradoException;
+import com.petconnect.auth.domain.exception.UsuarioNoEncontradoException;
 import com.petconnect.auth.domain.model.Usuario;
 import com.petconnect.auth.domain.usecase.UsuarioUseCase;
 import com.petconnect.auth.infraestructure.driver_adapters.jpa_repository.usuario.AuthResponse;
@@ -44,23 +48,27 @@ public class UsuarioController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginDto dto) {
+    public ResponseEntity<?> login(@Valid @RequestBody LoginDto dto) {
         // Llamamos al caso de uso
-        Usuario usuario = usuarioUseCase.loginUsuario(dto);
 
-        // Generamos token (convertimos el rol de enum a String)
-        String token = jwtValidation.generateToken(usuario.getId(), usuario.getRole().name());
 
-        // Construimos la respuesta
-        AuthResponse response = new AuthResponse(
-                usuario.getId(),
-                usuario.getEmail(),
-                usuario.getRole().name(),
-                token,
-                "Bienvenido"
-        );
+        try{
+            Usuario usuario = usuarioUseCase.loginUsuario(dto);
+            // Generamos token (convertimos el rol de enum a String)
+            String token = jwtValidation.generateToken(usuario.getId(), usuario.getRole().name());
 
-        return ResponseEntity.ok(response);
+            // Construimos la respuesta
+            AuthResponse response = new AuthResponse(
+                    usuario.getId(),
+                    usuario.getEmail(),
+                    usuario.getRole().name(),
+                    token,
+                    "Bienvenido");
+            return ResponseEntity.ok(response);
+        }catch (UsuarioNoEncontradoException | ContraseñaIncorrectaException | CamposIncompletosException error) {
+            return ResponseEntity.badRequest().body(error.getMessage());
+
+        }
     }
 
 

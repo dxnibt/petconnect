@@ -1,0 +1,86 @@
+/* Contenedor principal */
+.adoptante-container {
+  max-width: 1000px;
+  margin: 90px auto 60px auto; /* más espacio arriba */
+  padding: 30px;
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  font-family: Arial, sans-serif;
+
+  /* Para pantallas pequeñas */
+  overflow: auto;
+}
+
+/* Título */
+.adoptante-container h1 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 25px;
+}
+
+/* Formularios */
+.adoptante-container form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* Inputs y selects */
+.adoptante-container input[type="text"],
+.adoptante-container input[type="number"],
+.adoptante-container input[type="date"],
+.adoptante-container select,
+.adoptante-container textarea {
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  width: 100%;
+  box-sizing: border-box;
+  transition: border-color 0.3s;
+}
+
+.adoptante-container input:focus,
+.adoptante-container select:focus,
+.adoptante-container textarea:focus {
+  border-color: #FF6B6B;
+  outline: none;
+}
+
+/* Checkboxes */
+.adoptante-container label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #555;
+}
+
+/* Textarea */
+.adoptante-container textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+.adoptante-container button[type="submit"] {
+  padding: 12px;
+  background-color: #FF6B6B;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.adoptante-container button[type="submit"]:hover {
+  background-color: #FF6B6B;
+}
+
+@media (max-width: 768px) {
+  .adoptante-container {
+    margin: 50px 15px; 
+    padding: 20px;
+  }
+}
