@@ -4,6 +4,7 @@ import com.petconnect.pets.domain.exception.*;
 import com.petconnect.pets.domain.model.Mascota;
 import com.petconnect.pets.domain.model.enums.EstadoMascota;
 import com.petconnect.pets.domain.model.gateway.MascotaGateway;
+import com.petconnect.pets.domain.model.gateway.UsuarioGateway;
 import com.petconnect.pets.infrastructure.driver_adapters.jpa_repository.mascotas.ActualizationData;
 import lombok.RequiredArgsConstructor;
 
@@ -16,11 +17,9 @@ import java.util.List;
 
 public class MascotaUseCase {
     private final MascotaGateway mascotaGateway;
-
-
+    private final UsuarioGateway usuarioGateway;
 
     public Mascota guardarMascota (Mascota mascota){
-
         validarFechaDeNacimiento(mascota.getBirthDate());
         String edadCalculada = calcularEdad(mascota.getBirthDate());
         mascota.setAge(edadCalculada);

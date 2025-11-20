@@ -15,8 +15,8 @@ import org.springframework.context.annotation.Configuration;
 public class UseCaseConfig {
 
     @Bean
-    public MascotaUseCase mascotaUseCase(MascotaGateway mascotaGateway){
-        return new MascotaUseCase(mascotaGateway);
+    public MascotaUseCase mascotaUseCase(MascotaGateway mascotaGateway, UsuarioGateway usuarioGateway){
+        return new MascotaUseCase(mascotaGateway, usuarioGateway);
     }
 
     public ObjectMapper objectMapper() {

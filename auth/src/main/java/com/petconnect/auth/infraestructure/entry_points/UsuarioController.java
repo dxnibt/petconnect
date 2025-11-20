@@ -2,7 +2,9 @@ package com.petconnect.auth.infraestructure.entry_points;
 
 import com.petconnect.auth.domain.model.Usuario;
 import com.petconnect.auth.domain.usecase.UsuarioUseCase;
+import com.petconnect.auth.infraestructure.driver_adapters.jpa_repository.usuario.AuthResponse;
 import com.petconnect.auth.infraestructure.driver_adapters.jpa_repository.usuario.LoginDto;
+import com.petconnect.auth.infraestructure.security.JwtValidation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 public class UsuarioController {
 
     private final UsuarioUseCase usuarioUseCase;
+    private final JwtValidation jwtValidation;
 
     @GetMapping("/{id}")
     public ResponseEntity<?> findByIdUsuario(@PathVariable Long id) {
@@ -41,12 +44,24 @@ public class UsuarioController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@Valid @RequestBody LoginDto dto) {
-        try {
-            String mensaje = usuarioUseCase.loginUsuario(dto);
-            return ResponseEntity.ok(mensaje);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
-        }
+    public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginDto dto) {
+        // Llamamos al caso de uso
+        Usuario usuario = usuarioUseCase.loginUsuario(dto);
+
+        // Generamos token (convertimos el rol de enum a String)
+        String token = jwtValidation.generateToken(usuario.getId(), usuario.getRole().name());
+
+        // Construimos la respuesta
+        AuthResponse response = new AuthResponse(
+                usuario.getId(),
+                usuario.getEmail(),
+                usuario.getRole().name(),
+                token,
+                "Bienvenido"
+        );
+
+        return ResponseEntity.ok(response);
     }
+
+
 }
