@@ -30,25 +30,15 @@ public class MascotaController {
     @PostMapping("/save")
     public ResponseEntity<?> saveMascota(
             @RequestBody @Valid MascotaData mascotaData,
-            Authentication authentication) {  // <- aquí Authentication
+            @AuthenticationPrincipal JwtUserDetails userDetails) {
 
-        if (authentication == null || !authentication.isAuthenticated()) {
-            return new ResponseEntity<>("Token inválido o ausente", HttpStatus.UNAUTHORIZED);
-        }
-
-        // Validar rol
-        boolean esRefugio = authentication.getAuthorities().stream()
-                .anyMatch(a -> a.getAuthority().equals("ROLE_REFUGIO"));
-        boolean esAdmin = authentication.getAuthorities().stream()
-                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
-
-        if (!esRefugio && !esAdmin) {
-            return new ResponseEntity<>("No tienes permisos para esta acción", HttpStatus.FORBIDDEN);
+        if (userDetails == null) {
+            return new ResponseEntity<>("Token inválido o sin roles", HttpStatus.UNAUTHORIZED);
         }
 
         try {
             Mascota mascotaConvertida = mascotaMapper.toMascota(mascotaData);
-            Mascota mascota = mascotaUseCase.guardarMascota(mascotaConvertida, null); // si quieres pasar userDetails puedes mapearlo
+            Mascota mascota = mascotaUseCase.guardarMascota(mascotaConvertida, userDetails);
             return new ResponseEntity<>(mascota, HttpStatus.OK);
         } catch (IllegalArgumentException error) {
             return new ResponseEntity<>(error.getMessage(), HttpStatus.BAD_REQUEST);
