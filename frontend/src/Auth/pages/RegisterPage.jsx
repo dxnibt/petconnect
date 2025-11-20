@@ -1,7 +1,7 @@
 import { useState } from "react";
 import RegisterForm from "../components/RegisterForm.jsx";
 import LoginForm from "../components/LoginForm.jsx";
-
+import "../styles/register/style1.css";
 
 export default function RegisterPage() {
   const [active, setActive] = useState(false);

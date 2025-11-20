@@ -2,8 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import "../styles/refugio/refugio.css";
 
-
-function RefugioForm() { 
+function RefugioForm() {
   const [datosBasicos, setDatosBasicos] = useState({});
   const [form, setForm] = useState({
     nit: "",
@@ -18,11 +17,8 @@ function RefugioForm() {
   }, []);
 
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setForm({
-      ...form,
-      [name]: type === "checkbox" ? checked : value,
-    });
+    const { name, value } = e.target;
+    setForm({ ...form, [name]: value });
   };
 
   const handleSubmit = async (e) => {
@@ -35,14 +31,8 @@ function RefugioForm() {
         refugio
       );
       alert("Refugio registrado con éxito!");
-      console.log(response.data);
       localStorage.removeItem("datosBasicos");
-      setForm({
-        nit: "",
-        website: "",
-        supportDocument: "",
-        shelterDescription: ""
-      });
+      setForm({ nit: "", website: "", supportDocument: "", shelterDescription: "" });
     } catch (error) {
       console.error(error);
       alert("Error al registrar refugio");
@@ -50,9 +40,9 @@ function RefugioForm() {
   };
 
   return (
-    <div className={styles.formContainer}>
+    <div className="form-container">
       <h2>Registro de Refugio</h2>
-      <form onSubmit={handleSubmit} className={styles.formRefugio}>
+      <form onSubmit={handleSubmit}>
         <label>NIT</label>
         <input type="text" name="nit" value={form.nit} onChange={handleChange} required />
 
@@ -63,12 +53,7 @@ function RefugioForm() {
         <input type="text" name="supportDocument" value={form.supportDocument} onChange={handleChange} required />
 
         <label>Descripción del Refugio</label>
-        <textarea
-          name="shelterDescription"
-          value={form.shelterDescription}
-          onChange={handleChange}
-          required
-        ></textarea>
+        <textarea name="shelterDescription" value={form.shelterDescription} onChange={handleChange} required />
 
         <button type="submit">Registrar Refugio</button>
       </form>

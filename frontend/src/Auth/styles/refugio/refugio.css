@@ -1,116 +1,36 @@
-.formContainer {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap');
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Montserrat', sans-serif;
+}
+
+body {
+  background: linear-gradient(to right, #e2e2e2, #c9d6ff);
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 2rem;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.formContainer h2 {
-  color: white;
-  font-size: 2.5rem;
-  margin-bottom: 2rem;
-  text-align: center;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-  font-weight: 300;
-  letter-spacing: 1px;
-}
-
-.formRefugio {
-  background: white;
-  padding: 3rem;
+/* 🩷 Contenedor principal del formulario */
+.formContainer {
+  background-color: #fff;
   border-radius: 20px;
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+  padding: 40px;
   width: 100%;
   max-width: 500px;
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  animation: slideUp 0.6s ease-out;
+  animation: fadeIn 0.6s ease-in-out;
 }
 
-.formRefugio:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-}
-
-.formRefugio label {
-  display: block;
-  margin-bottom: 0.5rem;
-  color: #4a5568;
-  font-weight: 500;
-  font-size: 0.95rem;
-  transition: color 0.3s ease;
-}
-
-.formRefugio input,
-.formRefugio textarea {
-  width: 100%;
-  padding: 1rem;
-  margin-bottom: 1.5rem;
-  border: 2px solid #e2e8f0;
-  border-radius: 12px;
-  font-size: 1rem;
-  transition: all 0.3s ease;
-  background: #f8fafc;
-  box-sizing: border-box;
-}
-
-.formRefugio input:focus,
-.formRefugio textarea:focus {
-  outline: none;
-  border-color: #667eea;
-  background: white;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-  transform: scale(1.02);
-}
-
-.formRefugio input:hover,
-.formRefugio textarea:hover {
-  border-color: #cbd5e0;
-}
-
-.formRefugio textarea {
-  resize: vertical;
-  min-height: 120px;
-  font-family: inherit;
-  line-height: 1.5;
-}
-
-.formRefugio button {
-  width: 100%;
-  padding: 1rem 2rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border: none;
-  border-radius: 12px;
-  font-size: 1.1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-top: 1rem;
-}
-
-.formRefugio button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
-  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
-}
-
-.formRefugio button:active {
-  transform: translateY(0);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-}
-
-@keyframes slideUp {
+/* ✨ Animación suave al entrar */
+@keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(30px);
+    transform: translateY(15px);
   }
   to {
     opacity: 1;
@@ -118,36 +38,77 @@
   }
 }
 
-@media (max-width: 768px) {
-  .formContainer {
-    padding: 1rem;
-  }
-
-  .formContainer h2 {
-    font-size: 2rem;
-  }
-
-  .formRefugio {
-    padding: 2rem;
-    margin: 1rem;
-  }
+/* 🔹 Título */
+.formContainer h2 {
+  text-align: center;
+  color: #ff6b6b;
+  margin-bottom: 25px;
+  font-weight: 600;
 }
 
-@media (max-width: 480px) {
-  .formContainer {
-    padding: 0.5rem;
-  }
+/* 📝 Etiquetas */
+label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #444;
+}
 
-  .formContainer h2 {
-    font-size: 1.75rem;
-  }
+/* 🔘 Campos de texto */
+input,
+textarea {
+  width: 100%;
+  padding: 10px 15px;
+  margin-bottom: 18px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+  background-color: #f8f8f8;
+  transition: all 0.3s ease;
+}
 
-  .formRefugio {
-    padding: 1.5rem;
-  }
+/* 💡 Efectos de foco */
+input:focus,
+textarea:focus {
+  border-color: #ff6b6b;
+  box-shadow: 0 0 8px rgba(255, 107, 107, 0.3);
+  background-color: #fff;
+}
 
-  .formRefugio input,
-  .formRefugio textarea {
-    padding: 0.875rem;
-  }
+/* 🪶 Textarea */
+textarea {
+  resize: none;
+  height: 100px;
+  line-height: 1.4;
+}
+
+/* 🧡 Botón */
+button {
+  background-color: #ff6b6b;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 20px;
+  font-weight: 600;
+  text-transform: uppercase;
+  cursor: pointer;
+  width: 100%;
+  transition: all 0.3s ease;
+}
+
+button:hover {
+  background-color: #ff4040;
+  box-shadow: 0 4px 10px rgba(255, 107, 107, 0.4);
+}
+
+button:active {
+  transform: scale(0.98);
+}
+
+/* 🩵 Mensajes de validación (opcional) */
+input:invalid,
+textarea:invalid {
+  border-color: #ff9e9e;
 }
