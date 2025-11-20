@@ -50,8 +50,7 @@ public class MascotaUseCase {
         return mascotaGateway.guardar(mascota);
     }
 
-    public Mascota buscarPorId(Long pet_id, JwtUserDetails userDetails) {
-        validarAcceso(userDetails, "buscar");
+    public Mascota buscarPorId(Long pet_id) {
         Mascota mascota = mascotaGateway.buscarPorId(pet_id);
         if (mascota == null) {
             throw new MascotaNoEncontradaException("Mascota con id " + pet_id + " no existe");
@@ -59,7 +58,7 @@ public class MascotaUseCase {
         return mascota;
     }
 
-    public List<Mascota> obtenerTodas(int page, int size, JwtUserDetails userDetails) {
+    public List<Mascota> obtenerTodas(int page, int size) {
         return mascotaGateway.obtenerTodas(page, size);
     }
 

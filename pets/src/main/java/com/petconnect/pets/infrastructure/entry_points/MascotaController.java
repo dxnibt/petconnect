@@ -54,9 +54,9 @@ public class MascotaController {
 
 
     @GetMapping("/{pet_id}")
-    public ResponseEntity<?> findByIdMascota(@PathVariable Long pet_id, JwtUserDetails userDetails) {
+    public ResponseEntity<?> findByIdMascota(@PathVariable Long pet_id) {
 
-        Mascota mascota = mascotaUseCase.buscarPorId(pet_id,userDetails);
+        Mascota mascota = mascotaUseCase.buscarPorId(pet_id);
 
         if (mascota.getPet_id() != null) {
             return new ResponseEntity<>(mascota, HttpStatus.OK);
@@ -66,7 +66,7 @@ public class MascotaController {
 
     @GetMapping("/List")
     public ResponseEntity<?> listarMascotas(@RequestParam(defaultValue = "-1") int page, @RequestParam(defaultValue = "2") int size, JwtUserDetails userDetails) {
-        List<Mascota> mascotas = mascotaUseCase.obtenerTodas(page, size,userDetails);
+        List<Mascota> mascotas = mascotaUseCase.obtenerTodas(page, size);
         if (mascotas.isEmpty()) {
             return ResponseEntity.ok("No hay más productos disponibles");
         }
