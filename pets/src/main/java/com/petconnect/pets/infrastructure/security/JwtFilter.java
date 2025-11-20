@@ -25,28 +25,35 @@ public class JwtFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         String header = request.getHeader("Authorization");
-        if(header != null && header.startsWith("Bearer ")) {
+
+        if (header != null && header.startsWith("Bearer ")) {
             String token = header.substring(7);
+
             try {
                 Claims claims = Jwts.parser()
                         .setSigningKey(jwtSecret)
                         .parseClaimsJws(token)
                         .getBody();
 
-                String email = claims.getSubject();
-                List<String> roles = claims.get("roles", List.class);
+                // En tu token: subject = userId (String)
+                String userId = claims.getSubject();
 
-                if(email != null) {
-                    // Convertir roles en GrantedAuthority
-                    List<SimpleGrantedAuthority> authorities = roles.stream()
-                            .map(role -> new SimpleGrantedAuthority(role)) // IMPORTANTE: usa "ROLE_REFUGIO"
-                            .toList();
+                // En tu token: role = "REFUGIO"
+                String role = claims.get("role", String.class);
 
-                    // Crear Authentication
+                if (userId != null && role != null) {
+
+                    // Convertir UN SOLO rol a GrantedAuthority
+                    SimpleGrantedAuthority authority =
+                            new SimpleGrantedAuthority(role);
+
                     UsernamePasswordAuthenticationToken auth =
-                            new UsernamePasswordAuthenticationToken(email, null, authorities);
+                            new UsernamePasswordAuthenticationToken(
+                                    userId,    // principal = id del usuario
+                                    null,
+                                    List.of(authority)
+                            );
 
-                    // Setear en el contexto
                     SecurityContextHolder.getContext().setAuthentication(auth);
                 }
 
@@ -58,4 +65,5 @@ public class JwtFilter extends OncePerRequestFilter {
 
         filterChain.doFilter(request, response);
     }
+
 }

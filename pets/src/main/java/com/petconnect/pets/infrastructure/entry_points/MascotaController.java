@@ -11,9 +11,12 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collection;
 import java.util.List;
 
 @RestController
@@ -27,8 +30,18 @@ public class MascotaController {
     @PostMapping("/save")
     public ResponseEntity<?> saveMascota(
             @RequestBody @Valid MascotaData mascotaData,
-            @AuthenticationPrincipal JwtUserDetails userDetails) { // <-- agregado
+            @AuthenticationPrincipal JwtUserDetails userDetails) {
 
+        if (userDetails == null) {
+            return new ResponseEntity<>("Token inválido o ausente", HttpStatus.UNAUTHORIZED);
+        }
+
+        // Validar que el rol sea permitido
+        if (!userDetails.getRoles().contains("REFUGIO") &&
+                !userDetails.getRoles().contains("ADMIN")) {
+
+            return new ResponseEntity<>("No tienes permisos para esta acción", HttpStatus.FORBIDDEN);
+        }
         try {
             Mascota mascotaConvertida = mascotaMapper.toMascota(mascotaData);
             Mascota mascota = mascotaUseCase.guardarMascota(mascotaConvertida, userDetails);
