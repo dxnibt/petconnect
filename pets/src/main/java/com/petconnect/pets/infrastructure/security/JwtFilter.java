@@ -17,6 +17,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class JwtFilter extends OncePerRequestFilter {
@@ -41,15 +42,18 @@ public class JwtFilter extends OncePerRequestFilter {
                 List<String> roles = claims.get("roles", List.class);
 
                 if (userId != null && roles != null) {
+                    // **CORRECCIÓN: Usar List<GrantedAuthority> explícitamente**
+                    List<GrantedAuthority> authorities = roles.stream()
+                            .map(role -> {
+                                // Si el rol no tiene el prefijo, agregarlo
+                                if (!role.startsWith("ROLE_")) {
+                                    return new SimpleGrantedAuthority("ROLE_" + role);
+                                }
+                                return new SimpleGrantedAuthority(role);
+                            })
+                            .collect(Collectors.toList()); // Usar collect en lugar de toList()
 
-                    // Convertir roles en authorities
-                    List<SimpleGrantedAuthority> authorities = roles.stream()
-                            .map(r -> "ROLE_" + r)
-                            .map(SimpleGrantedAuthority::new)
-                            .toList();
-
-                    // Crear principal con JwtUserDetails
-                    JwtUserDetails userDetails = new JwtUserDetails(Long.parseLong(userId), "user", roles);
+                    JwtUserDetails userDetails = new JwtUserDetails(Long.parseLong(userId), userId, roles);
 
                     UsernamePasswordAuthenticationToken auth =
                             new UsernamePasswordAuthenticationToken(userDetails, null, authorities);
@@ -57,16 +61,21 @@ public class JwtFilter extends OncePerRequestFilter {
                     SecurityContextHolder.getContext().setAuthentication(auth);
 
                     // Logs para depuración
-                    System.out.println("JWT Filter ejecutado: userId=" + userId + ", roles=" + roles);
-                    System.out.println("Authorities asignadas: " + authorities);
+                    System.out.println("JWT Filter - User ID: " + userId);
+                    System.out.println("JWT Filter - Roles from token: " + roles);
+                    System.out.println("JWT Filter - Authorities: " + authorities);
                 }
 
             } catch (Exception e) {
+                System.err.println("JWT Filter Error: " + e.getMessage());
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token inválido");
                 return;
             }
+        } else {
+            System.out.println("JWT Filter: No Authorization header found");
         }
 
         filterChain.doFilter(request, response);
     }
 }
+

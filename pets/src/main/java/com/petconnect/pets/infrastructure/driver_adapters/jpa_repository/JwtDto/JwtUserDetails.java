@@ -8,17 +8,26 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 public class JwtUserDetails implements UserDetails {
     @Getter
     private Long id;
-    private String name;
-    private List <String> role;
+    private String username;
+    @Getter
+    private List<String> roles;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return role.stream().map(SimpleGrantedAuthority::new).toList();
+        return roles.stream()
+                .map(role -> {
+                    if (!role.startsWith("ROLE_")) {
+                        return new SimpleGrantedAuthority("ROLE_" + role);
+                    }
+                    return new SimpleGrantedAuthority(role);
+                })
+                .collect(Collectors.toList()); // Usar collect aquí también
     }
 
     @Override
@@ -28,7 +37,7 @@ public class JwtUserDetails implements UserDetails {
 
     @Override
     public String getUsername() {
-        return name;
+        return username;
     }
 
     @Override
@@ -49,9 +58,6 @@ public class JwtUserDetails implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
-    }
-    public List<String> getRoles() {
-        return this.role;
     }
 
 }
