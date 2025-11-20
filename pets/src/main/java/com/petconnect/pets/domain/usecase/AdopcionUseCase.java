@@ -115,7 +115,6 @@ public class AdopcionUseCase {
 
     public Adopcion rechazar(Long aId) {
         Adopcion adopcion = obtenerPorId(aId);
-
         if (adopcion.getStatus() != EstadoAdopcion.EN_PROCESO) {
             throw new IllegalStateException("Solo se pueden rechazar adopciones en proceso");
         }

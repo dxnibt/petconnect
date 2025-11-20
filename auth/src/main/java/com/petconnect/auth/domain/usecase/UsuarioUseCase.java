@@ -56,22 +56,27 @@ public class UsuarioUseCase {
         }
     }
 
-    public String loginUsuario(LoginDto dto){
+    public Usuario loginUsuario(LoginDto dto){
 
         if (dto.getEmail() == null || dto.getPassword() == null) {
             throw new CamposIncompletosException("El email y la contraseña son obligatorios");
         }
+
         Usuario usuario = usuarioGateway.buscarPorEmail(dto.getEmail());
         if (usuario == null) {
             throw new UsuarioNoEncontradoException("Usuario no encontrado");
         }
+
         boolean passwordValid = encrypterGateway.checkPassword(dto.getPassword(), usuario.getPassword());
         if (!passwordValid) {
             throw new ContraseñaIncorrectaException("Contraseña incorrecta");
         }
+
         usuarioGateway.actualizarLastLogin(usuario.getId(), LocalDateTime.now());
-        return "Bienvenido";
+
+        return usuario; // ahora devolvemos el objeto completo
     }
+
 
     public boolean isValidUsuario(Usuario usuario) {
         return usuario.getName() != null &&
