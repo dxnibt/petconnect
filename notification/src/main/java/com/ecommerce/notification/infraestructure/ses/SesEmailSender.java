@@ -31,7 +31,7 @@ public class SesEmailSender {
         SendEmailRequest request = SendEmailRequest.builder()
                 .destination(destination)
                 .message(message)
-                .source(from)
+                .source("source")
                 .build();
 
         sesClient.sendEmail(request);

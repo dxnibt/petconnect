@@ -2,8 +2,10 @@ package com.petconnect.auth.domain.usecase;
 
 import com.petconnect.auth.domain.exception.*;
 import com.petconnect.auth.domain.model.Adoptante;
+import com.petconnect.auth.domain.model.Notificacion;
 import com.petconnect.auth.domain.model.gateway.AdoptanteGateway;
 import com.petconnect.auth.domain.model.gateway.EncrypterGateway;
+import com.petconnect.auth.domain.model.gateway.NotificationGateway;
 import com.petconnect.auth.infraestructure.driver_adapters.jpa_repository.adoptante.AdoptanteActualizarDto;
 import lombok.RequiredArgsConstructor;
 import java.time.LocalDate;
@@ -16,6 +18,7 @@ public class AdoptanteUseCase {
     private final AdoptanteGateway adoptanteGateway;
     private final EncrypterGateway encrypterGateway;
     private final UsuarioUseCase usuarioUseCase;
+    private final NotificationGateway notificationGateway;
 
     private static final double salario_minimo = 1423500;
 
@@ -52,6 +55,15 @@ public class AdoptanteUseCase {
         adoptante.setPassword(passwordEncrypt);
 
         adoptante.setRegistrationDate(LocalDateTime.now());
+
+        Notificacion mensajeNotificacion = Notificacion.builder()
+                .tipo("Registro Usuario")
+                .email(adoptante.getEmail())
+                .phoneNumber(adoptante.getPhoneNumber())
+                .mensaje("Adoptante registrado con exito")
+                .build();
+
+        notificationGateway.enviarMensaje(mensajeNotificacion);
 
         return adoptanteGateway.guardarAdoptante(adoptante);
     }

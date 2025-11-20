@@ -10,8 +10,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class EventoNotificacionDTO {
-    private String type;
+    private String tipo;
     private String email;
     private String phoneNumber;
-    private String message;
+    private String mensaje;
 }

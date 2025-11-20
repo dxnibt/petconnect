@@ -78,6 +78,18 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.BAD_REQUEST)
                 .body(ex.getMessage());
     }
+    @ExceptionHandler(UsuarioNoAutenticadoException.class)
+    public ResponseEntity<?> usuarioNoAutenticado(UsuarioNoAutenticadoException ex) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(ex.getMessage());
+    }
+    @ExceptionHandler(BloqueoDePermisosException.class)
+    public ResponseEntity<?> bloqueoDePermisos(BloqueoDePermisosException ex) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(ex.getMessage());
+    }
 
     // Handler único para HttpMessageNotReadableException
     @ExceptionHandler(HttpMessageNotReadableException.class)

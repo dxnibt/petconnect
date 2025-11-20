@@ -1,9 +1,6 @@
 package com.petconnect.auth.application.config;
 
-import com.petconnect.auth.domain.model.gateway.AdoptanteGateway;
-import com.petconnect.auth.domain.model.gateway.EncrypterGateway;
-import com.petconnect.auth.domain.model.gateway.RefugioGateway;
-import com.petconnect.auth.domain.model.gateway.UsuarioGateway;
+import com.petconnect.auth.domain.model.gateway.*;
 import com.petconnect.auth.domain.usecase.AdminUseCase;
 import com.petconnect.auth.domain.usecase.AdoptanteUseCase;
 import com.petconnect.auth.domain.usecase.RefugioUseCase;
@@ -20,13 +17,13 @@ public class UseCaseConfig {
     }
 
     @Bean
-    public AdoptanteUseCase adoptanteUseCase(AdoptanteGateway adoptanteGateway, EncrypterGateway encrypterGateway, UsuarioUseCase usuarioUseCase){
-        return new AdoptanteUseCase(adoptanteGateway, encrypterGateway, usuarioUseCase);
+    public AdoptanteUseCase adoptanteUseCase(AdoptanteGateway adoptanteGateway, EncrypterGateway encrypterGateway, UsuarioUseCase usuarioUseCase, NotificationGateway notificationGateway){
+        return new AdoptanteUseCase(adoptanteGateway, encrypterGateway, usuarioUseCase, notificationGateway);
     }
 
     @Bean
-    public RefugioUseCase refugioUseCase(RefugioGateway refugioGateway, EncrypterGateway encrypterGateway, UsuarioUseCase usuarioUseCase){
-        return new RefugioUseCase(refugioGateway, encrypterGateway, usuarioUseCase);
+    public RefugioUseCase refugioUseCase(RefugioGateway refugioGateway, EncrypterGateway encrypterGateway, UsuarioUseCase usuarioUseCase, NotificationGateway notificationGateway){
+        return new RefugioUseCase(refugioGateway, encrypterGateway, usuarioUseCase, notificationGateway);
     }
 
     @Bean

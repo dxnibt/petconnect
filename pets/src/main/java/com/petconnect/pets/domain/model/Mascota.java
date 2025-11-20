@@ -31,7 +31,7 @@ public class Mascota {
     private String description;
     private String imageUrl;
     private EstadoMascota state = EstadoMascota.DISPONIBLE;
-
+    private Long shelter_Id;
 
 
 

@@ -24,7 +24,8 @@ public class MascotaMapper {
                 mascotaData.getVaccines(),
                 mascotaData.getDescription(),
                 mascotaData.getImageUrl(),
-                mascotaData.getState()
+                mascotaData.getState(),
+                mascotaData.getShelterId()
         );
     }
 
@@ -44,7 +45,8 @@ public class MascotaMapper {
                 mascota.getVaccines(),
                 mascota.getDescription(),
                 mascota.getImageUrl(),
-                mascota.getState()
+                mascota.getState(),
+                mascota.getShelter_Id()
         );
     }
 

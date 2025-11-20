@@ -17,8 +17,8 @@ public class AwsConfig {
                 .credentialsProvider(
                         StaticCredentialsProvider.create(
                                 AwsBasicCredentials.create(
-                                        "AKIAYGGP4E7VQO2OXBX5",
-                                        "TXAMQzkVEUqDVeC8qDPycGtnIX0ZBm3JLM6jVFlS"
+                                        "",
+                                        ""
                                 )
                         )
                 )

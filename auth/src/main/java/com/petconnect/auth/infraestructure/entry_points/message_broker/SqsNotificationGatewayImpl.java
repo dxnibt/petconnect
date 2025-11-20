@@ -15,12 +15,12 @@ public class SqsNotificationGatewayImpl implements NotificationGateway {
 
     private final SqsClient sqsClient;
     private final ObjectMapper objectMapper;
-    private final String queueUrl = "https://sqs.us-east-1.amazonaws.com/563076671467/notificaciones_petconnect";
+    private final String queueUrl = "https://sqs.us-east-1.amazonaws.com/563076671467/notificaciones";
     @Override
-    public void enviarMensaje(Notificacion mensajeCola) {
-        System.out.println("Enviando mensaje a SQS: " + mensajeCola);
+    public void enviarMensaje(Notificacion mensajeJson) {
+        System.out.println("Enviando mensaje a SQS: " + mensajeJson);
         try {
-            String mensaje = objectMapper.writeValueAsString(mensajeCola);
+            String mensaje = objectMapper.writeValueAsString(mensajeJson);
             SendMessageRequest request = SendMessageRequest.builder()
                     .queueUrl(queueUrl)
                     .messageBody(mensaje)
