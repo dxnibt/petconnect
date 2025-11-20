@@ -60,7 +60,6 @@ public class MascotaUseCase {
     }
 
     public List<Mascota> obtenerTodas(int page, int size, JwtUserDetails userDetails) {
-        validarAcceso(userDetails, "obtener");
         return mascotaGateway.obtenerTodas(page, size);
     }
 
@@ -131,7 +130,6 @@ public class MascotaUseCase {
                 case "actualizar":
                 case "eliminar":
                 case "buscar":
-                case "obtener":
                     throw new BloqueoDePermisosException("Los adoptantes solo pueden adoptar, no realizar CRUD de mascotas.");
                 default:
                     throw new IllegalArgumentException("Operación desconocida: " + operacion);
