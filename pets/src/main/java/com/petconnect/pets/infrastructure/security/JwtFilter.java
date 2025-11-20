@@ -20,48 +20,48 @@ import java.util.List;
 
 @Component
 public class JwtFilter extends OncePerRequestFilter {
-
     @Value("${jwt.secret}")
     private String jwtSecret;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response,
-                                    FilterChain filterChain) throws ServletException, IOException {
-
-        System.out.println("JwtFilter ejecutándose para URL: " + request.getRequestURI());
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
 
         String header = request.getHeader("Authorization");
+
         if (header != null && header.startsWith("Bearer ")) {
             String token = header.substring(7);
-
             try {
                 Claims claims = Jwts.parser()
                         .setSigningKey(jwtSecret)
                         .parseClaimsJws(token)
                         .getBody();
 
-                String userIdStr = claims.getSubject();
-                List<String> roles = claims.get("roles", List.class); // debe ser lista
+                String userId = claims.getSubject();
+                List<String> roles = claims.get("roles", List.class);
 
-                if (userIdStr != null && roles != null) {
+                if (userId != null && roles != null) {
 
-                    JwtUserDetails userDetails = new JwtUserDetails(
-                            Long.parseLong(userIdStr),
-                            userIdStr, // o el email si lo pones en subject
-                            roles
-                    );
+                    // Convertir roles en authorities
+                    List<SimpleGrantedAuthority> authorities = roles.stream()
+                            .map(r -> "ROLE_" + r)
+                            .map(SimpleGrantedAuthority::new)
+                            .toList();
+
+                    // Crear principal con JwtUserDetails
+                    JwtUserDetails userDetails = new JwtUserDetails(Long.parseLong(userId), "user", roles);
 
                     UsernamePasswordAuthenticationToken auth =
-                            new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                            new UsernamePasswordAuthenticationToken(userDetails, null, authorities);
 
                     SecurityContextHolder.getContext().setAuthentication(auth);
 
-                    System.out.println("Usuario autenticado: " + userDetails.getUsername() + " con roles: " + roles);
+                    // Logs para depuración
+                    System.out.println("JWT Filter ejecutado: userId=" + userId + ", roles=" + roles);
+                    System.out.println("Authorities asignadas: " + authorities);
                 }
 
             } catch (Exception e) {
-                System.out.println("Token inválido: " + e.getMessage());
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token inválido");
                 return;
             }
