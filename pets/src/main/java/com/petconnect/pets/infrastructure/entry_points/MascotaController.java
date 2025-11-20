@@ -3,6 +3,7 @@ package com.petconnect.pets.infrastructure.entry_points;
 import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 import com.petconnect.pets.domain.model.Mascota;
 import com.petconnect.pets.domain.usecase.MascotaUseCase;
+import com.petconnect.pets.infrastructure.driver_adapters.jpa_repository.JwtDto.JwtUserDetails;
 import com.petconnect.pets.infrastructure.driver_adapters.jpa_repository.mascotas.ActualizationData;
 import com.petconnect.pets.infrastructure.driver_adapters.jpa_repository.mascotas.MascotaData;
 import com.petconnect.pets.infrastructure.mapper.MascotaMapper;
@@ -10,6 +11,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,20 +25,25 @@ public class MascotaController {
     private final MascotaUseCase mascotaUseCase;
 
     @PostMapping("/save")
-    public ResponseEntity<?> saveMascota(@RequestBody @Valid MascotaData mascotaData) {
+    public ResponseEntity<?> saveMascota(
+            @RequestBody @Valid MascotaData mascotaData,
+            @AuthenticationPrincipal JwtUserDetails userDetails) { // <-- agregado
+
         try {
             Mascota mascotaConvertida = mascotaMapper.toMascota(mascotaData);
-            Mascota mascota = mascotaUseCase.guardarMascota(mascotaConvertida);
+            Mascota mascota = mascotaUseCase.guardarMascota(mascotaConvertida, userDetails);
+
             return new ResponseEntity<>(mascota, HttpStatus.OK);
         } catch (IllegalArgumentException error) {
-            return new ResponseEntity<>(error.getMessage(), HttpStatus.OK);
+            return new ResponseEntity<>(error.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 
-    @GetMapping("/{pet_id}")
-    public ResponseEntity<?> findByIdMascota(@PathVariable Long pet_id) {
 
-        Mascota mascota = mascotaUseCase.buscarPorId(pet_id);
+    @GetMapping("/{pet_id}")
+    public ResponseEntity<?> findByIdMascota(@PathVariable Long pet_id, JwtUserDetails userDetails) {
+
+        Mascota mascota = mascotaUseCase.buscarPorId(pet_id,userDetails);
 
         if (mascota.getPet_id() != null) {
             return new ResponseEntity<>(mascota, HttpStatus.OK);
@@ -45,8 +52,8 @@ public class MascotaController {
     }
 
     @GetMapping("/List")
-    public ResponseEntity<?> listarMascotas(@RequestParam(defaultValue = "-1") int page, @RequestParam(defaultValue = "2") int size) {
-        List<Mascota> mascotas = mascotaUseCase.obtenerTodas(page, size);
+    public ResponseEntity<?> listarMascotas(@RequestParam(defaultValue = "-1") int page, @RequestParam(defaultValue = "2") int size, JwtUserDetails userDetails) {
+        List<Mascota> mascotas = mascotaUseCase.obtenerTodas(page, size,userDetails);
         if (mascotas.isEmpty()) {
             return ResponseEntity.ok("No hay más productos disponibles");
         }
@@ -56,10 +63,10 @@ public class MascotaController {
     @PatchMapping("/update/{pet_id}")
     public ResponseEntity<?> actualizarMascota(
             @PathVariable Long pet_id,
-            @RequestBody ActualizationData data) {
+            @RequestBody ActualizationData data,JwtUserDetails jwtUserDetails) {
 
         try {
-            Mascota mascotaActualizada = mascotaUseCase.actualizarMascota(pet_id, data);
+            Mascota mascotaActualizada = mascotaUseCase.actualizarMascota(pet_id, data,jwtUserDetails);
             return ResponseEntity.ok(mascotaActualizada);
 
         } catch (Exception e) {
@@ -69,9 +76,9 @@ public class MascotaController {
 
 
     @DeleteMapping("/delete/{pet_id}")
-    public ResponseEntity<String> deleteMascota(@PathVariable Long pet_id){
+    public ResponseEntity<String> deleteMascota(@PathVariable Long pet_id, JwtUserDetails jwtUserDetails){
         try {
-            mascotaUseCase.eliminarMascota(pet_id);
+            mascotaUseCase.eliminarMascota(pet_id,jwtUserDetails);
             return new ResponseEntity<>("Mascota Eliminada", HttpStatus.OK);
         }catch (Exception error){
             return new ResponseEntity<>(error.getMessage(),HttpStatus.OK);

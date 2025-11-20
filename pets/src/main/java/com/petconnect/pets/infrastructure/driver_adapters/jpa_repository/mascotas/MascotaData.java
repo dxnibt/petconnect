@@ -48,4 +48,6 @@ public class MascotaData {
     @Enumerated(EnumType.STRING)
     private EstadoMascota state = EstadoMascota.DISPONIBLE;
 
+    private Long shelterId;
+
 }

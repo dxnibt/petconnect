@@ -14,6 +14,7 @@ public class UsuarioGatewayImpl implements UsuarioGateway {
 
     private final RestTemplate restTemplate;
     
+
     @Override
     public boolean usuarioExiste(Long userId) {
         try {

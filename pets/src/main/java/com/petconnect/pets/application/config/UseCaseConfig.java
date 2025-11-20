@@ -16,7 +16,7 @@ public class UseCaseConfig {
 
     @Bean
     public MascotaUseCase mascotaUseCase(MascotaGateway mascotaGateway, UsuarioGateway usuarioGateway){
-        return new MascotaUseCase(mascotaGateway, usuarioGateway);
+        return new MascotaUseCase(mascotaGateway);
     }
 
     public ObjectMapper objectMapper() {
