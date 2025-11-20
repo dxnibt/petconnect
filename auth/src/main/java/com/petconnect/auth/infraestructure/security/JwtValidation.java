@@ -38,7 +38,7 @@ public class JwtValidation {
         // Obtener rol del token
         public String getRole(String token) {
             Claims claims = parseToken(token);
-            return claims.get("role", String.class);
+            return claims.get("roles", String.class);
         }
 
         // Validar token
