@@ -48,6 +48,9 @@ public class AdopcionUseCase {
         mascota.setState(EstadoMascota.EN_PROCESO);
         mascotaGateway.actualizarMascota(mascota);
 
+        adopcion.setShelterId(mascota.getShelter_Id());
+
+
         // Completar solicitud
         adopcion.setRequestDate(LocalDate.now().toString());
         adopcion.setStatus(EstadoAdopcion.EN_PROCESO);

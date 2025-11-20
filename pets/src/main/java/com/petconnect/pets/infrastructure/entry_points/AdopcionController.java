@@ -3,9 +3,12 @@ package com.petconnect.pets.infrastructure.entry_points;
 import com.petconnect.pets.domain.exception.*;
 import com.petconnect.pets.domain.model.Adopcion;
 import com.petconnect.pets.domain.usecase.AdopcionUseCase;
+import com.petconnect.pets.infrastructure.driver_adapters.jpa_repository.JwtDto.JwtUserDetails;
+import com.petconnect.pets.infrastructure.dtos.SolicitudAdopcionRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -17,16 +20,26 @@ public class AdopcionController {
 
     // Crear solicitud de adopción
     @PostMapping("/save")
-    public ResponseEntity<?> crear(@RequestBody Adopcion adopcion) {
+    public ResponseEntity<?> solicitarAdopcion(
+            @RequestBody SolicitudAdopcionRequest solicitud,
+            @AuthenticationPrincipal JwtUserDetails userDetails) {
+
+        if (userDetails == null) {
+            return new ResponseEntity<>("Token inválido o sin roles", HttpStatus.UNAUTHORIZED);
+        }
+
         try {
-            Adopcion creada = useCase.crear(adopcion);
-            return new ResponseEntity<>(creada, HttpStatus.OK);
-        } catch (UsuarioProcesoAdopcionException | UsuarioNoEncontradoException |
-                 UsuarioNoAdoptanteException | MascotaNoEncontradaException |
-                 MascotaNoDisponibleException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            // Crear objeto Adopcion con datos del JWT y request
+            Adopcion adopcion = new Adopcion();
+            adopcion.setUserId(userDetails.getId()); // Del token
+            adopcion.setPetId(solicitud.getPetId()); // Del body
+
+            // El UseCase se encarga de validar si es adoptante
+            Adopcion adopcionCreada = useCase.crear(adopcion);
+            return new ResponseEntity<>(adopcionCreada, HttpStatus.OK);
+
+        } catch (Exception error) {
+            return new ResponseEntity<>(error.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 
