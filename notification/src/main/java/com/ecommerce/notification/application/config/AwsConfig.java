@@ -19,8 +19,8 @@ public class AwsConfig {
                 .credentialsProvider(
                         StaticCredentialsProvider.create(
                                 AwsBasicCredentials.create(
-                                        "accessKeyId",
-                                        "secretAcessKey"
+                                        "",
+                                        ""
                                 )
                         )
                 )                .build();
@@ -33,8 +33,8 @@ public class AwsConfig {
                 .credentialsProvider(
                         StaticCredentialsProvider.create(
                                 AwsBasicCredentials.create(
-                                        "accessKeyId",
-                                        "secretAcessKey"
+                                        "",
+                                        ""
                                 )
                         )
                 )                .build();
@@ -46,8 +46,8 @@ public class AwsConfig {
                 .credentialsProvider(
                         StaticCredentialsProvider.create(
                                 AwsBasicCredentials.create(
-                                        "accessKeyId",
-                                        "secretAccessKey"
+                                        "",
+                                        ""
                                 )
                         )
                 )                .build();
