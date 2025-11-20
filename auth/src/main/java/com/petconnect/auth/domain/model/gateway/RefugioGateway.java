@@ -10,5 +10,5 @@ public interface RefugioGateway {
     Refugio buscarPorId(Long id);
     void eliminarPorId(Long id);
     Refugio actualizarRefugio(Refugio refugio);
-    List<Refugio> listarNoAprobados(boolean aprobado);
+    List<Refugio> listarNoAprobados(boolean aprobado, int page, int size);
 }

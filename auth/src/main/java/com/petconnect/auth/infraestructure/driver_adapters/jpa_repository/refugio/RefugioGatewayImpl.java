@@ -4,6 +4,9 @@ import com.petconnect.auth.domain.model.Refugio;
 import com.petconnect.auth.domain.model.gateway.RefugioGateway;
 import com.petconnect.auth.infraestructure.mapper.RefugioMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -15,6 +18,7 @@ public class RefugioGatewayImpl implements RefugioGateway {
 
     private final RefugioMapper refugioMapper;
     private final RefugioDataJpaRepository repository;
+    private int currentPage = 0;
 
     @Override
     public Refugio guardarRefugio(Refugio refugio) {
@@ -66,9 +70,23 @@ public class RefugioGatewayImpl implements RefugioGateway {
     }
 
     @Override
-    public List<Refugio> listarNoAprobados(boolean aprobado) {
-        return repository.findByAprobado(aprobado)
-                .stream()
+    public List<Refugio> listarNoAprobados(boolean aprobado, int page, int size) {
+        // Si no se pasa una página usamos el contador interno
+        if (page == -1) {
+            page = currentPage;
+            currentPage++; // avanza una pagina por cada llamada
+        }
+
+        Pageable pageable = PageRequest.of(page, size);
+        Page<RefugioData> refugioData = repository.findByAprobado(aprobado, pageable);
+
+        // Si no hay más refugios, reinicia contador y devuelve lista vacia
+        if (refugioData.isEmpty()) {
+            currentPage = 0;
+            return List.of();
+        }
+
+        return refugioData.stream()
                 .map(refugioMapper::toRefugio)
                 .toList();
     }

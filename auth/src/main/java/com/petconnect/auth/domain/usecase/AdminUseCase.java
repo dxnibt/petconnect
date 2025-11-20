@@ -12,8 +12,8 @@ public class AdminUseCase {
 
     private final RefugioGateway refugioGateway;
 
-    public List<Refugio>listarRefugiosPendientes() {
-        return refugioGateway.listarNoAprobados(false);
+    public List<Refugio>listarRefugiosPendientes(int page, int size) {
+        return refugioGateway.listarNoAprobados(false, page, size);
     }
 
     public Refugio aprobarRefugio(Long id) {
