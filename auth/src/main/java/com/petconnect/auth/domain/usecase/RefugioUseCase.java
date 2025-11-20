@@ -27,6 +27,8 @@ public class RefugioUseCase {
             throw new CamposIncompletosException("Por favor, complete todos los campos");
         }
 
+        refugio.setAprobado(false);
+
         String passwordEncrypt = encrypterGateway.encrypt(refugio.getPassword());
         refugio.setPassword(passwordEncrypt);
         refugio.setRegistrationDate(LocalDateTime.now());

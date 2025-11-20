@@ -32,6 +32,7 @@ public class RefugioGatewayImpl implements RefugioGateway {
         if(nitExiste.isPresent()){
             throw new IllegalArgumentException("El nit ya está registrado");
         }
+        refugio.setAprobado(false);
 
         RefugioData refugioData = refugioMapper.toData(refugio);
         return refugioMapper.toRefugio(repository.save(refugioData));
