@@ -40,4 +40,18 @@ public class UsuarioGatewayImpl implements UsuarioGateway {
             throw new RuntimeException("Error al consultar el servicio de usuarios", error);
         }
     }
+
+    @Override
+    public UsuarioResponse obtenerUsuarioCompleto(Long userId) {
+        try {
+            return restTemplate.getForObject(
+                    "http://localhost:8181/api/petconnect/usuario/" + userId,
+                    UsuarioResponse.class
+            );
+        } catch (HttpClientErrorException.NotFound e) {
+            return null;
+        } catch (Exception error) {
+            throw new RuntimeException("Error al consultar el servicio de usuarios", error);
+        }
+    }
 }

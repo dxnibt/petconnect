@@ -8,6 +8,8 @@ import com.petconnect.pets.domain.model.enums.EstadoMascota;
 import com.petconnect.pets.domain.model.gateway.AdopcionGateway;
 import com.petconnect.pets.domain.model.gateway.MascotaGateway;
 import com.petconnect.pets.domain.model.gateway.UsuarioGateway;
+import com.petconnect.pets.infrastructure.driver_adapters.jpa_repository.dtos.AdopcionDetalladaResponse;
+import com.petconnect.pets.infrastructure.driver_adapters.jpa_repository.dtos.UsuarioResponse;
 import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDate;
@@ -215,6 +217,98 @@ public class AdopcionUseCase {
         }
 
         return gateway.buscarTodasPorUserId(usuarioId, page, size);
+
     }
+
+    public AdopcionDetalladaResponse obtenerDetallesCompletosParaRefugio(Long adopcionId, Long shelterId) {
+        // Validar que la adopción existe
+        Adopcion adopcion = gateway.obtenerAdopcionPorId(adopcionId);
+        if (adopcion == null) {
+            throw new AdopcionNoEncontradaException("La adopción no existe");
+        }
+
+        // Validar que el usuario es REFUGIO
+        if (!usuarioGateway.tieneRol(shelterId, "REFUGIO")) {
+            throw new UsuarioNoAutorizadoException("Solo los refugios pueden ver detalles completos de adopciones");
+        }
+
+        // Validar que el refugio es dueño de esta adopción
+        if (!adopcion.getShelterId().equals(shelterId)) {
+            throw new UsuarioNoAutorizadoException("No puedes ver adopciones de otros refugios");
+        }
+
+        // Obtener información COMPLETA de la mascota
+        Mascota mascota = mascotaGateway.buscarPorId(adopcion.getPetId());
+        if (mascota == null) {
+            throw new MascotaNoEncontradaException("La mascota de esta adopción no existe");
+        }
+
+        // Obtener información COMPLETA del adoptante
+        UsuarioResponse usuarioResponse = usuarioGateway.obtenerUsuarioCompleto(adopcion.getUserId());
+        if (usuarioResponse == null) {
+            throw new UsuarioNoEncontradoException("El usuario adoptante no existe");
+        }
+
+        // Retornar TODOS los datos
+        return crearRespuestaCompleta(adopcion, mascota, usuarioResponse);
+    }
+
+    private AdopcionDetalladaResponse crearRespuestaCompleta(Adopcion adopcion, Mascota mascota, UsuarioResponse usuario) {
+        AdopcionDetalladaResponse response = new AdopcionDetalladaResponse();
+
+        //info adopción
+        response.setIdAdoption(adopcion.getIdAdoption());
+        response.setRequestDate(adopcion.getRequestDate());
+        response.setStatus(adopcion.getStatus());
+        response.setResponseDate(adopcion.getResponseDate());
+
+        // info usuario
+        response.setUserId(usuario.getId());
+        response.setUserName(usuario.getName());
+        response.setUserEmail(usuario.getEmail());
+        response.setUserPhoneNumber(usuario.getPhoneNumber());
+        response.setUserCity(usuario.getCity());
+        response.setUserAddress(usuario.getAddress());
+        response.setUserProfilePicture(usuario.getProfilePicture());
+
+        // info extra adoptante
+        response.setAdoptanteDocument(usuario.getDocument());
+        response.setAdoptanteGender(usuario.getGender());
+        response.setAdoptanteOtherGender(usuario.getOtherGender());
+        response.setAdoptanteBirthDate(usuario.getBirthDate());
+        response.setAdoptanteMonthlySalary(usuario.getMonthlySalary());
+        response.setAdoptanteHousingType(usuario.getHousingType());
+        response.setAdoptanteHasYard(usuario.getHasYard());
+        response.setAdoptantePetExperience(usuario.getPetExperience());
+        response.setAdoptanteHasOtherPets(usuario.getHasOtherPets());
+        response.setAdoptanteHasChildren(usuario.getHasChildren());
+        response.setAdoptanteHoursAwayFromHome(usuario.getHoursAwayFromHome());
+        response.setAdoptantePreferredAnimalType(usuario.getPreferredAnimalType());
+        response.setAdoptanteOtherPreferredAnimalType(usuario.getOtherPreferredAnimalType());
+        response.setAdoptantePreferredPetSize(usuario.getPreferredPetSize());
+        response.setAdoptanteActivityLevel(usuario.getActivityLevel());
+        response.setAdoptantePersonalDescription(usuario.getPersonalDescription());
+
+        // inf mascota
+        response.setPetId(mascota.getPet_id());
+        response.setPetName(mascota.getName());
+        response.setPetSpecies(mascota.getSpecies() != null ? mascota.getSpecies().toString() : null);
+        response.setPetOtherSpecies(mascota.getOtherspecies());
+        response.setPetRace(mascota.getRace());
+        response.setPetBirthDate(mascota.getBirthDate() != null ? mascota.getBirthDate().toString() : null);
+        response.setPetAge(mascota.getAge());
+        response.setPetSex(mascota.getSex() != null ? mascota.getSex().toString() : null);
+        response.setPetChildFriendly(mascota.getChildFriendly());
+        response.setPetRequiresAmpleSpace(mascota.getRequiresAmpleSpace());
+        response.setPetSterilization(mascota.getSterilization());
+        response.setPetVaccines(mascota.getVaccines());
+        response.setPetDescription(mascota.getDescription());
+        response.setPetImageUrl(mascota.getImageUrl());
+        response.setPetState(mascota.getState() != null ? mascota.getState().toString() : null);
+        response.setPetShelterId(mascota.getShelter_Id());
+
+        return response;
+    }
+
 
 }

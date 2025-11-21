@@ -3,6 +3,7 @@ package com.petconnect.pets.infrastructure.entry_points;
 import com.petconnect.pets.domain.model.Adopcion;
 import com.petconnect.pets.domain.usecase.AdopcionUseCase;
 import com.petconnect.pets.infrastructure.driver_adapters.jpa_repository.JwtDto.JwtUserDetails;
+import com.petconnect.pets.infrastructure.driver_adapters.jpa_repository.dtos.AdopcionDetalladaResponse;
 import com.petconnect.pets.infrastructure.driver_adapters.jpa_repository.dtos.SolicitudAdopcionRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -155,6 +156,24 @@ public class AdopcionController {
             }
 
             return new ResponseEntity<>(adopcion, HttpStatus.OK);
+        } catch (Exception error) {
+            return new ResponseEntity<>(error.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/refugio/detalles/{id}")
+    public ResponseEntity<?> obtenerDetallesAdopcionRefugio(
+            @PathVariable Long id,
+            @AuthenticationPrincipal JwtUserDetails userDetails) {
+
+        if (userDetails == null) {
+            return new ResponseEntity<>("Token inválido", HttpStatus.UNAUTHORIZED);
+        }
+
+        try {
+            AdopcionDetalladaResponse detalles = useCase.obtenerDetallesCompletosParaRefugio(id, userDetails.getId());
+            return new ResponseEntity<>(detalles, HttpStatus.OK);
+
         } catch (Exception error) {
             return new ResponseEntity<>(error.getMessage(), HttpStatus.BAD_REQUEST);
         }
