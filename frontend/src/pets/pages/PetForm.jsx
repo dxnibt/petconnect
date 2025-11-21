@@ -48,11 +48,9 @@ export default function PetForm() {
       
       const petData = {
         ...res.data,
-        // Asegurar que los booleanos no sean null
         childFriendly: res.data.childFriendly || false,
         requiresAmpleSpace: res.data.requiresAmpleSpace || false,
         sterilization: res.data.sterilization || false,
-        // Formatear la fecha para el input
         birthDate: res.data.birthDate ? formatDateForInput(res.data.birthDate) : ""
       };
       
@@ -90,7 +88,7 @@ export default function PetForm() {
     }));
   }
 
-  // Función para calcular la edad a partir de la fecha de nacimiento
+  // Función solo para mostrar en UI
   const calculateAge = (birthDate) => {
     if (!birthDate) return null;
     const today = new Date();
@@ -112,7 +110,7 @@ export default function PetForm() {
       otherspecies: formData.species === ESPECIE_MASCOTA.OTRO ? formData.otherspecies?.trim() : null,
       race: formData.race?.trim() || null,
       birthDate: formData.birthDate || null,
-      age: calculateAge(formData.birthDate), // Se calcula automáticamente
+      // ⚠️ NO enviar 'age' - se calcula en el backend
       sex: formData.sex || null,
       childFriendly: Boolean(formData.childFriendly),
       requiresAmpleSpace: Boolean(formData.requiresAmpleSpace),
@@ -120,8 +118,6 @@ export default function PetForm() {
       vaccines: formData.vaccines?.trim() || null,
       description: formData.description?.trim() || null,
       imageUrl: formData.imageUrl?.trim() || null,
-      // state: "DISPONIBLE", // Se setea automáticamente en el backend
-      // shelter_Id: null // Se setea automáticamente según el usuario logueado
     };
 
     // Validaciones básicas
@@ -170,14 +166,12 @@ export default function PetForm() {
       console.error("📋 Response data:", error.response?.data);
       console.error("🔧 Response status:", error.response?.status);
       
-      // Mostrar el error específico del backend si está disponible
       if (error.response?.data) {
         const errorData = error.response.data;
         console.error("🐛 Error del backend:", errorData);
         
         let errorMessage = "Error del servidor: ";
         
-        // Dependiendo de cómo tu backend envía los errores
         if (errorData.message) {
           errorMessage += errorData.message;
         } else if (errorData.error) {
@@ -305,11 +299,11 @@ export default function PetForm() {
                 type="date"
                 value={form.birthDate}
                 onChange={handleChange}
-                max={new Date().toISOString().split('T')[0]} // No permitir fechas futuras
+                max={new Date().toISOString().split('T')[0]}
               />
               {form.birthDate && (
                 <small className="age-calculator">
-                  Edad calculada: {calculateAge(form.birthDate) || 0} años
+                  Edad aproximada: {calculateAge(form.birthDate) || 0} años
                 </small>
               )}
             </div>
