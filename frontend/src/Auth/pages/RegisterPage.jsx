@@ -1,24 +1,73 @@
 import { useState } from "react";
 import RegisterForm from "../components/RegisterForm.jsx";
-import LoginForm from "../components/LoginForm.jsx";
 import "../styles/register/style1.css";
 
 export default function RegisterPage() {
   const [active, setActive] = useState(false);
 
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    // Aquí va la lógica de login que estaba en LoginForm
+    const email = e.target.email.value;
+    const password = e.target.password.value;
+
+    try {
+      const response = await fetch("http://localhost:8181/api/petconnect/usuario/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        
+        // Guardar en localStorage
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("role", data.role);
+        localStorage.setItem("userEmail", email);
+        localStorage.setItem("isLoggedIn", "true");
+        
+        alert("Inicio de sesión exitoso ✅");
+        
+        // Redirigir a home
+        window.location.href = "/";
+      } else {
+        const error = await response.text();
+        alert(error || "Error en el inicio de sesión");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      alert("Error al conectar con el servidor");
+    }
+  };
+
   return (
     <div className={`container ${active ? "active" : ""}`} id="container">
+      {/* Panel de Registro */}
       <div className="form-container sign-up">
         <RegisterForm />
       </div>
 
+      {/* Panel de Login - Ahora integrado directamente */}
       <div className="form-container sign-in">
-        <form>
+        <form onSubmit={handleLogin}>
           <h1>Iniciar Sesión</h1>
-          <input type="email" placeholder="Correo electrónico" required />
-          <input type="password" placeholder="Contraseña" required />
+          <input 
+            type="email" 
+            name="email"
+            placeholder="Correo electrónico" 
+            required 
+          />
+          <input 
+            type="password" 
+            name="password"
+            placeholder="Contraseña" 
+            required 
+          />
           <a href="#">¿Olvidaste tu contraseña?</a>
-          <button type="button">Iniciar sesión</button>
+          <button type="submit">Iniciar sesión</button>
         </form>
       </div>
 
