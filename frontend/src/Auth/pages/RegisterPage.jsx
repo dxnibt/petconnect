@@ -1,13 +1,16 @@
+// src/pages/RegisterPage.jsx
 import { useState } from "react";
+import { useAuth } from "../../hooks/useAuth"; // 👈 importar el hook de autenticación
 import RegisterForm from "../components/RegisterForm.jsx";
 import "../styles/register/style1.css";
 
 export default function RegisterPage() {
   const [active, setActive] = useState(false);
+  const { login } = useAuth(); // 👈 usar la función login del contexto
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    // Aquí va la lógica de login que estaba en LoginForm
+
     const email = e.target.email.value;
     const password = e.target.password.value;
 
@@ -22,17 +25,12 @@ export default function RegisterPage() {
 
       if (response.ok) {
         const data = await response.json();
-        
-        // Guardar en localStorage
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("role", data.role);
-        localStorage.setItem("userEmail", email);
-        localStorage.setItem("isLoggedIn", "true");
-        
+
+        // 🔹 Usa el hook para guardar sesión correctamente
+        login(data.token, data.email, data.role, data.userId);
+
         alert("Inicio de sesión exitoso ✅");
-        
-        // Redirigir a home
-        window.location.href = "/";
+        window.location.href = "/"; // o usa navigate("/") si prefieres
       } else {
         const error = await response.text();
         alert(error || "Error en el inicio de sesión");
@@ -50,7 +48,7 @@ export default function RegisterPage() {
         <RegisterForm />
       </div>
 
-      {/* Panel de Login - Ahora integrado directamente */}
+      {/* Panel de Login */}
       <div className="form-container sign-in">
         <form onSubmit={handleLogin}>
           <h1>Iniciar Sesión</h1>
