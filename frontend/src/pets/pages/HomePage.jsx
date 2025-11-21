@@ -3,35 +3,42 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import "../styles/home.css";
+import { useAuth } from "../../hooks/useAuth.js";
 
-export default function HomePage() {
+export default function Home() {
   const [mascotas, setMascotas] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeSection, setActiveSection] = useState("inicio");
+  
+  // 👇 Usar el hook de autenticación
+  const { isAuthenticated, userEmail, userRole, logout } = useAuth();
 
   useEffect(() => {
-  const fetchMascotas = async () => {
-    try {
-      const response = await axios.get("http://localhost:9494/api/petconnect/mascotas/List");
-      console.log("✅ API respondió con:", response);
-      console.log("✅ Datos:", response.data);
+    const fetchMascotas = async () => {
+      try {
+        const response = await axios.get("http://localhost:9494/api/petconnect/mascotas/List");
+        console.log("✅ API respondió con:", response);
+        console.log("✅ Datos:", response.data);
 
-      if (Array.isArray(response.data)) {
-        setMascotas(response.data);
-      } else {
-        console.warn("⚠️ La API no devolvió un array:", response.data);
+        if (Array.isArray(response.data)) {
+          setMascotas(response.data);
+        } else {
+          console.warn("⚠️ La API no devolvió un array:", response.data);
+          setMascotas([]);
+        }
+      } catch (error) {
+        console.error("❌ Error al cargar mascotas:", error);
         setMascotas([]);
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      console.error("❌ Error al cargar mascotas:", error);
-      setMascotas([]);
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
 
-  fetchMascotas();
-}, []);
+    fetchMascotas();
+  }, []);
+
+  // 👇 Obtener solo las primeras 3 mascotas
+  const mascotasMostradas = mascotas.slice(0, 3);
 
   const scrollToSection = (sectionId) => {
     const element = document.getElementById(sectionId);
@@ -39,6 +46,11 @@ export default function HomePage() {
       element.scrollIntoView({ behavior: "smooth" });
     }
     setActiveSection(sectionId);
+  };
+
+  const handleLogout = () => {
+    logout();
+    window.location.reload();
   };
 
   return (
@@ -68,7 +80,7 @@ export default function HomePage() {
           </div>
           
           <div className="auth-buttons">
-            {!localStorage.getItem("token") ? (
+            {!isAuthenticated ? (
               <>
                 <Link to="/register">
                   <button className="auth-btn signin-btn">Iniciar Sesión</button>
@@ -78,19 +90,21 @@ export default function HomePage() {
                 </Link>
               </>
             ) : (
-              <button
-                className="auth-btn logout-btn"
-                onClick={() => {
-                  localStorage.removeItem("token");
-                  localStorage.removeItem("role");
-                  window.location.reload();
-                }}
-              >
-                Cerrar Sesión
-              </button>
+              <div className="user-menu">
+                <span className="user-info">
+                  ¡Hola, {userEmail}!
+                  {userRole && <span className="user-role">({userRole})</span>}
+                </span>
+                <button 
+                  className="auth-btn logout-btn"
+                  onClick={handleLogout}
+                >
+                  Cerrar Sesión
+                </button>
+              </div>
             )}
           </div>
-        </div> {/* ✅ cierre agregado */}
+        </div>
       </header>
 
       <main>
@@ -115,7 +129,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* Sección Frase e Imagen - REEMPLAZA Quiénes Somos */}
+        {/* Sección Frase e Imagen */}
         <section id="quienes-somos" className="phrase-hero-section">
           <div className="phrase-hero-image">
             <img 
@@ -134,7 +148,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* Catálogo de Mascotas */}
+        {/* Catálogo de Mascotas - MOSTRANDO SOLO 3 */}
         <section id="mascotas" className="pets-section">
           <div className="section-header">
             <h2>Nuestras Mascotas</h2>
@@ -147,45 +161,58 @@ export default function HomePage() {
               <p>Cargando mascotas...</p>
             </div>
           ) : (
-            <div className="mascotas-grid">
-              {mascotas.length > 0 ? (
-                mascotas.map((mascota, index) => (
-                  <div key={mascota.id || index} className="mascota-card">
-                    <div className="card-image">
-                      <img
-                        src={
-                          mascota.imageUrl ||
-                          "https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=300&h=200&fit=crop"
-                        }
-                        alt={mascota.name || "Mascota"}
-                        onError={(e) => {
-                          e.target.src = "https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=300&h=200&fit=crop";
-                        }}
-                      />
-                      <div className="card-overlay">
-                        <button className="adopt-btn">¡Adóptame!</button>
+            <>
+              <div className="mascotas-grid">
+                {mascotasMostradas.length > 0 ? (
+                  mascotasMostradas.map((mascota, index) => (
+                    <div key={mascota.id || index} className="mascota-card">
+                      <div className="card-image">
+                        <img
+                          src={
+                            mascota.imageUrl ||
+                            "https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=300&h=200&fit=crop"
+                          }
+                          alt={mascota.name || "Mascota"}
+                          onError={(e) => {
+                            e.target.src = "https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=300&h=200&fit=crop";
+                          }}
+                        />
+                        <div className="card-overlay">
+                          <button className="adopt-btn">¡Adóptame!</button>
+                        </div>
+                      </div>
+                      <div className="card-content">
+                        <h3>{mascota.name || "Sin nombre"}</h3>
+                        <p className="pet-description">
+                          {mascota.description || "Esta mascota está buscando un hogar lleno de amor y cuidados."}
+                        </p>
+                        <div className="pet-tags">
+                          <span className="tag">🐕 Mascota</span>
+                          <span className="tag">❤️ Necesita Hogar</span>
+                        </div>
                       </div>
                     </div>
-                    <div className="card-content">
-                      <h3>{mascota.name || "Sin nombre"}</h3>
-                      <p className="pet-description">
-                        {mascota.description || "Esta mascota está buscando un hogar lleno de amor y cuidados."}
-                      </p>
-                      <div className="pet-tags">
-                        <span className="tag">🐕 Mascota</span>
-                        <span className="tag">❤️ Necesita Hogar</span>
-                      </div>
-                    </div>
+                  ))
+                ) : (
+                  <div className="no-pets">
+                    <div className="no-pets-icon">🐾</div>
+                    <h3>No hay mascotas disponibles en este momento</h3>
+                    <p>Pronto tendremos nuevos amigos esperando por un hogar.</p>
                   </div>
-                ))
-              ) : (
-                <div className="no-pets">
-                  <div className="no-pets-icon">🐾</div>
-                  <h3>No hay mascotas disponibles en este momento</h3>
-                  <p>Pronto tendremos nuevos amigos esperando por un hogar.</p>
+                )}
+              </div>
+
+              {/* 👇 Botón "Mostrar más" - Solo aparece si hay más de 3 mascotas */}
+              {mascotas.length > 3 && (
+                <div className="show-more-container">
+                  <Link to="/mascotas">
+                    <button className="show-more-btn">
+                      Ver todas las mascotas ({mascotas.length})
+                    </button>
+                  </Link>
                 </div>
               )}
-            </div>
+            </>
           )}
         </section>
       </main>

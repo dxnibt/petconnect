@@ -599,4 +599,52 @@ body {
   margin-bottom: 1.5rem;
 }
   
+/* Agregar a tu style1.css para mensajes de error */
+.form-container form {
+  position: relative;
+}
+
+.form-container form::after {
+  content: '';
+  display: block;
+  height: 20px;
+  margin-top: 10px;
+  text-align: center;
+  font-size: 14px;
+  color: #ff6b6b;
+}
+
+/* Para mostrar mensajes de error temporalmente */
+.form-container form:has(input:invalid)::after {
+  content: 'Por favor completa todos los campos';
+}
+
+/* Estilos para el botón "Mostrar más" */
+.show-more-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 2px solid #f0f0f0;
+}
+
+.show-more-btn {
+  background: linear-gradient(135deg, #FF6B6B, #FF8E8E);
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.show-more-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(255, 107, 107, 0.3);
+}
+
 }
