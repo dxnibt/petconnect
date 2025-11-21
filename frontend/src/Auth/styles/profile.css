@@ -1,0 +1,635 @@
+/* src/styles/profile.css */
+/* Estilos para ProfilePage con prefijo pc- para evitar conflictos */
+
+.pc-profile-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.pc-profile-header {
+  text-align: center;
+  margin-bottom: 2rem;
+  color: white;
+}
+
+.pc-profile-header h1 {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+  font-weight: 700;
+}
+
+.pc-profile-header p {
+  font-size: 1.1rem;
+  opacity: 0.9;
+}
+
+.pc-profile-layout {
+  display: grid;
+  grid-template-columns: 350px 1fr;
+  gap: 2rem;
+  align-items: start;
+}
+
+/* Sidebar - Foto de perfil */
+.pc-profile-sidebar {
+  position: sticky;
+  top: 2rem;
+}
+
+.pc-profile-card {
+  background: white;
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+  text-align: center;
+}
+
+.pc-profile-photo-container {
+  position: relative;
+  margin-bottom: 1.5rem;
+}
+
+.pc-profile-photo {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 5px solid #667eea;
+  margin: 0 auto;
+}
+
+.pc-profile-overlay {
+  position: absolute;
+  bottom: 10px;
+  right: 50%;
+  transform: translateX(50%);
+}
+
+.pc-change-photo-btn {
+  background: rgba(102, 126, 234, 0.9);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+}
+
+.pc-profile-basic-info h2 {
+  margin: 0 0 0.5rem 0;
+  color: #333;
+  font-size: 1.5rem;
+}
+
+.pc-profile-email {
+  color: #666;
+  margin-bottom: 1rem;
+}
+
+.pc-role-badge {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+.pc-role-adoptante {
+  background: #e3f2fd;
+  color: #1976d2;
+}
+
+.pc-role-refugio {
+  background: #e8f5e8;
+  color: #2e7d32;
+}
+
+.pc-role-admin {
+  background: #fce4ec;
+  color: #c2185b;
+}
+
+.pc-profile-stats {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #eee;
+}
+
+.pc-stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.pc-stat-number {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #667eea;
+}
+
+.pc-stat-label {
+  font-size: 0.8rem;
+  color: #666;
+  margin-top: 0.25rem;
+}
+
+/* Contenido principal */
+.pc-profile-main {
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+  overflow: hidden;
+}
+
+.pc-profile-tabs {
+  display: flex;
+  background: #f8f9fa;
+  border-bottom: 1px solid #e0e0e0;
+  padding: 0 2rem;
+}
+
+.pc-tab-btn {
+  padding: 1.2rem 2rem;
+  border: none;
+  background: none;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  transition: all 0.3s ease;
+  font-size: 1rem;
+  color: #666;
+}
+
+.pc-tab-btn.pc-active {
+  border-bottom-color: #667eea;
+  color: #667eea;
+  font-weight: 600;
+}
+
+.pc-tab-btn:hover {
+  background: #f0f0f0;
+  color: #667eea;
+}
+
+.pc-profile-content {
+  padding: 2rem;
+}
+
+/* Información del perfil */
+.pc-info-section {
+  margin-bottom: 2rem;
+}
+
+.pc-info-section h3 {
+  margin-bottom: 1.5rem;
+  color: #333;
+  font-size: 1.5rem;
+  border-bottom: 2px solid #667eea;
+  padding-bottom: 0.5rem;
+  display: inline-block;
+}
+
+.pc-info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.pc-info-item {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 10px;
+  border-left: 4px solid #667eea;
+}
+
+.pc-info-item label {
+  font-weight: 600;
+  color: #667eea;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.pc-info-item span {
+  color: #333;
+  font-size: 1.1rem;
+}
+
+.pc-full-width {
+  grid-column: 1 / -1;
+}
+
+.pc-description-text {
+  line-height: 1.6;
+  color: #555;
+}
+
+.pc-edit-btn {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 1.1rem;
+  font-weight: 600;
+  transition: transform 0.3s ease;
+}
+
+.pc-edit-btn:hover {
+  transform: translateY(-2px);
+}
+
+/* Formulario de edición */
+.pc-edit-form h3 {
+  margin-bottom: 1.5rem;
+  color: #333;
+  font-size: 1.5rem;
+  border-bottom: 2px solid #667eea;
+  padding-bottom: 0.5rem;
+  display: inline-block;
+}
+
+.pc-form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.pc-form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.pc-form-group label {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #333;
+}
+
+.pc-form-input, .pc-form-textarea {
+  padding: 1rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 10px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+}
+
+.pc-form-input:focus, .pc-form-textarea:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.pc-form-textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+.pc-form-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  margin-top: 2rem;
+}
+
+.pc-cancel-btn, .pc-save-btn {
+  padding: 1rem 2rem;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.pc-cancel-btn {
+  background: #6c757d;
+  color: white;
+}
+
+.pc-cancel-btn:hover {
+  background: #5a6268;
+}
+
+.pc-save-btn {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+}
+
+.pc-save-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+}
+
+.pc-save-btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+/* Sección de mascotas */
+.pc-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.pc-section-header h3 {
+  color: #333;
+  font-size: 1.5rem;
+  margin: 0;
+}
+
+.pc-add-pet-btn, .pc-browse-pets-btn {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  border: none;
+  padding: 1rem 1.5rem;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: transform 0.3s ease;
+}
+
+.pc-add-pet-btn:hover, .pc-browse-pets-btn:hover {
+  transform: translateY(-2px);
+}
+
+.pc-mascotas-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.pc-mascota-card {
+  background: white;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: 1px solid #e0e0e0;
+}
+
+.pc-mascota-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+}
+
+.pc-mascota-image img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.pc-mascota-content {
+  padding: 1.5rem;
+}
+
+.pc-mascota-content h4 {
+  margin: 0 0 0.5rem 0;
+  color: #333;
+  font-size: 1.2rem;
+}
+
+.pc-mascota-species {
+  color: #666;
+  margin-bottom: 1rem;
+}
+
+.pc-pet-status {
+  margin-bottom: 1rem;
+}
+
+.pc-status {
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.pc-disponible {
+  background: #d4edda;
+  color: #155724;
+}
+
+.pc-adoptado, .pc-aprobado {
+  background: #cce7ff;
+  color: #004085;
+}
+
+.pc-pendiente {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.pc-rechazado, .pc-cancelado {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.pc-mascota-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.pc-action-btn, .pc-view-btn {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.3s ease;
+}
+
+.pc-action-btn {
+  background: #667eea;
+  color: white;
+}
+
+.pc-view-btn {
+  background: #6c757d;
+  color: white;
+}
+
+/* Solicitudes */
+.pc-solicitudes-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.pc-solicitud-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  background: #f8f9fa;
+  border-radius: 15px;
+  border-left: 4px solid #667eea;
+  transition: transform 0.3s ease;
+}
+
+.pc-solicitud-card:hover {
+  transform: translateX(5px);
+}
+
+.pc-solicitud-info h4 {
+  margin: 0 0 0.5rem 0;
+  color: #333;
+}
+
+.pc-solicitud-info p {
+  margin: 0.25rem 0;
+  color: #666;
+}
+
+.pc-solicitud-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.pc-btn-secondary, .pc-btn-danger {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.pc-btn-secondary {
+  background: #6c757d;
+  color: white;
+}
+
+.pc-btn-secondary:hover {
+  background: #5a6268;
+}
+
+.pc-btn-danger {
+  background: #dc3545;
+  color: white;
+}
+
+.pc-btn-danger:hover {
+  background: #c82333;
+}
+
+/* Estados de carga y vacío */
+.pc-loading, .pc-no-data {
+  text-align: center;
+  padding: 3rem;
+  color: #666;
+}
+
+.pc-no-data-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+}
+
+.pc-no-data h4 {
+  margin-bottom: 0.5rem;
+  color: #333;
+}
+
+/* No autenticado */
+.pc-not-authenticated {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+}
+
+.pc-auth-btn {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-top: 1rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .pc-profile-layout {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .pc-profile-sidebar {
+    position: static;
+  }
+  
+  .pc-profile-tabs {
+    flex-direction: column;
+    padding: 0;
+  }
+  
+  .pc-tab-btn {
+    padding: 1rem;
+    text-align: center;
+  }
+  
+  .pc-section-header {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+  }
+  
+  .pc-solicitud-card {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+  }
+  
+  .pc-solicitud-actions {
+    justify-content: stretch;
+  }
+  
+  .pc-btn-secondary, .pc-btn-danger {
+    flex: 1;
+  }
+
+/* Agrega esto al final de profile.css */
+.pc-loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid #f3f3f3;
+  border-top: 5px solid #667eea;
+  border-radius: 50%;
+  animation: pc-spin 1s linear infinite;
+  margin: 0 auto 1rem;
+}
+
+@keyframes pc-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.pc-loading {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+}
+
+/* Mejora la visualización de datos vacíos */
+.pc-info-item span:empty::before {
+  content: "No especificado";
+  color: #999;
+  font-style: italic;
+}
+
+}
