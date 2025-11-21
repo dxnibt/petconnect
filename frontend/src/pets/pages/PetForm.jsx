@@ -102,6 +102,24 @@ export default function PetForm() {
     return age.toString();
   };
 
+  // Agrega esta función en PetForm.jsx para probar la conexión básica
+const testConnection = async () => {
+  try {
+    console.log("🧪 Probando conexión con el backend...");
+    const response = await fetch("http://localhost:9494/api/petconnect/mascotas/List");
+    console.log("✅ Backend responde. Status:", response.status);
+    return true;
+  } catch (error) {
+    console.error("❌ No se puede conectar al backend:", error);
+    return false;
+  }
+};
+
+// Llama a esta función en el useEffect o antes de enviar
+useEffect(() => {
+  testConnection(); // Para verificar la conexión al cargar el componente
+}, []);
+
   // Función para validar y formatear los datos para el backend
   function validateAndFormatData(formData) {
     const formattedData = {
