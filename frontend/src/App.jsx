@@ -16,7 +16,8 @@ function App() {
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/adoptante" element={<AdoptantePage />} />
         <Route path="/editar" element={<PetDetails/>} />
-        <Route path="/crear" element={<PetList/>} />
+        <Route path="/ver" element={<PetList/>} />
+        <Route path= "crear" element={<PetForm/>}/>
         <Route path="/" element={<HomePage/>} />
         
       </Routes>
