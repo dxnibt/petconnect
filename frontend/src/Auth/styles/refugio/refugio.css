@@ -1,13 +1,13 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap');
 
-* {
+.refugio-container * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
   font-family: 'Montserrat', sans-serif;
 }
 
-body {
+.refugio-container {
   background: linear-gradient(to right, #e2e2e2, #c9d6ff);
   min-height: 100vh;
   display: flex;
@@ -16,13 +16,13 @@ body {
 }
 
 /* 🩷 Contenedor principal del formulario */
-.formContainer {
+.refugio-container .form-container {
   background-color: #fff;
   border-radius: 20px;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
   padding: 40px;
   width: 100%;
-  max-width: 500px;
+  max-width: 550px;
   animation: fadeIn 0.6s ease-in-out;
 }
 
@@ -39,7 +39,7 @@ body {
 }
 
 /* 🔹 Título */
-.formContainer h2 {
+.refugio-container .form-container h2 {
   text-align: center;
   color: #ff6b6b;
   margin-bottom: 25px;
@@ -47,7 +47,7 @@ body {
 }
 
 /* 📝 Etiquetas */
-label {
+.refugio-container label {
   display: block;
   margin-bottom: 6px;
   font-size: 14px;
@@ -56,8 +56,8 @@ label {
 }
 
 /* 🔘 Campos de texto */
-input,
-textarea {
+.refugio-container input,
+.refugio-container textarea {
   width: 100%;
   padding: 10px 15px;
   margin-bottom: 18px;
@@ -70,22 +70,22 @@ textarea {
 }
 
 /* 💡 Efectos de foco */
-input:focus,
-textarea:focus {
+.refugio-container input:focus,
+.refugio-container textarea:focus {
   border-color: #ff6b6b;
   box-shadow: 0 0 8px rgba(255, 107, 107, 0.3);
   background-color: #fff;
 }
 
 /* 🪶 Textarea */
-textarea {
+.refugio-container textarea {
   resize: none;
   height: 100px;
   line-height: 1.4;
 }
 
 /* 🧡 Botón */
-button {
+.refugio-container button {
   background-color: #ff6b6b;
   color: #fff;
   border: none;
@@ -98,17 +98,182 @@ button {
   transition: all 0.3s ease;
 }
 
-button:hover {
+.refugio-container button:hover {
   background-color: #ff4040;
   box-shadow: 0 4px 10px rgba(255, 107, 107, 0.4);
 }
 
-button:active {
+.refugio-container button:active {
   transform: scale(0.98);
 }
 
-/* 🩵 Mensajes de validación (opcional) */
-input:invalid,
-textarea:invalid {
+.refugio-container button.disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.refugio-container button.disabled:hover {
+  background-color: #ccc;
+  box-shadow: none;
+}
+
+/* 🩵 Mensajes de validación */
+.refugio-container input:invalid,
+.refugio-container textarea:invalid {
   border-color: #ff9e9e;
+}
+
+/* 🌟 Sección de Política */
+.refugio-container .policy-section {
+  background: linear-gradient(135deg, #f8f9ff 0%, #f0f2ff 100%);
+  border: 2px solid #e0e7ff;
+  border-radius: 12px;
+  padding: 20px;
+  margin: 25px 0;
+  transition: all 0.3s ease;
+}
+
+.refugio-container .policy-section:hover {
+  border-color: #ff6b6b;
+  box-shadow: 0 4px 12px rgba(255, 107, 107, 0.1);
+}
+
+.refugio-container .policy-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.refugio-container .policy-header h3 {
+  color: #4a5568;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.refugio-container .policy-toggle {
+  background: #667eea;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: auto;
+  text-transform: none;
+}
+
+.refugio-container .policy-toggle:hover {
+  background: #5a67d8;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+.refugio-container .policy-content {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.refugio-container .policy-text {
+  font-size: 12px;
+  line-height: 1.6;
+  color: #4a5568;
+}
+
+.refugio-container .policy-text p {
+  margin-bottom: 8px;
+}
+
+.refugio-container .policy-title {
+  font-weight: 600;
+  color: #2d3748;
+  font-size: 13px;
+  margin-bottom: 12px !important;
+}
+
+/* ✅ Checkbox personalizado */
+.refugio-container .policy-acceptance {
+  margin-top: 15px;
+}
+
+.refugio-container .checkbox-label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  color: #4a5568;
+  position: relative;
+  padding-left: 30px;
+}
+
+.refugio-container .checkbox-label input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+.refugio-container .checkmark {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 20px;
+  width: 20px;
+  background-color: #f8f8f8;
+  border: 2px solid #ddd;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+.refugio-container .checkbox-label:hover input ~ .checkmark {
+  border-color: #ff6b6b;
+}
+
+.refugio-container .checkbox-label input:checked ~ .checkmark {
+  background-color: #ff6b6b;
+  border-color: #ff6b6b;
+}
+
+.refugio-container .checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+  left: 6px;
+  top: 2px;
+  width: 4px;
+  height: 8px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.refugio-container .checkbox-label input:checked ~ .checkmark:after {
+  display: block;
+}
+
+/* 🎨 Scrollbar personalizado para la política */
+.refugio-container .policy-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.refugio-container .policy-content::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.refugio-container .policy-content::-webkit-scrollbar-thumb {
+  background: #ff6b6b;
+  border-radius: 3px;
+}
+
+.refugio-container .policy-content::-webkit-scrollbar-thumb:hover {
+  background: #ff4040;
 }
