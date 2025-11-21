@@ -149,7 +149,7 @@ export default function Home() {
                 
                 {/* Botón para crear mascota - Solo para roles autorizados */}
                 {canCreatePets && (
-                  <Link to="/crear">
+                  <Link to="/mascotas/crear">
                     <button className="auth-btn create-pet-btn">
                       🐾 Crear Mascota
                     </button>
@@ -214,6 +214,17 @@ export default function Home() {
           <div className="section-header">
             <h2>Nuestras Mascotas</h2>
             <p>Conoce a estos increíbles compañeros que buscan un hogar</p>
+            
+            {/* Botón crear mascota en la sección - Solo para roles autorizados */}
+            {canCreatePets && (
+              <div className="create-pet-section">
+                <Link to="/mascotas/crear">
+                  <button className="create-pet-main-btn">
+                    ＋ Agregar Nueva Mascota
+                  </button>
+                </Link>
+              </div>
+            )}
           </div>
 
           {loading ? (
@@ -264,6 +275,18 @@ export default function Home() {
                             </Link>
                           )}
                           
+                          {/* Botón actualizar info - Solo para REFUGIO (no ADMIN) */}
+                          {userRole === "REFUGIO" && (
+                            <Link to={`/mascotas/actualizar/${mascota.id}`}>
+                              <button 
+                                className="action-btn update-info-btn"
+                                title="Actualizar información"
+                              >
+                                📝
+                              </button>
+                            </Link>
+                          )}
+                          
                           {/* Botón eliminar - Solo para ADMIN */}
                           {canDeletePets && (
                             <button 
@@ -305,8 +328,17 @@ export default function Home() {
                           <span className="tag">❤️ Necesita Hogar</span>
                         </div>
                         
+                        {/* Información adicional para refugios */}
+                        {userRole === "REFUGIO" && (
+                          <div className="refugio-info">
+                            <p className="info-text">
+                              📝 Puedes actualizar información médica y características
+                            </p>
+                          </div>
+                        )}
+                        
                         {/* Mensaje informativo para usuarios no adoptantes */}
-                        {isAuthenticated && !canAdoptPets && (
+                        {isAuthenticated && !canAdoptPets && userRole !== "REFUGIO" && (
                           <div className="adoption-info">
                             <p className="info-text">
                               ⓘ Solo los adoptantes pueden realizar adopciones
@@ -383,7 +415,7 @@ export default function Home() {
           </div>
         </div>
         <div className="footer-bottom">
-          <p>&copy; 2024 PetConnect. Todos los derechos reservados.</p>
+          <p>&copy; 2025 PetConnect. Todos los derechos reservados.</p>
         </div>
       </footer>
     </div>
