@@ -155,27 +155,37 @@ public class AdopcionUseCase {
         return adopcion;
     }
 
-//    public Adopcion obtenerPorUserId(Long userId) {
-//        Adopcion adopcion = gateway.buscarPorUserId(userId);
-//        if (adopcion == null) {
-//            throw new AdopcionNoEncontradaException("El usuario no tiene solicitudes de adopción");
-//        }
-//        return adopcion;
-//    }
-
-    public void eliminar(Long id) {
-        Adopcion adopcion = obtenerPorId(id);
-
-        // Si la adopción está en proceso, liberar la mascota
-        if (adopcion.getStatus() == EstadoAdopcion.EN_PROCESO) {
-            Mascota mascota = mascotaGateway.buscarPorId(adopcion.getPetId());
-            if (mascota != null) {
-                mascota.setState(EstadoMascota.DISPONIBLE);
-                mascotaGateway.actualizarMascota(mascota);
-            }
+    public void eliminarSolicitudUsuario(Long adopcionId, Long usuarioId) {
+        // Validar que la adopción existe
+        Adopcion adopcion = gateway.obtenerAdopcionPorId(adopcionId);
+        if (adopcion == null) {
+            throw new AdopcionNoEncontradaException("La adopción no existe");
         }
 
-        gateway.eliminarAdopcion(id);
+        // Validar que el usuario es el dueño de la solicitud
+        if (!adopcion.getUserId().equals(usuarioId)) {
+            throw new UsuarioNoAutorizadoException("No puedes eliminar solicitudes de otros usuarios");
+        }
+
+        // Validar que el usuario tiene rol de ADOPTANTE
+        if (!usuarioGateway.tieneRol(usuarioId, "ADOPTANTE")) {
+            throw new UsuarioNoAutorizadoException("Solo los adoptantes pueden eliminar sus solicitudes");
+        }
+
+        // Validar que la adopción está EN_PROCESO
+        if (adopcion.getStatus() != EstadoAdopcion.EN_PROCESO) {
+            throw new IllegalStateException("Solo se pueden eliminar solicitudes en proceso");
+        }
+
+        // Liberar la mascota para que esté disponible nuevamente
+        Mascota mascota = mascotaGateway.buscarPorId(adopcion.getPetId());
+        if (mascota != null) {
+            mascota.setState(EstadoMascota.DISPONIBLE);
+            mascotaGateway.actualizarMascota(mascota);
+        }
+
+        // Eliminar la solicitud
+        gateway.eliminarAdopcion(adopcionId);
     }
 
 }

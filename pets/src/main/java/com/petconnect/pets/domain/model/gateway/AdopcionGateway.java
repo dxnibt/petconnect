@@ -7,7 +7,6 @@ import java.util.List;
 
 public interface AdopcionGateway {
     Adopcion crear(Adopcion adopcion);
-//    Adopcion buscarPorUserId(Long userId);
     List<Adopcion> buscarPorShelterId(Long shelterId, int page, int size);
     Adopcion obtenerAdopcionPorId(Long adoptionId);
     Adopcion buscarPorUserIdYEstado(Long userId, EstadoAdopcion estado);

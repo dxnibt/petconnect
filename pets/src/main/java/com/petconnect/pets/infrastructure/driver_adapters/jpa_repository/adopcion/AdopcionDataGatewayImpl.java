@@ -27,12 +27,6 @@ public class AdopcionDataGatewayImpl implements AdopcionGateway {
         return mapper.toAdopcion(saved);
     }
 
-//    @Override
-//    public Adopcion buscarPorUserId(Long userId) {
-//        AdopcionData data = repository.findByUserId(userId);
-//        return (data != null) ? mapper.toAdopcion(data) : null;
-//    }
-
     @Override
     public List<Adopcion> buscarPorShelterId(Long shelterId, int page, int size) {
         if (page == -1) {

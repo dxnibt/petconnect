@@ -101,6 +101,23 @@ public class AdopcionController {
         }
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> eliminarSolicitud(
+            @PathVariable Long id,
+            @AuthenticationPrincipal JwtUserDetails userDetails) {
+
+        if (userDetails == null) {
+            return new ResponseEntity<>("Token inválido", HttpStatus.UNAUTHORIZED);
+        }
+
+        try {
+            useCase.eliminarSolicitudUsuario(id, userDetails.getId());
+            return new ResponseEntity<>("Solicitud de adopción eliminada", HttpStatus.OK);
+        } catch (Exception error) {
+            return new ResponseEntity<>(error.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
 //    // Obtener por ID
 //    @GetMapping("/{id}")
 //    public ResponseEntity<?> obtenerPorId(@PathVariable Long id) {
@@ -126,14 +143,4 @@ public class AdopcionController {
 //    }
 //
 //
-//    // Eliminar solicitud
-//    @DeleteMapping("/delete/{id}")
-//    public ResponseEntity<?> eliminar(@PathVariable Long id) {
-//        try {
-//            useCase.eliminar(id);
-//            return new ResponseEntity<>("Solicitud de adopción eliminada", HttpStatus.OK);
-//        } catch (Exception e) {
-//            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-//        }
-//    }
 }
