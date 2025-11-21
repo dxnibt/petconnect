@@ -1,0 +1,12 @@
+.nav-container {
+  display: flex;
+  justify-content: space-between;
+  padding: 15px;
+  background: #e7ffe7;
+}
+
+.nav-links a {
+  margin-left: 10px;
+  text-decoration: none;
+  color: black;
+}

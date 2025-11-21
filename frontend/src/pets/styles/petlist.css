@@ -1,0 +1,21 @@
+.pet-list-container {
+  padding: 20px;
+}
+
+.pet-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 16px;
+}
+
+.pet-card {
+  padding: 20px;
+  background: #f5f5f5;
+  border-radius: 10px;
+}
+
+.card-actions {
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-between;
+}

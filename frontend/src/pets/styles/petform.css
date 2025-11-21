@@ -1,0 +1,14 @@
+.pet-form-container {
+  padding: 20px;
+}
+
+.pet-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 350px;
+}
+
+.pet-form input {
+  padding: 8px;
+}

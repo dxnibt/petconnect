@@ -1,0 +1,13 @@
+.pet-details-container {
+  padding: 20px;
+}
+
+.edit-btn {
+  display: inline-block;
+  margin-top: 12px;
+  padding: 8px 12px;
+  background: #62caff;
+  border-radius: 6px;
+  text-decoration: none;
+  color: black;
+}
