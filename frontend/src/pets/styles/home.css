@@ -1087,4 +1087,573 @@ body {
   opacity: 1;
 }
 
+/* Agrega esto a tu home.css */
+.pagination-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 3rem 0 2rem;
+  gap: 1rem;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.pagination-btn {
+  padding: 0.75rem 1.5rem;
+  background: #667eea;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.pagination-btn:hover:not(.disabled) {
+  background: #5a67d8;
+  transform: translateY(-2px);
+}
+
+.pagination-btn.disabled {
+  background: #cbd5e0;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.page-numbers {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.page-number {
+  padding: 0.75rem 1rem;
+  background: #f7fafc;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  min-width: 3rem;
+}
+
+.page-number:hover {
+  border-color: #667eea;
+  background: white;
+}
+
+.page-number.active {
+  background: #667eea;
+  color: white;
+  border-color: #667eea;
+}
+
+.page-info {
+  color: #718096;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .pagination {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .page-numbers {
+    order: -1;
+  }
+  
+  .pagination-btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+  }
+  
+  .page-number {
+    padding: 0.5rem 0.75rem;
+    min-width: 2.5rem;
+  }
+}
+
+/* Estilos mejorados para el botón "Ver todas las mascotas" */
+.show-more-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 2px solid rgba(0, 0, 0, 0.1);
+}
+
+.show-more-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 1.2rem 2.5rem;
+  border-radius: 50px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.show-more-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.show-more-btn:hover::before {
+  left: 100%;
+}
+
+.show-more-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 35px rgba(102, 126, 234, 0.4);
+}
+
+.show-more-btn:active {
+  transform: translateY(-1px);
+}
+
+/* Icono del botón */
+.show-more-btn::after {
+  content: '🐾';
+  font-size: 1.2rem;
+}
+
+/* Versión alternativa con icono diferente */
+.show-more-btn.alternative::after {
+  content: '👀';
+}
+
+/* Para el contenedor cuando está junto a la paginación */
+.pets-section:has(.pagination-container) .show-more-container {
+  margin-top: 1rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .show-more-btn {
+    padding: 1rem 2rem;
+    font-size: 1rem;
+  }
+  
+  .show-more-container {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+  }
+}
+
+/* Estilo Moderno con Gradiente */
+.show-more-container {
+  display: flex;
+  justify-content: center;
+  margin: 3rem 0 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.show-more-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 1.2rem 2.5rem;
+  border-radius: 50px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.8rem;
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+  position: relative;
+  overflow: hidden;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.show-more-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.6s;
+}
+
+.show-more-btn:hover::before {
+  left: 100%;
+}
+
+.show-more-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
+  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+}
+
+.show-more-btn:active {
+  transform: translateY(-1px);
+}
+
+/* Icono de patitas */
+.show-more-btn::after {
+  content: '🐾🐾';
+  font-size: 1.1rem;
+  filter: brightness(0) invert(1);
+}
+}
+
+/* Estilo Moderno con Gradiente */
+.show-more-container {
+  display: flex;
+  justify-content: center;
+  margin: 3rem 0 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.show-more-btn {
+  background: linear-gradient(135deg, #FF6B6B 0%, #FF6B6B 100%);
+  color: white;
+  border: none;
+  padding: 1.2rem 2.5rem;
+  border-radius: 50px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.8rem;
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+  position: relative;
+  overflow: hidden;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.show-more-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.6s;
+}
+
+.show-more-btn:hover::before {
+  left: 100%;
+}
+
+.show-more-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 15px 35px rgba(211, 74, 92, 0.664);
+  background: linear-gradient(135deg, #FF6B6B 0%, #c577b4 100%);
+}
+
+.show-more-btn:active {
+  transform: translateY(-1px);
+}
+
+/* Icono de patitas */
+.show-more-btn::after {
+  content: '🐾🐾';
+  font-size: 1.1rem;
+  filter: brightness(0) invert(1);
+}
+
+/* Corrige estos estilos en tu home.css */
+
+/* Hero Section del Catálogo - CORREGIDO */
+.catalog-hero {
+  background: linear-gradient(135deg, #FF6B6B 0%, #da8080 100%);
+  color: white;
+  padding: 80px 2rem 40px; /* Reducido el padding */
+  text-align: center;
+  margin-top: 0; /* QUITAR el margin-top */
+}
+
+.catalog-hero-content h1 {
+  font-size: 2.5rem; /* Reducido un poco */
+  font-weight: 700;
+  margin-bottom: 1rem;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+
+.catalog-hero-content p {
+  font-size: 1.2rem; /* Reducido */
+  margin-bottom: 2rem; /* Reducido */
+  opacity: 0.9;
+}
+
+.hero-stats {
+  display: flex;
+  justify-content: center;
+  gap: 3rem; /* Reducido el gap */
+  flex-wrap: wrap;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.stat-number {
+  font-size: 2rem; /* Reducido */
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.stat-label {
+  font-size: 0.85rem; /* Reducido */
+  opacity: 0.8;
+  text-transform: uppercase;
+  letter-spacing: 0.5px; /* Reducido */
+}
+
+/* Sección de Filtros - Ajustar para que sea más compacta */
+.filters-section {
+  background: white;
+  padding: 1.5rem 2rem; /* Reducido padding */
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+  margin-bottom: 1rem; /* Reducido */
+}
+
+.filters-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem; /* Reducido el gap */
+}
+
+.search-box {
+  display: flex;
+  justify-content: center;
+}
+
+.search-input {
+  width: 100%;
+  max-width: 400px; /* Reducido */
+  padding: 0.8rem 1.2rem; /* Reducido */
+  border: 2px solid #e2e8f0;
+  border-radius: 50px;
+  font-size: 0.95rem; /* Reducido */
+  font-family: 'Montserrat', sans-serif;
+  transition: all 0.3s ease;
+}
+
+.filters-group {
+  display: flex;
+  justify-content: center;
+  gap: 0.8rem; /* Reducido */
+  flex-wrap: wrap;
+}
+
+.filter-btn {
+  padding: 0.6rem 1.2rem; /* Reducido */
+  border: 2px solid #e2e8f0;
+  background: white;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9rem; /* Reducido */
+  transition: all 0.3s ease;
+  font-family: 'Montserrat', sans-serif;
+}
+
+/* También ajusta el header para que ocupe menos espacio */
+.all-pets-page .main-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.all-pets-page .header-content {
+  padding: 0.8rem 2rem; /* Reducido padding del header */
+}
+
+/* Ajustar la sección de mascotas para que empiece más arriba */
+.all-pets-section {
+  padding: 2rem 2rem 4rem; /* Reducido padding superior */
+}
+
+.all-pets-section .section-header {
+  margin-bottom: 2rem; /* Reducido */
+}
+
+.all-pets-section .section-header h2 {
+  font-size: 2rem; /* Reducido */
+}
+
+/* Responsive - Ajustes adicionales para móviles */
+@media (max-width: 768px) {
+  .catalog-hero {
+    padding: 60px 1rem 30px; /* Más compacto en móviles */
+  }
+  
+  .catalog-hero-content h1 {
+    font-size: 2rem; /* Más pequeño en móviles */
+  }
+  
+  .catalog-hero-content p {
+    font-size: 1.1rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .hero-stats {
+    gap: 1.5rem; /* Menos espacio entre stats */
+  }
+  
+  .stat-number {
+    font-size: 1.7rem;
+  }
+  
+  .filters-section {
+    padding: 1rem; /* Más compacto */
+  }
+  
+  .filters-container {
+    gap: 0.8rem;
+  }
+  
+  .search-input {
+    max-width: 100%;
+    padding: 0.7rem 1rem;
+  }
+  
+  .filter-btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+  }
+  
+  .all-pets-section {
+    padding: 1.5rem 1rem 3rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .catalog-hero {
+    padding: 50px 1rem 25px;
+  }
+  
+  .catalog-hero-content h1 {
+    font-size: 1.7rem;
+  }
+  
+  .catalog-hero-content p {
+    font-size: 1rem;
+  }
+  
+  .hero-stats {
+    gap: 1rem;
+  }
+  
+  .stat {
+    min-width: 70px;
+  }
+  
+  .stat-number {
+    font-size: 1.5rem;
+  }
+  
+  .stat-label {
+    font-size: 0.75rem;
+  }
+  
+  .filters-group {
+    gap: 0.5rem;
+  }
+  
+  .filter-btn {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+  }
+}
+
+/* Contenedor con scroll interno */
+.all-pets-page {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.scrollable-content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  margin-top: 70px; /* Compensa el header fijo */
+  height: calc(100vh - 70px);
+}
+
+/* Personalizar scrollbar */
+.scrollable-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.scrollable-content::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.scrollable-content::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 10px;
+}
+
+.scrollable-content::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* Ajustes para header fijo */
+.all-pets-page .main-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background: white;
+}
+
+/* Ajustes responsive */
+@media (max-width: 768px) {
+  .scrollable-content {
+    margin-top: 60px;
+    height: calc(100vh - 60px);
+  }
+  
+  .all-pets-page .header-content {
+    padding: 0.5rem 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .scrollable-content {
+    margin-top: 55px;
+    height: calc(100vh - 55px);
+  }
 }

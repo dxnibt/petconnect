@@ -9,6 +9,8 @@ import PetForm from "./pets/pages/PetForm.jsx";
 import PetList from "./pets/pages/PetList.jsx";
 import PetUpdateForm from "./pets/pages/PetUpdateForm.jsx";
 import ProfilePage from "./Auth/pages/ProfilePage.jsx";
+import MascotaPage from "./pets/pages/MascotaPage.jsx";
+
 
 function App() {
   return (
@@ -22,6 +24,7 @@ function App() {
           <Route path="/ver" element={<PetList/>} />
           <Route path= "/crear" element={<PetForm/>}/>
           <Route path= "/profile" element={<ProfilePage/>}/>
+          <Route path= "/mascotas" element={<MascotaPage/>}/>
           <Route path="/" element={<HomePage/>} />
         </Routes>
       </Router>

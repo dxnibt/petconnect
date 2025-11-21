@@ -1,7 +1,7 @@
 /* src/styles/profile.css */
 .pc-profile-container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #dda2a2 0%, #d6a2a2 100%);
   padding: 1rem;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
@@ -119,7 +119,7 @@
 }
 
 .pc-profile-basic-info h2 {
-  color: #2c3e50;
+  color: #FF6B6B;
   font-size: 1.2rem;
   margin-bottom: 0.5rem;
 }
@@ -192,7 +192,7 @@
 
 .pc-tab-btn.pc-active {
   color: #667eea;
-  border-bottom-color: #667eea;
+  border-bottom-color: #FF6B6B;
   background: white;
 }
 
@@ -205,7 +205,7 @@
 
 /* Info Section Styles */
 .pc-info-section h3 {
-  color: #2c3e50;
+  color: #FF6B6B;
   font-size: 1.2rem;
   margin-bottom: 1rem;
   padding-bottom: 0.5rem;
@@ -238,7 +238,7 @@
 }
 
 .pc-info-item span {
-  color: #2c3e50;
+  color: #07070770;
   line-height: 1.3;
 }
 
@@ -248,7 +248,7 @@
 
 /* Button Styles */
 .pc-edit-btn {
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: linear-gradient(135deg, #FF6B6B, #FF6B6B);
   color: white;
   border: none;
   padding: 8px 16px;
@@ -261,7 +261,7 @@
 
 /* Form Styles */
 .pc-edit-form h3 {
-  color: #2c3e50;
+  color: #FF6B6B;
   font-size: 1.2rem;
   margin-bottom: 1rem;
 }
@@ -299,7 +299,7 @@
 .pc-form-group select:focus,
 .pc-form-group textarea:focus {
   outline: none;
-  border-color: #667eea;
+  border-color: #FF6B6B;
 }
 
 .pc-form-group textarea {
@@ -345,7 +345,7 @@
 }
 
 .pc-save-btn {
-  background: linear-gradient(135deg, #00b894, #00a085);
+  background: linear-gradient(135deg, #FF6B6B, #FF6B6B);
   color: white;
   border: none;
   padding: 8px 16px;
@@ -369,7 +369,7 @@
 }
 
 .pc-profile-content::-webkit-scrollbar-thumb {
-  background: #667eea;
+  background: #FF6B6B;
   border-radius: 3px;
 }
 
@@ -427,7 +427,7 @@
   }
   
   .pc-tab-btn.pc-active {
-    border-left-color: #667eea;
+    border-left-color: #FF6B6B;
     border-bottom-color: #e9ecef;
   }
   
@@ -474,7 +474,7 @@
 }
 
 .pc-field-group h4 {
-  color: #495057;
+  color: #0c0c0c59;
   margin-bottom: 0.8rem;
   font-size: 0.9rem;
   border-bottom: 1px solid #dee2e6;
@@ -497,4 +497,25 @@
   border-radius: 6px;
   border: 1px solid #e9ecef;
   font-size: 0.8rem;
+}
+
+/* Agrega esto a tu profile.css */
+.pc-readonly-field {
+  background-color: #f8f9fa !important;
+  border-color: #e9ecef !important;
+  color: #6c757d !important;
+  cursor: not-allowed !important;
+  opacity: 0.8 !important;
+}
+
+.pc-field-note {
+  color: #6c757d;
+  font-size: 0.75rem;
+  font-style: italic;
+  margin-top: 0.25rem;
+  display: block;
+}
+
+.pc-form-group:has(.pc-readonly-field) {
+  opacity: 0.9;
 }

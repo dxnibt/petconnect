@@ -40,10 +40,13 @@ export default function ProfilePage() {
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      console.log("📥 Datos del usuario:", res.data);
+      console.log("📥 Datos COMPLETOS del usuario:", res.data);
+      console.log("📅 registrationDate:", res.data.registrationDate);
+      console.log("🎂 birthDate:", res.data.birthDate);
+      console.log("🔍 Todos los campos disponibles:", Object.keys(res.data));
 
       setEditForm(res.data);
-      updateUserData(res.data); // Actualizar el contexto global
+      updateUserData(res.data);
     } catch (error) {
       console.error("❌ Error al cargar perfil:", error);
     }
@@ -63,11 +66,16 @@ export default function ProfilePage() {
         );
         setMascotas(mascotasRes.data || []);
       } else if (userRole === "ADOPTANTE") {
-        const solicitudesRes = await axios.get(
-          `http://localhost:8181/api/petconnect/adoptante/${userId}`,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        setSolicitudes(solicitudesRes.data || []);
+        try {
+          const solicitudesRes = await axios.get(
+            `http://localhost:8181/api/petconnect/adoptante/${userId}`,
+            { headers: { Authorization: `Bearer ${token}` } }
+          );
+          setSolicitudes(solicitudesRes.data || []);
+        } catch (solicitudesError) {
+          console.warn("⚠️ No se pudieron cargar las solicitudes:", solicitudesError.message);
+          setSolicitudes([]);
+        }
       }
     } catch (error) {
       console.error("Error cargando datos adicionales:", error);
@@ -76,13 +84,17 @@ export default function ProfilePage() {
     }
   };
 
-  // 🔹 Editar perfil
+  // 🔹 Editar perfil - CON PUT
   const handleEdit = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
       const token = localStorage.getItem("token");
-      updateUserData(editForm);
+      
+      if (!token) {
+        alert("No hay token de autenticación. Por favor, inicia sesión nuevamente.");
+        return;
+      }
 
       let endpoint = "";
       let dataToSend = {};
@@ -94,10 +106,10 @@ export default function ProfilePage() {
           phoneNumber: editForm.phoneNumber || "",
           city: editForm.city || "",
           address: editForm.address || "",
-          document: editForm.document || "",
+          // Documento NO se incluye - no se puede modificar
           gender: editForm.gender || "",
           otherGender: editForm.otherGender || "",
-          birthDate: editForm.birthDate || "",
+          // Fecha de nacimiento NO se incluye - no se puede modificar
           monthlySalary: editForm.monthlySalary || 0,
           housingType: editForm.housingType || "",
           hasYard: editForm.hasYard || false,
@@ -119,20 +131,44 @@ export default function ProfilePage() {
           city: editForm.city || "",
           address: editForm.address || "",
           description: editForm.description || ""
+          // NIT NO se incluye - no se puede modificar
         };
       }
 
-      if (endpoint) {
-        await axios.patch(endpoint, dataToSend, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-      }
+      console.log("📤 Enviando PUT a:", endpoint);
+      console.log("📦 Datos enviados:", dataToSend);
 
+      // USAMOS PUT EN LUGAR DE PATCH
+      const response = await axios.put(endpoint, dataToSend, {
+        headers: { 
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      console.log("✅ Respuesta del servidor:", response.data);
+
+      // Actualizar el contexto global con los nuevos datos
+      updateUserData(editForm);
+      
       setEditing(false);
       alert("Perfil actualizado exitosamente!");
+      
+      // Recargar los datos para asegurar consistencia
+      loadUserProfile();
+      
     } catch (error) {
-      console.error("Error actualizando perfil:", error);
-      alert("Error al actualizar el perfil");
+      console.error("❌ Error actualizando perfil:", error);
+      
+      if (error.code === 'ERR_NETWORK') {
+        alert("Error de conexión. Verifica que el servidor esté ejecutándose.");
+      } else if (error.response?.status === 403 || error.response?.status === 401) {
+        alert("Sesión expirada. Por favor, inicia sesión nuevamente.");
+      } else if (error.response?.status === 404) {
+        alert("Endpoint no encontrado. Verifica la URL del servicio.");
+      } else {
+        alert("Error al actualizar el perfil: " + (error.response?.data?.message || error.message));
+      }
     } finally {
       setLoading(false);
     }
@@ -164,10 +200,83 @@ export default function ProfilePage() {
     return userData?.name || userEmail?.split("@")[0] || "Usuario";
   };
 
-  // 🔹 Formatear fecha
+  // 🔹 Formatear fecha - VERSIÓN CORREGIDA (sin problemas de timezone)
   const formatDate = (dateString) => {
-    if (!dateString) return "No especificado";
-    return new Date(dateString).toLocaleDateString('es-ES');
+    if (!dateString) {
+      return "No especificado";
+    }
+    
+    try {
+      // Para fechas en formato YYYY-MM-DD (como birthDate), usar split para evitar problemas de timezone
+      if (typeof dateString === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
+        const [year, month, day] = dateString.split('-');
+        const date = new Date(year, month - 1, day); // month - 1 porque los meses en JS van de 0-11
+        return date.toLocaleDateString('es-ES', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+        });
+      }
+      
+      // Para otros formatos de fecha
+      const date = new Date(dateString);
+      if (!isNaN(date.getTime())) {
+        return date.toLocaleDateString('es-ES', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+        });
+      }
+      
+      return "No especificado";
+    } catch (error) {
+      console.error("❌ Error formateando fecha:", error, "Valor:", dateString);
+      return "No especificado";
+    }
+  };
+
+  // 🔹 Formatear fecha para input type="date" (formato YYYY-MM-DD)
+  const formatDateForInput = (dateString) => {
+    if (!dateString) return "";
+    
+    try {
+      // Si ya está en formato YYYY-MM-DD, devolverlo tal cual
+      if (typeof dateString === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
+        return dateString;
+      }
+      
+      const date = new Date(dateString);
+      if (!isNaN(date.getTime())) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+      }
+      
+      return "";
+    } catch (error) {
+      console.error("Error formateando fecha para input:", error);
+      return "";
+    }
+  };
+
+  // 🔹 Obtener fecha de registro (busca en diferentes campos)
+  const getRegistrationDate = () => {
+    const possibleDateFields = [
+      userData?.registrationDate,
+      userData?.createdAt,
+      userData?.createDate,
+      userData?.fechaRegistro,
+      userData?.fechaCreacion
+    ];
+    
+    for (const dateField of possibleDateFields) {
+      if (dateField) {
+        return formatDate(dateField);
+      }
+    }
+    
+    return "Fecha no disponible";
   };
 
   // 🔹 Formatear valores booleanos
@@ -180,7 +289,7 @@ export default function ProfilePage() {
     if (!salary) return "No especificado";
     return new Intl.NumberFormat('es-ES', {
       style: 'currency',
-      currency: 'COP'
+      currency: 'USD'
     }).format(salary);
   };
 
@@ -234,8 +343,10 @@ export default function ProfilePage() {
               <div className={`pc-role-badge pc-role-${userRole?.toLowerCase()}`}>
                 {userRole === "ADOPTANTE" ? "🐾 Adoptante" : userRole === "REFUGIO" ? "🏠 Refugio" : "👑 Administrador"}
               </div>
+              
+              {/* Fecha de registro */}
               <div className="pc-registration-date">
-                Miembro desde: {formatDate(userData?.registrationDate)}
+                Miembro desde: {getRegistrationDate()}
               </div>
             </div>
           </div>
@@ -282,6 +393,18 @@ export default function ProfilePage() {
                         <div className="pc-info-item"><label>Teléfono:</label><span>{userData?.phoneNumber || "No especificado"}</span></div>
                         <div className="pc-info-item"><label>Ciudad:</label><span>{userData?.city || "No especificada"}</span></div>
                         <div className="pc-info-item"><label>Dirección:</label><span>{userData?.address || "No especificada"}</span></div>
+                        
+                        {/* Campos no editables según el rol */}
+                        {userRole === "ADOPTANTE" && (
+                          <>
+                            <div className="pc-info-item"><label>Documento:</label><span>{userData?.document || "No especificado"}</span></div>
+                            <div className="pc-info-item"><label>Fecha de nacimiento:</label><span>{formatDate(userData?.birthDate)}</span></div>
+                          </>
+                        )}
+                        
+                        {userRole === "REFUGIO" && (
+                          <div className="pc-info-item"><label>NIT:</label><span>{userData?.document || userData?.nit || "No especificado"}</span></div>
+                        )}
                       </div>
                     </div>
 
@@ -292,9 +415,7 @@ export default function ProfilePage() {
                         <div className="pc-field-group">
                           <h4>Información Personal</h4>
                           <div className="pc-info-grid">
-                            <div className="pc-info-item"><label>Documento:</label><span>{userData?.document || "No especificado"}</span></div>
                             <div className="pc-info-item"><label>Género:</label><span>{userData?.gender || "No especificado"}</span></div>
-                            <div className="pc-info-item"><label>Fecha de nacimiento:</label><span>{formatDate(userData?.birthDate)}</span></div>
                           </div>
                         </div>
 
@@ -397,6 +518,51 @@ export default function ProfilePage() {
                             onChange={handleInputChange} 
                           />
                         </div>
+                        
+                        {/* Campos no editables - solo lectura */}
+                        {userRole === "ADOPTANTE" && (
+                          <>
+                            <div className="pc-form-group">
+                              <label>Documento</label>
+                              <input 
+                                type="text" 
+                                name="document" 
+                                value={editForm.document || ""} 
+                                readOnly
+                                disabled
+                                className="pc-readonly-field"
+                              />
+                              <small className="pc-field-note">⚠️ Este campo no se puede modificar</small>
+                            </div>
+                            <div className="pc-form-group">
+                              <label>Fecha de nacimiento</label>
+                              <input 
+                                type="date" 
+                                name="birthDate" 
+                                value={formatDateForInput(editForm.birthDate)} 
+                                readOnly
+                                disabled
+                                className="pc-readonly-field"
+                              />
+                              <small className="pc-field-note">⚠️ Este campo no se puede modificar</small>
+                            </div>
+                          </>
+                        )}
+                        
+                        {userRole === "REFUGIO" && (
+                          <div className="pc-form-group">
+                            <label>NIT</label>
+                            <input 
+                              type="text" 
+                              name="document" 
+                              value={editForm.document || editForm.nit || ""} 
+                              readOnly
+                              disabled
+                              className="pc-readonly-field"
+                            />
+                            <small className="pc-field-note">⚠️ Este campo no se puede modificar</small>
+                          </div>
+                        )}
                       </div>
                     </div>
 
@@ -406,15 +572,6 @@ export default function ProfilePage() {
                           <h4>Información Personal</h4>
                           <div className="pc-form-grid">
                             <div className="pc-form-group">
-                              <label>Documento</label>
-                              <input 
-                                type="text" 
-                                name="document" 
-                                value={editForm.document || ""} 
-                                onChange={handleInputChange} 
-                              />
-                            </div>
-                            <div className="pc-form-group">
                               <label>Género</label>
                               <select 
                                 name="gender" 
@@ -422,19 +579,10 @@ export default function ProfilePage() {
                                 onChange={handleInputChange}
                               >
                                 <option value="">Seleccionar género</option>
-                                <option value="MALE">Masculino</option>
-                                <option value="FEMALE">Femenino</option>
-                                <option value="OTHER">Otro</option>
+                                <option value="MASCULINO">Masculino</option>
+                                <option value="FEMENINO">Femenino</option>
+                                <option value="OTRO">Otro</option>
                               </select>
-                            </div>
-                            <div className="pc-form-group">
-                              <label>Fecha de nacimiento</label>
-                              <input 
-                                type="date" 
-                                name="birthDate" 
-                                value={editForm.birthDate || ""} 
-                                onChange={handleInputChange} 
-                              />
                             </div>
                           </div>
                         </div>
@@ -459,9 +607,9 @@ export default function ProfilePage() {
                                 onChange={handleInputChange}
                               >
                                 <option value="">Seleccionar tipo</option>
-                                <option value="HOUSE">Casa</option>
-                                <option value="APARTMENT">Apartamento</option>
-                                <option value="OTHER">Otro</option>
+                                <option value="CASA">Casa</option>
+                                <option value="APARTMENTO">Apartamento</option>
+                                <option value="OTRO">Otro</option>
                               </select>
                             </div>
                             <div className="pc-form-group">
@@ -487,9 +635,9 @@ export default function ProfilePage() {
                                 onChange={handleInputChange}
                               >
                                 <option value="">Seleccionar tipo</option>
-                                <option value="DOG">Perro</option>
-                                <option value="CAT">Gato</option>
-                                <option value="OTHER">Otro</option>
+                                <option value="PERRO">Perro</option>
+                                <option value="GATO">Gato</option>
+                                <option value="OTRO">Otro</option>
                               </select>
                             </div>
                             <div className="pc-form-group">
@@ -500,9 +648,9 @@ export default function ProfilePage() {
                                 onChange={handleInputChange}
                               >
                                 <option value="">Seleccionar tamaño</option>
-                                <option value="SMALL">Pequeño</option>
-                                <option value="MEDIUM">Mediano</option>
-                                <option value="LARGE">Grande</option>
+                                <option value="PEQUEÑA">Pequeño</option>
+                                <option value="MEDIANA">Mediano</option>
+                                <option value="GRANDE">Grande</option>
                               </select>
                             </div>
                             <div className="pc-form-group">
@@ -513,9 +661,9 @@ export default function ProfilePage() {
                                 onChange={handleInputChange}
                               >
                                 <option value="">Seleccionar nivel</option>
-                                <option value="LOW">Bajo</option>
-                                <option value="MEDIUM">Medio</option>
-                                <option value="HIGH">Alto</option>
+                                <option value="BAJO">Bajo</option>
+                                <option value="MEDIO">Medio</option>
+                                <option value="ALTO">Alto</option>
                               </select>
                             </div>
                           </div>

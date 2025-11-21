@@ -4,45 +4,57 @@ import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import "../styles/home.css";
 import { useAuth } from "../../hooks/useAuth.jsx";
+import AdoptionModal from "../components/AdoptionModal.jsx";
 
 export default function Home() {
   const [mascotas, setMascotas] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeSection, setActiveSection] = useState("inicio");
-  const navigate = useNavigate();
+  const [currentPage, setCurrentPage] = useState(0);
+  const [pageSize] = useState(6);
+  const [totalPages, setTotalPages] = useState(0);
   
-  const { isAuthenticated, userEmail, userRole, logout } = useAuth();
+  // Estados para el modal de adopción
+  const [selectedMascota, setSelectedMascota] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  
+  const navigate = useNavigate();
+  const { isAuthenticated, userEmail, userRole, logout, userId } = useAuth();
 
-  // Agrega este useEffect para debug
   useEffect(() => {
-    console.log("🔍 Estado de autenticación en Home:", {
-      isAuthenticated,
-      userEmail, 
-      userRole,
-      localStorageToken: localStorage.getItem('token'),
-      localStorageEmail: localStorage.getItem('userEmail'),
-      localStorageRole: localStorage.getItem('userRole')
-    });
-    fetchMascotas();
-  }, [isAuthenticated]);
+    fetchMascotas(currentPage);
+  }, [isAuthenticated, currentPage]);
 
-  const fetchMascotas = async () => {
+  const fetchMascotas = async (page = 0) => {
     try {
-      const response = await axios.get("http://localhost:9494/api/petconnect/mascotas/List");
-      console.log("✅ API respondió con:", response);
-      console.log("✅ Datos:", response.data);
-
+      setLoading(true);
+      const response = await axios.get(`http://localhost:9494/api/petconnect/mascotas/List?page=${page}&size=${pageSize}`);
+      
       if (Array.isArray(response.data)) {
         setMascotas(response.data);
+        
+        if (response.data.length < pageSize) {
+          setTotalPages(page + 1);
+        } else {
+          setTotalPages(page + 2);
+        }
       } else {
-        console.warn("⚠️ La API no devolvió un array:", response.data);
         setMascotas([]);
+        setTotalPages(0);
       }
     } catch (error) {
       console.error("❌ Error al cargar mascotas:", error);
       setMascotas([]);
+      setTotalPages(0);
     } finally {
       setLoading(false);
+    }
+  };
+
+  // Función para cambiar de página
+  const handlePageChange = (newPage) => {
+    if (newPage >= 0 && newPage < totalPages) {
+      setCurrentPage(newPage);
     }
   };
 
@@ -71,30 +83,15 @@ export default function Home() {
       });
       
       alert("Mascota eliminada exitosamente");
-      // Recargar la lista de mascotas
-      fetchMascotas();
+      fetchMascotas(currentPage);
     } catch (error) {
       console.error("❌ Error al eliminar mascota:", error);
       alert("Error al eliminar la mascota: " + (error.response?.data?.message || error.message));
     }
   };
 
-  // Función para ver detalles
-  const handleViewDetails = (mascotaId) => {
-    if (!mascotaId) {
-      alert("Error: ID de mascota no válido");
-      return;
-    }
-    alert(`Ver detalles de la mascota con ID: ${mascotaId}`);
-  };
-
   // Función para manejar la adopción
-  const handleAdopt = (mascotaId, mascotaName) => {
-    if (!mascotaId) {
-      alert("Error: ID de mascota no válido");
-      return;
-    }
-
+  const handleAdopt = (mascota) => {
     if (!isAuthenticated) {
       alert("Debes iniciar sesión para adoptar una mascota");
       navigate("/login");
@@ -106,12 +103,20 @@ export default function Home() {
       return;
     }
     
-    alert(`¡Iniciando proceso de adopción para ${mascotaName || 'esta mascota'}!`);
-    // Aquí puedes redirigir a una página de proceso de adopción
-    // navigate(`/adopcion/${mascotaId}`);
+    setSelectedMascota(mascota);
+    setIsModalOpen(true);
   };
 
-  const mascotasMostradas = mascotas.slice(0, 3);
+  // Función cuando la adopción es exitosa
+  const handleAdoptionSuccess = () => {
+    console.log("Adopción exitosa!");
+  };
+
+  // Función para cerrar el modal
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedMascota(null);
+  };
 
   const scrollToSection = (sectionId) => {
     const element = document.getElementById(sectionId);
@@ -123,7 +128,6 @@ export default function Home() {
 
   const handleLogout = () => {
     logout();
-    // Usar navigate en lugar de reload para mejor experiencia
     navigate("/");
   };
 
@@ -133,33 +137,52 @@ export default function Home() {
   const canDeletePets = isAuthenticated && userRole === "ADMIN";
   const canAdoptPets = isAuthenticated && userRole === "ADOPTANTE";
 
-  // Componente de debug temporal - elimínalo cuando funcione todo
-  const DebugInfo = () => (
-    <div style={{
-      position: 'fixed',
-      top: '10px',
-      right: '10px',
-      background: 'rgba(0,0,0,0.8)',
-      color: 'white',
-      padding: '10px',
-      borderRadius: '5px',
-      fontSize: '12px',
-      zIndex: 1000,
-      maxWidth: '300px'
-    }}>
-      <h4>🔧 Debug HomePage</h4>
-      <div>Autenticado: {isAuthenticated ? '✅' : '❌'}</div>
-      <div>Email: {userEmail || 'No email'}</div>
-      <div>Rol: {userRole || 'No role'}</div>
-      <div>Token: {localStorage.getItem('token') ? '✅' : '❌'}</div>
-      <div>Mascotas: {mascotas.length}</div>
-    </div>
-  );
+  // Componente de Paginación
+  const Pagination = () => {
+    if (totalPages <= 1) return null;
+
+    return (
+      <div className="pagination-container">
+        <div className="pagination">
+          <button
+            className={`pagination-btn ${currentPage === 0 ? 'disabled' : ''}`}
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 0}
+          >
+            ← Anterior
+          </button>
+
+          <div className="page-numbers">
+            {Array.from({ length: totalPages }, (_, index) => (
+              <button
+                key={index}
+                className={`page-number ${currentPage === index ? 'active' : ''}`}
+                onClick={() => handlePageChange(index)}
+              >
+                {index + 1}
+              </button>
+            ))}
+          </div>
+
+          <button
+            className={`pagination-btn ${currentPage === totalPages - 1 ? 'disabled' : ''}`}
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages - 1}
+          >
+            Siguiente →
+          </button>
+        </div>
+        
+        <div className="page-info">
+          Página {currentPage + 1} de {totalPages} • 
+          Mostrando {mascotas.length} mascotas
+        </div>
+      </div>
+    );
+  };
 
   return (
     <div className="home-container">
-      <DebugInfo /> {/* Elimina esta línea cuando todo funcione */}
-      
       {/* Header Mejorado */}
       <header className="main-header">
         <div className="header-content">
@@ -201,14 +224,12 @@ export default function Home() {
                   {userRole && <span className="user-role">({userRole})</span>}
                 </span>
                 
-                {/* Botón para ir al perfil */}
                 <Link to="/profile">
                   <button className="auth-btn profile-btn">
                     👤 Mi Perfil
                   </button>
                 </Link>
 
-                {/* Botón para crear mascota - Solo para roles autorizados */}
                 {canCreatePets && (
                   <Link to="/crear">
                     <button className="auth-btn create-pet-btn">
@@ -273,10 +294,9 @@ export default function Home() {
         {/* Catálogo de Mascotas */}
         <section id="mascotas" className="pets-section">
           <div className="section-header">
-            <h2>Nuestras Mascotas</h2>
-            <p>Conoce a estos increíbles compañeros que buscan un hogar</p>
+            <h2>Mascotas Disponibles</h2>
+            <p>Conoce a nuestros compañeros que buscan un hogar - Página {currentPage + 1}</p>
             
-            {/* Botón crear mascota en la sección - Solo para roles autorizados */}
             {canCreatePets && (
               <div className="create-pet-section">
                 <Link to="/crear">
@@ -296,9 +316,8 @@ export default function Home() {
           ) : (
             <>
               <div className="mascotas-grid">
-                {mascotasMostradas.length > 0 ? (
-                  mascotasMostradas.map((mascota, index) => {
-                    // Manejar diferentes posibles nombres de ID
+                {mascotas.length > 0 ? (
+                  mascotas.map((mascota, index) => {
                     const mascotaId = mascota.pet_id || mascota.id || mascota.mascotaId;
                     const mascotaName = mascota.name || mascota.nombre || "Sin nombre";
                     
@@ -317,20 +336,7 @@ export default function Home() {
                             }}
                           />
                           
-                          {/* Botones de acción flotantes */}
                           <div className="card-actions">
-                            {/* Botón ver detalles - Disponible para todos los autenticados */}
-                            {isAuthenticated && (
-                              <button 
-                                className="action-btn view-btn"
-                                onClick={() => handleViewDetails(mascotaId)}
-                                title="Ver detalles"
-                              >
-                                🔍
-                              </button>
-                            )}
-                            
-                            {/* Botón editar - Solo para ADMIN y REFUGIO */}
                             {canEditPets && (
                               <Link to={`/editar/${mascotaId}`}>
                                 <button 
@@ -342,7 +348,6 @@ export default function Home() {
                               </Link>
                             )}
                             
-                            {/* Botón eliminar - Solo para ADMIN */}
                             {canDeletePets && (
                               <button 
                                 className="action-btn delete-btn"
@@ -354,12 +359,11 @@ export default function Home() {
                             )}
                           </div>
                           
-                          {/* Botón Adóptame - Solo para ADOPTANTE */}
                           {canAdoptPets && (
                             <div className="card-overlay">
                               <button 
                                 className="adopt-btn"
-                                onClick={() => handleAdopt(mascotaId, mascotaName)}
+                                onClick={() => handleAdopt(mascota)}
                               >
                                 ¡Adóptame!
                               </button>
@@ -384,7 +388,6 @@ export default function Home() {
                             <span className="tag">❤️ Necesita Hogar</span>
                           </div>
                           
-                          {/* Mensaje informativo para usuarios no adoptantes */}
                           {isAuthenticated && !canAdoptPets && userRole !== "REFUGIO" && (
                             <div className="adoption-info">
                               <p className="info-text">
@@ -393,7 +396,6 @@ export default function Home() {
                             </div>
                           )}
                           
-                          {/* Mensaje para usuarios no autenticados */}
                           {!isAuthenticated && (
                             <div className="adoption-info">
                               <p className="info-text">
@@ -408,14 +410,13 @@ export default function Home() {
                 ) : (
                   <div className="no-pets">
                     <div className="no-pets-icon">🐾</div>
-                    <h3>No hay mascotas disponibles en este momento</h3>
-                    <p>Pronto tendremos nuevos amigos esperando por un hogar.</p>
+                    <h3>No hay mascotas disponibles en esta página</h3>
+                    <p>Intenta con otra página o vuelve más tarde.</p>
                     
-                    {/* Botón para crear primera mascota */}
                     {canCreatePets && (
                       <Link to="/crear">
                         <button className="create-pet-main-btn">
-                          ＋ Agregar la Primera Mascota
+                          ＋ Agregar Nueva Mascota
                         </button>
                       </Link>
                     )}
@@ -423,22 +424,22 @@ export default function Home() {
                 )}
               </div>
 
-              {/* Botón "Mostrar más" */}
-              {mascotas.length > 3 && (
-                <div className="show-more-container">
-                  <Link to="/ver">
-                    <button className="show-more-btn">
-                      Ver todas las mascotas ({mascotas.length})
-                    </button>
-                  </Link>
-                </div>
-              )}
+              {/* Paginación */}
+              <Pagination />
+
+              {/* Botón "Ver todas las mascotas" */}
+              <div className="show-more-container">
+                <Link to="/todas-las-mascotas">
+                  <button className="show-more-btn">
+                    Ver catálogo completo de mascotas
+                  </button>
+                </Link>
+              </div>
             </>
           )}
         </section>
       </main>
 
-      {/* Footer */}
       <footer className="main-footer">
         <div className="footer-content">
           <div className="footer-section">
@@ -466,6 +467,14 @@ export default function Home() {
           <p>&copy; 2024 PetConnect. Todos los derechos reservados.</p>
         </div>
       </footer>
+
+      {/* Modal de Adopción */}
+      <AdoptionModal
+        mascota={selectedMascota}
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        onSuccess={handleAdoptionSuccess}
+      />
     </div>
   );
 }
