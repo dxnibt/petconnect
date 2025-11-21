@@ -1,7 +1,7 @@
 // src/pages/HomePage.jsx
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "../styles/home.css";
 import { useAuth } from "../../hooks/useAuth.js";
 
@@ -9,6 +9,7 @@ export default function Home() {
   const [mascotas, setMascotas] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeSection, setActiveSection] = useState("inicio");
+  const navigate = useNavigate();
   
   const { isAuthenticated, userEmail, userRole, logout } = useAuth();
 
@@ -38,6 +39,11 @@ export default function Home() {
 
   // Función para eliminar mascota
   const handleDeleteMascota = async (mascotaId) => {
+    if (!mascotaId) {
+      alert("Error: ID de mascota no válido");
+      return;
+    }
+
     if (!window.confirm("¿Estás seguro de que quieres eliminar esta mascota?")) {
       return;
     }
@@ -59,17 +65,25 @@ export default function Home() {
     }
   };
 
-  // Función para ver detalles (podrías redirigir a una página de detalles)
+  // Función para ver detalles
   const handleViewDetails = (mascotaId) => {
-    // Aquí puedes redirigir a una página de detalles o mostrar un modal
+    if (!mascotaId) {
+      alert("Error: ID de mascota no válido");
+      return;
+    }
     alert(`Ver detalles de la mascota con ID: ${mascotaId}`);
-    // O redirigir: navigate(`/mascotas/${mascotaId}`);
   };
 
   // Función para manejar la adopción
   const handleAdopt = (mascotaId, mascotaName) => {
+    if (!mascotaId) {
+      alert("Error: ID de mascota no válido");
+      return;
+    }
+
     if (!isAuthenticated) {
       alert("Debes iniciar sesión para adoptar una mascota");
+      navigate("/login");
       return;
     }
     
@@ -78,9 +92,7 @@ export default function Home() {
       return;
     }
     
-    // Aquí puedes implementar la lógica de adopción
     alert(`¡Iniciando proceso de adopción para ${mascotaName}!`);
-    // Por ejemplo: navigate(`/adopcion/${mascotaId}`);
   };
 
   const mascotasMostradas = mascotas.slice(0, 3);
@@ -236,127 +248,130 @@ export default function Home() {
             <>
               <div className="mascotas-grid">
                 {mascotasMostradas.length > 0 ? (
-                  mascotasMostradas.map((mascota, index) => (
-                    <div key={mascota.id || index} className="mascota-card">
-                      <div className="card-image">
-                        <img
-                          src={
-                            mascota.imageUrl ||
-                            "https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=300&h=200&fit=crop"
-                          }
-                          alt={mascota.name || "Mascota"}
-                          onError={(e) => {
-                            e.target.src = "https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=300&h=200&fit=crop";
-                          }}
-                        />
-                        
-                        {/* Botones de acción flotantes */}
-                        <div className="card-actions">
-                          {/* Botón ver detalles - Disponible para todos los autenticados */}
-                          {isAuthenticated && (
-                            <button 
-                              className="action-btn view-btn"
-                              onClick={() => handleViewDetails(mascota.id)}
-                              title="Ver detalles"
-                            >
-                              🔍
-                            </button>
-                          )}
+                  mascotasMostradas.map((mascota, index) => {
+                    const mascotaId = mascota.pet_id || mascota.id;
+                    return (
+                      <div key={mascotaId || index} className="mascota-card">
+                        <div className="card-image">
+                          <img
+                            src={
+                              mascota.imageUrl ||
+                              "https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=300&h=200&fit=crop"
+                            }
+                            alt={mascota.name || "Mascota"}
+                            onError={(e) => {
+                              e.target.src = "https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=300&h=200&fit=crop";
+                            }}
+                          />
                           
-                          {/* Botón editar - Solo para ADMIN y REFUGIO */}
-                          {canEditPets && (
-                            <Link to={`/mascotas/editar/${mascota.id}`}>
+                          {/* Botones de acción flotantes */}
+                          <div className="card-actions">
+                            {/* Botón ver detalles - Disponible para todos los autenticados */}
+                            {isAuthenticated && (
                               <button 
-                                className="action-btn edit-btn"
-                                title="Editar mascota"
+                                className="action-btn view-btn"
+                                onClick={() => handleViewDetails(mascotaId)}
+                                title="Ver detalles"
                               >
-                                ✏️
+                                🔍
                               </button>
-                            </Link>
-                          )}
+                            )}
+                            
+                            {/* Botón editar - Solo para ADMIN y REFUGIO */}
+                            {canEditPets && (
+                              <Link to={`/mascotas/editar/${mascotaId}`}>
+                                <button 
+                                  className="action-btn edit-btn"
+                                  title="Editar mascota completa"
+                                >
+                                  ✏️
+                                </button>
+                              </Link>
+                            )}
+                            
+                            {/* Botón actualizar info - Solo para REFUGIO (no ADMIN) */}
+                            {userRole === "REFUGIO" && (
+                              <Link to={`/mascotas/actualizar/${mascotaId}`}>
+                                <button 
+                                  className="action-btn update-info-btn"
+                                  title="Actualizar información médica"
+                                >
+                                  💊
+                                </button>
+                              </Link>
+                            )}
+                            
+                            {/* Botón eliminar - Solo para ADMIN */}
+                            {canDeletePets && (
+                              <button 
+                                className="action-btn delete-btn"
+                                onClick={() => handleDeleteMascota(mascotaId)}
+                                title="Eliminar mascota"
+                              >
+                                🗑️
+                              </button>
+                            )}
+                          </div>
                           
-                          {/* Botón actualizar info - Solo para REFUGIO (no ADMIN) */}
+                          {/* Botón Adóptame - Solo para ADOPTANTE */}
+                          {canAdoptPets && (
+                            <div className="card-overlay">
+                              <button 
+                                className="adopt-btn"
+                                onClick={() => handleAdopt(mascotaId, mascota.name)}
+                              >
+                                ¡Adóptame!
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                        <div className="card-content">
+                          <h3>{mascota.name || "Sin nombre"}</h3>
+                          <p className="pet-species">
+                            {mascota.species === 'PERRO' ? '🐕 Perro' : 
+                             mascota.species === 'GATO' ? '🐈 Gato' : 
+                             '🐾 ' + (mascota.otherspecies || 'Otra especie')}
+                            {mascota.race && ` • ${mascota.race}`}
+                          </p>
+                          <p className="pet-description">
+                            {mascota.description || "Esta mascota está buscando un hogar lleno de amor y cuidados."}
+                          </p>
+                          <div className="pet-tags">
+                            {mascota.childFriendly && <span className="tag">👶 Amigable con niños</span>}
+                            {mascota.sterilization && <span className="tag">✂️ Esterilizado</span>}
+                            <span className="tag">❤️ Necesita Hogar</span>
+                          </div>
+                          
+                          {/* Información adicional para refugios */}
                           {userRole === "REFUGIO" && (
-                            <Link to={`/mascotas/actualizar/${mascota.id}`}>
-                              <button 
-                                className="action-btn update-info-btn"
-                                title="Actualizar información"
-                              >
-                                📝
-                              </button>
-                            </Link>
+                            <div className="refugio-info">
+                              <p className="info-text">
+                                💊 Puedes actualizar información médica con el botón verde
+                              </p>
+                            </div>
                           )}
                           
-                          {/* Botón eliminar - Solo para ADMIN */}
-                          {canDeletePets && (
-                            <button 
-                              className="action-btn delete-btn"
-                              onClick={() => handleDeleteMascota(mascota.id)}
-                              title="Eliminar mascota"
-                            >
-                              🗑️
-                            </button>
+                          {/* Mensaje informativo para usuarios no adoptantes */}
+                          {isAuthenticated && !canAdoptPets && userRole !== "REFUGIO" && (
+                            <div className="adoption-info">
+                              <p className="info-text">
+                                ⓘ Solo los adoptantes pueden realizar adopciones
+                              </p>
+                            </div>
+                          )}
+                          
+                          {/* Mensaje para usuarios no autenticados */}
+                          {!isAuthenticated && (
+                            <div className="adoption-info">
+                              <p className="info-text">
+                                ⓘ <Link to="/login">Inicia sesión</Link> como adoptante para adoptar
+                              </p>
+                            </div>
                           )}
                         </div>
-                        
-                        {/* Botón Adóptame - Solo para ADOPTANTE */}
-                        {canAdoptPets && (
-                          <div className="card-overlay">
-                            <button 
-                              className="adopt-btn"
-                              onClick={() => handleAdopt(mascota.id, mascota.name)}
-                            >
-                              ¡Adóptame!
-                            </button>
-                          </div>
-                        )}
                       </div>
-                      <div className="card-content">
-                        <h3>{mascota.name || "Sin nombre"}</h3>
-                        <p className="pet-species">
-                          {mascota.species === 'PERRO' ? '🐕 Perro' : 
-                           mascota.species === 'GATO' ? '🐈 Gato' : 
-                           '🐾 ' + (mascota.otherspecies || 'Otra especie')}
-                          {mascota.race && ` • ${mascota.race}`}
-                        </p>
-                        <p className="pet-description">
-                          {mascota.description || "Esta mascota está buscando un hogar lleno de amor y cuidados."}
-                        </p>
-                        <div className="pet-tags">
-                          {mascota.childFriendly && <span className="tag">👶 Amigable con niños</span>}
-                          {mascota.sterilization && <span className="tag">✂️ Esterilizado</span>}
-                          <span className="tag">❤️ Necesita Hogar</span>
-                        </div>
-                        
-                        {/* Información adicional para refugios */}
-                        {userRole === "REFUGIO" && (
-                          <div className="refugio-info">
-                            <p className="info-text">
-                              📝 Puedes actualizar información médica y características
-                            </p>
-                          </div>
-                        )}
-                        
-                        {/* Mensaje informativo para usuarios no adoptantes */}
-                        {isAuthenticated && !canAdoptPets && userRole !== "REFUGIO" && (
-                          <div className="adoption-info">
-                            <p className="info-text">
-                              ⓘ Solo los adoptantes pueden realizar adopciones
-                            </p>
-                          </div>
-                        )}
-                        
-                        {/* Mensaje para usuarios no autenticados */}
-                        {!isAuthenticated && (
-                          <div className="adoption-info">
-                            <p className="info-text">
-                              ⓘ <Link to="/login">Inicia sesión</Link> como adoptante para adoptar
-                            </p>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  ))
+                    );
+                  })
                 ) : (
                   <div className="no-pets">
                     <div className="no-pets-icon">🐾</div>
@@ -415,7 +430,7 @@ export default function Home() {
           </div>
         </div>
         <div className="footer-bottom">
-          <p>&copy; 2025 PetConnect. Todos los derechos reservados.</p>
+          <p>&copy; 2024 PetConnect. Todos los derechos reservados.</p>
         </div>
       </footer>
     </div>
