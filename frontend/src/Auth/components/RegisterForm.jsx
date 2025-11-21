@@ -1,86 +1,70 @@
 import { useState } from "react";
-import axios from "axios";
+import { useNavigate } from "react-router-dom";
+
+
 
 function RegisterForm() {
-  const [formData, setFormData] = useState({
+  const [form, setForm] = useState({
     name: "",
     email: "",
     password: "",
-    role: "adoptante",
+    role: "",
   });
-  const [message, setMessage] = useState("");
+
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+    setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
 
-    try {
-      const response = await axios.post(
-        "http://localhost:8181/api/petconnect/usuario/register",
-        formData
-      );
+    if (!form.role) {
+      alert("Por favor selecciona un rol antes de continuar.");
+      return;
+    }
 
-      setMessage("Registro exitoso 🎉 Ahora puedes iniciar sesión.");
-      console.log("✅ Usuario registrado:", response.data);
-    } catch (error) {
-      console.error("❌ Error al registrar usuario:", error);
-      if (error.response) {
-        setMessage(error.response.data.message || "Error al registrarse");
-      } else {
-        setMessage("Error al conectar con el servidor");
-      }
+    localStorage.setItem("datosBasicos", JSON.stringify(form));
+
+    if (form.role === "ADOPTANTE") {
+      navigate("/adoptante");
+    } else if (form.role === "REFUGIO") {
+      navigate("/refugio");
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="auth-form-content">
-      <h2>Registrarse</h2>
-
+    <form onSubmit={handleSubmit}>
+      <h1>Crear Cuenta</h1>
       <input
         type="text"
         name="name"
-        placeholder="Nombre completo"
-        value={formData.name}
+        placeholder="Nombre"
         onChange={handleChange}
         required
       />
-
       <input
         type="email"
         name="email"
         placeholder="Correo electrónico"
-        value={formData.email}
         onChange={handleChange}
         required
       />
-
       <input
         type="password"
         name="password"
         placeholder="Contraseña"
-        value={formData.password}
         onChange={handleChange}
         required
       />
-
-      <select
-        name="role"
-        value={formData.role}
-        onChange={handleChange}
-        required
-      >
-        <option value="adoptante">Adoptante</option>
-        <option value="refugio">Refugio</option>
+      <select name="role" onChange={handleChange} required>
+        <option value="">Seleccionar Rol</option>
+        <option value="ADOPTANTE">Adoptante</option>
+        <option value="REFUGIO">Refugio</option>
       </select>
 
-      <button type="submit">Registrarse</button>
-      {message && <p className="message">{message}</p>}
+      <button type="submit">Continuar</button>
     </form>
   );
 }

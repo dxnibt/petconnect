@@ -10,40 +10,40 @@ export default function HomePage() {
   const [activeSection, setActiveSection] = useState("inicio");
 
   useEffect(() => {
-    const fetchMascotas = async () => {
-      try {
-        const response = await axios.get(
-          "http://localhost:9494/api/petconnect/mascotas/List"
-        );
-        console.log("✅ API respondió con:", response);
-        console.log("✅ Datos:", response.data);
+  const fetchMascotas = async () => {
+    try {
+      const response = await axios.get("http://localhost:9494/api/petconnect/mascotas/List");
+      console.log("✅ API respondió con:", response);
+      console.log("✅ Datos:", response.data);
 
-        if (Array.isArray(response.data)) {
-          setMascotas(response.data);
-        } else {
-          console.warn("⚠️ La API no devolvió un array:", response.data);
-          setMascotas([]);
-        }
-      } catch (error) {
-        console.error("❌ Error al cargar mascotas:", error);
+      if (Array.isArray(response.data)) {
+        setMascotas(response.data);
+      } else {
+        console.warn("⚠️ La API no devolvió un array:", response.data);
         setMascotas([]);
-      } finally {
-        setLoading(false);
       }
-    };
+    } catch (error) {
+      console.error("❌ Error al cargar mascotas:", error);
+      setMascotas([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    fetchMascotas();
-  }, []);
+  fetchMascotas();
+}, []);
 
   const scrollToSection = (sectionId) => {
     const element = document.getElementById(sectionId);
-    if (element) element.scrollIntoView({ behavior: "smooth" });
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth" });
+    }
     setActiveSection(sectionId);
   };
 
   return (
     <div className="home-container">
-      {/* ✅ HEADER */}
+      {/* Header Mejorado */}
       <header className="main-header">
         <div className="header-content">
           <div className="logo-section">
@@ -51,37 +51,32 @@ export default function HomePage() {
               <span className="paw">🐾</span>
               <h1>PetConnect</h1>
             </div>
-
             <nav className="navigation">
-              <button
-                className={`nav-btn ${activeSection === "inicio" ? "active" : ""}`}
-                onClick={() => scrollToSection("inicio")}
+              <button 
+                className={`nav-btn ${activeSection === 'inicio' ? 'active' : ''}`}
+                onClick={() => scrollToSection('inicio')}
               >
                 Inicio
               </button>
-              <button
-                className={`nav-btn ${activeSection === "quienes-somos" ? "active" : ""}`}
-                onClick={() => scrollToSection("quienes-somos")}
-              >
-                Quiénes Somos
-              </button>
-              <button
-                className={`nav-btn ${activeSection === "mascotas" ? "active" : ""}`}
-                onClick={() => scrollToSection("mascotas")}
+              <button 
+                className={`nav-btn ${activeSection === 'mascotas' ? 'active' : ''}`}
+                onClick={() => scrollToSection('mascotas')}
               >
                 Mascotas
               </button>
             </nav>
           </div>
-
-          {/* ✅ Botones de autenticación */}
+          
           <div className="auth-buttons">
             {!localStorage.getItem("token") ? (
-              <Link to="/register">
-                <button className="auth-btn signin-btn">
-                  Iniciar Sesión / Registrarse
-                </button>
-              </Link>
+              <>
+                <Link to="/register">
+                  <button className="auth-btn signin-btn">Iniciar Sesión</button>
+                </Link>
+                <Link to="/register">
+                  <button className="auth-btn signup-btn">Registrarse</button>
+                </Link>
+              </>
             ) : (
               <button
                 className="auth-btn logout-btn"
@@ -95,25 +90,18 @@ export default function HomePage() {
               </button>
             )}
           </div>
-        </div>
+        </div> {/* ✅ cierre agregado */}
       </header>
 
       <main>
-        {/* ✅ HERO SECTION */}
+        {/* Hero Section */}
         <section id="inicio" className="hero-section">
           <div className="hero-content">
-            <h2>
-              Conectamos corazones,
-              <br />
-              encontramos hogares
-            </h2>
-            <p>
-              Tu compañero perfecto te está esperando. Descubre mascotas que
-              buscan una segunda oportunidad.
-            </p>
-            <button
+            <h2>Conectamos corazones,<br/>encontramos hogares</h2>
+            <p>Tu compañero perfecto te está esperando. Descubre mascotas que buscan una segunda oportunidad.</p>
+            <button 
               className="cta-button"
-              onClick={() => scrollToSection("mascotas")}
+              onClick={() => scrollToSection('mascotas')}
             >
               Ver Mascotas Disponibles
             </button>
@@ -127,11 +115,11 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* ✅ FRASE POÉTICA */}
+        {/* Sección Frase e Imagen - REEMPLAZA Quiénes Somos */}
         <section id="quienes-somos" className="phrase-hero-section">
           <div className="phrase-hero-image">
-            <img
-              src="https://i.pinimg.com/1200x/7a/ac/7e/7aac7eb9f34a54ec650b7dc0523a33f6.jpg"
+            <img 
+              src="https://i.pinimg.com/1200x/7a/ac/7e/7aac7eb9f34a54ec650b7dc0523a33f6.jpg" 
               alt="Cachorro y gatito buscando un hogar"
             />
             <div className="phrase-hero-content">
@@ -146,7 +134,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* ✅ CATÁLOGO DE MASCOTAS */}
+        {/* Catálogo de Mascotas */}
         <section id="mascotas" className="pets-section">
           <div className="section-header">
             <h2>Nuestras Mascotas</h2>
@@ -171,8 +159,7 @@ export default function HomePage() {
                         }
                         alt={mascota.name || "Mascota"}
                         onError={(e) => {
-                          e.target.src =
-                            "https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=300&h=200&fit=crop";
+                          e.target.src = "https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=300&h=200&fit=crop";
                         }}
                       />
                       <div className="card-overlay">
@@ -182,8 +169,7 @@ export default function HomePage() {
                     <div className="card-content">
                       <h3>{mascota.name || "Sin nombre"}</h3>
                       <p className="pet-description">
-                        {mascota.description ||
-                          "Esta mascota está buscando un hogar lleno de amor y cuidados."}
+                        {mascota.description || "Esta mascota está buscando un hogar lleno de amor y cuidados."}
                       </p>
                       <div className="pet-tags">
                         <span className="tag">🐕 Mascota</span>
@@ -204,7 +190,7 @@ export default function HomePage() {
         </section>
       </main>
 
-      {/* ✅ FOOTER */}
+      {/* Footer */}
       <footer className="main-footer">
         <div className="footer-content">
           <div className="footer-section">
@@ -217,7 +203,7 @@ export default function HomePage() {
           <div className="footer-section">
             <h4>Contacto</h4>
             <p>info@petconnect.com</p>
-            <p>+57 321 654 9870</p>
+            <p>+1 234 567 890</p>
           </div>
           <div className="footer-section">
             <h4>Síguenos</h4>
@@ -229,7 +215,7 @@ export default function HomePage() {
           </div>
         </div>
         <div className="footer-bottom">
-          <p>&copy; 2025 PetConnect. Todos los derechos reservados.</p>
+          <p>&copy; 2024 PetConnect. Todos los derechos reservados.</p>
         </div>
       </footer>
     </div>
