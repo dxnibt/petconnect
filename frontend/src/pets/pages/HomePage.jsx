@@ -10,34 +10,62 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [activeSection, setActiveSection] = useState("inicio");
   
-  // 👇 Usar el hook de autenticación
   const { isAuthenticated, userEmail, userRole, logout } = useAuth();
 
   useEffect(() => {
-    const fetchMascotas = async () => {
-      try {
-        const response = await axios.get("http://localhost:9494/api/petconnect/mascotas/List");
-        console.log("✅ API respondió con:", response);
-        console.log("✅ Datos:", response.data);
-
-        if (Array.isArray(response.data)) {
-          setMascotas(response.data);
-        } else {
-          console.warn("⚠️ La API no devolvió un array:", response.data);
-          setMascotas([]);
-        }
-      } catch (error) {
-        console.error("❌ Error al cargar mascotas:", error);
-        setMascotas([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchMascotas();
   }, []);
 
-  // 👇 Obtener solo las primeras 3 mascotas
+  const fetchMascotas = async () => {
+    try {
+      const response = await axios.get("http://localhost:9494/api/petconnect/mascotas/List");
+      console.log("✅ API respondió con:", response);
+      console.log("✅ Datos:", response.data);
+
+      if (Array.isArray(response.data)) {
+        setMascotas(response.data);
+      } else {
+        console.warn("⚠️ La API no devolvió un array:", response.data);
+        setMascotas([]);
+      }
+    } catch (error) {
+      console.error("❌ Error al cargar mascotas:", error);
+      setMascotas([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Función para eliminar mascota
+  const handleDeleteMascota = async (mascotaId) => {
+    if (!window.confirm("¿Estás seguro de que quieres eliminar esta mascota?")) {
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem("token");
+      await axios.delete(`http://localhost:9494/api/petconnect/mascotas/delete/${mascotaId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      
+      alert("Mascota eliminada exitosamente");
+      // Recargar la lista de mascotas
+      fetchMascotas();
+    } catch (error) {
+      console.error("❌ Error al eliminar mascota:", error);
+      alert("Error al eliminar la mascota");
+    }
+  };
+
+  // Función para ver detalles (podrías redirigir a una página de detalles)
+  const handleViewDetails = (mascotaId) => {
+    // Aquí puedes redirigir a una página de detalles o mostrar un modal
+    alert(`Ver detalles de la mascota con ID: ${mascotaId}`);
+    // O redirigir: navigate(`/mascotas/${mascotaId}`);
+  };
+
   const mascotasMostradas = mascotas.slice(0, 3);
 
   const scrollToSection = (sectionId) => {
@@ -52,6 +80,11 @@ export default function Home() {
     logout();
     window.location.reload();
   };
+
+  // Verificar permisos según el rol
+  const canCreatePets = isAuthenticated && (userRole === "ADMIN" || userRole === "VOLUNTARIO");
+  const canEditPets = isAuthenticated && (userRole === "ADMIN" || userRole === "VOLUNTARIO");
+  const canDeletePets = isAuthenticated && userRole === "ADMIN";
 
   return (
     <div className="home-container">
@@ -82,7 +115,7 @@ export default function Home() {
           <div className="auth-buttons">
             {!isAuthenticated ? (
               <>
-                <Link to="/register">
+                <Link to="/login">
                   <button className="auth-btn signin-btn">Iniciar Sesión</button>
                 </Link>
                 <Link to="/register">
@@ -95,6 +128,16 @@ export default function Home() {
                   ¡Hola, {userEmail}!
                   {userRole && <span className="user-role">({userRole})</span>}
                 </span>
+                
+                {/* Botón para crear mascota - Solo para roles autorizados */}
+                {canCreatePets && (
+                  <Link to="/mascotas/crear">
+                    <button className="auth-btn create-pet-btn">
+                      🐾 Crear Mascota
+                    </button>
+                  </Link>
+                )}
+                
                 <button 
                   className="auth-btn logout-btn"
                   onClick={handleLogout}
@@ -148,11 +191,22 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Catálogo de Mascotas - MOSTRANDO SOLO 3 */}
+        {/* Catálogo de Mascotas */}
         <section id="mascotas" className="pets-section">
           <div className="section-header">
             <h2>Nuestras Mascotas</h2>
             <p>Conoce a estos increíbles compañeros que buscan un hogar</p>
+            
+            {/* Botón crear mascota en la sección - Solo para roles autorizados */}
+            {canCreatePets && (
+              <div className="create-pet-section">
+                <Link to="/mascotas/crear">
+                  <button className="create-pet-main-btn">
+                    ＋ Agregar Nueva Mascota
+                  </button>
+                </Link>
+              </div>
+            )}
           </div>
 
           {loading ? (
@@ -177,17 +231,62 @@ export default function Home() {
                             e.target.src = "https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=300&h=200&fit=crop";
                           }}
                         />
+                        
+                        {/* Botones de acción flotantes */}
+                        <div className="card-actions">
+                          {/* Botón ver detalles - Disponible para todos los autenticados */}
+                          {isAuthenticated && (
+                            <button 
+                              className="action-btn view-btn"
+                              onClick={() => handleViewDetails(mascota.id)}
+                              title="Ver detalles"
+                            >
+                              🔍
+                            </button>
+                          )}
+                          
+                          {/* Botón editar - Solo para ADMIN y VOLUNTARIO */}
+                          {canEditPets && (
+                            <Link to={`/mascotas/editar/${mascota.id}`}>
+                              <button 
+                                className="action-btn edit-btn"
+                                title="Editar mascota"
+                              >
+                                ✏️
+                              </button>
+                            </Link>
+                          )}
+                          
+                          {/* Botón eliminar - Solo para ADMIN */}
+                          {canDeletePets && (
+                            <button 
+                              className="action-btn delete-btn"
+                              onClick={() => handleDeleteMascota(mascota.id)}
+                              title="Eliminar mascota"
+                            >
+                              🗑️
+                            </button>
+                          )}
+                        </div>
+                        
                         <div className="card-overlay">
                           <button className="adopt-btn">¡Adóptame!</button>
                         </div>
                       </div>
                       <div className="card-content">
                         <h3>{mascota.name || "Sin nombre"}</h3>
+                        <p className="pet-species">
+                          {mascota.species === 'PERRO' ? '🐕 Perro' : 
+                           mascota.species === 'GATO' ? '🐈 Gato' : 
+                           '🐾 ' + (mascota.otherspecies || 'Otra especie')}
+                          {mascota.race && ` • ${mascota.race}`}
+                        </p>
                         <p className="pet-description">
                           {mascota.description || "Esta mascota está buscando un hogar lleno de amor y cuidados."}
                         </p>
                         <div className="pet-tags">
-                          <span className="tag">🐕 Mascota</span>
+                          {mascota.childFriendly && <span className="tag">👶 Amigable con niños</span>}
+                          {mascota.sterilization && <span className="tag">✂️ Esterilizado</span>}
                           <span className="tag">❤️ Necesita Hogar</span>
                         </div>
                       </div>
@@ -198,11 +297,20 @@ export default function Home() {
                     <div className="no-pets-icon">🐾</div>
                     <h3>No hay mascotas disponibles en este momento</h3>
                     <p>Pronto tendremos nuevos amigos esperando por un hogar.</p>
+                    
+                    {/* Botón para crear primera mascota */}
+                    {canCreatePets && (
+                      <Link to="/mascotas/crear">
+                        <button className="create-pet-main-btn">
+                          ＋ Agregar la Primera Mascota
+                        </button>
+                      </Link>
+                    )}
                   </div>
                 )}
               </div>
 
-              {/* 👇 Botón "Mostrar más" - Solo aparece si hay más de 3 mascotas */}
+              {/* Botón "Mostrar más" */}
               {mascotas.length > 3 && (
                 <div className="show-more-container">
                   <Link to="/mascotas">
