@@ -1,7 +1,7 @@
 // PetForm.jsx
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { createPet, getPet, updatePet } from "../../api/pets";
+import axios from "axios";
 import "../styles/petform.css";
 
 const ESPECIE_MASCOTA = {
@@ -15,11 +15,34 @@ const SEXO_MASCOTA = {
   HEMBRA: "HEMBRA"
 };
 
+// Configuración de axios directamente en el componente
+const api = axios.create({
+  baseURL: "http://localhost:9494/api/petconnect/mascotas",
+  timeout: 10000,
+});
+
+// Interceptor para agregar el token automáticamente
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem("token");
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  config.headers['Content-Type'] = 'application/json';
+  return config;
+});
+
+// Funciones API directamente en el componente
+const getPet = (id) => api.get(`/${id}`);
+const createPet = (data) => api.post("/save", data);
+const updatePet = (id, data) => api.patch(`/update/${id}`, data);
+
 export default function PetForm() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [currentTab, setCurrentTab] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [validationErrors, setValidationErrors] = useState({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [form, setForm] = useState({
     name: "",
@@ -38,7 +61,69 @@ export default function PetForm() {
 
   useEffect(() => {
     if (id) loadPet();
+    testConnection();
   }, [id]);
+
+  // Función para probar la conexión básica
+  const testConnection = async () => {
+    try {
+      console.log("🧪 Probando conexión con el backend...");
+      const response = await fetch("http://localhost:9494/api/petconnect/mascotas/List");
+      console.log("✅ Backend responde. Status:", response.status);
+      return true;
+    } catch (error) {
+      console.error("❌ No se puede conectar al backend:", error);
+      return false;
+    }
+  };
+
+  // Función para formatear fecha de input (YYYY-MM-DD) a backend (dd/MM/yyyy)
+  function formatDateForBackend(dateString) {
+    if (!dateString) return null;
+    
+    try {
+      const [year, month, day] = dateString.split('-');
+      
+      if (!year || !month || !day) {
+        console.warn("Formato de fecha inválido:", dateString);
+        return null;
+      }
+      
+      return `${day.padStart(2, '0')}/${month.padStart(2, '0')}/${year}`;
+    } catch (error) {
+      console.error("Error formateando fecha para backend:", error);
+      return null;
+    }
+  }
+
+  // Función para formatear fecha del backend (dd/MM/yyyy) a input (YYYY-MM-DD)
+  function formatDateForInput(dateString) {
+    if (!dateString) return "";
+    
+    try {
+      if (dateString.includes('/')) {
+        const parts = dateString.split('/');
+        if (parts.length === 3) {
+          const day = parts[0];
+          const month = parts[1];
+          const year = parts[2];
+          
+          return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+        }
+      }
+      
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) {
+        console.warn("Fecha inválida:", dateString);
+        return "";
+      }
+      
+      return date.toISOString().split('T')[0];
+    } catch (error) {
+      console.error("Error formateando fecha para input:", error);
+      return "";
+    }
+  }
 
   async function loadPet() {
     try {
@@ -63,29 +148,19 @@ export default function PetForm() {
     }
   }
 
-  function formatDateForInput(dateString) {
-    if (!dateString) return "";
-    
-    try {
-      const date = new Date(dateString);
-      if (isNaN(date.getTime())) {
-        console.warn("Fecha inválida:", dateString);
-        return "";
-      }
-      
-      return date.toISOString().split('T')[0];
-    } catch (error) {
-      console.error("Error formateando fecha:", error);
-      return "";
-    }
-  }
-
   function handleChange(e) {
     const { name, value, type, checked } = e.target;
     setForm(prev => ({
       ...prev,
       [name]: type === "checkbox" ? checked : value
     }));
+
+    if (validationErrors[name]) {
+      setValidationErrors(prev => ({
+        ...prev,
+        [name]: ""
+      }));
+    }
   }
 
   // Función solo para mostrar en UI
@@ -102,33 +177,38 @@ export default function PetForm() {
     return age.toString();
   };
 
-  // Agrega esta función en PetForm.jsx para probar la conexión básica
-const testConnection = async () => {
-  try {
-    console.log("🧪 Probando conexión con el backend...");
-    const response = await fetch("http://localhost:9494/api/petconnect/mascotas/List");
-    console.log("✅ Backend responde. Status:", response.status);
-    return true;
-  } catch (error) {
-    console.error("❌ No se puede conectar al backend:", error);
-    return false;
+  // Función solo para validar (sin formatear) - SOLO SE USA EN SUBMIT
+  function validateForm(formData) {
+    const errors = {};
+
+    if (!formData.name?.trim()) {
+      errors.name = "El nombre es requerido";
+    }
+    
+    if (!formData.species) {
+      errors.species = "La especie es requerida";
+    }
+
+    if (formData.species === ESPECIE_MASCOTA.OTRO && !formData.otherspecies?.trim()) {
+      errors.otherspecies = "Debe especificar la especie";
+    }
+
+    if (Object.keys(errors).length > 0) {
+      setValidationErrors(errors);
+      throw new Error("Por favor complete los campos obligatorios");
+    }
+
+    setValidationErrors({});
   }
-};
 
-// Llama a esta función en el useEffect o antes de enviar
-useEffect(() => {
-  testConnection(); // Para verificar la conexión al cargar el componente
-}, []);
-
-  // Función para validar y formatear los datos para el backend
-  function validateAndFormatData(formData) {
+  // Función solo para formatear (sin validar)
+  function formatDataForBackend(formData) {
     const formattedData = {
       name: formData.name?.trim(),
       species: formData.species,
       otherspecies: formData.species === ESPECIE_MASCOTA.OTRO ? formData.otherspecies?.trim() : null,
       race: formData.race?.trim() || null,
-      birthDate: formData.birthDate || null,
-      // ⚠️ NO enviar 'age' - se calcula en el backend
+      birthDate: formatDateForBackend(formData.birthDate),
       sex: formData.sex || null,
       childFriendly: Boolean(formData.childFriendly),
       requiresAmpleSpace: Boolean(formData.requiresAmpleSpace),
@@ -138,37 +218,35 @@ useEffect(() => {
       imageUrl: formData.imageUrl?.trim() || null,
     };
 
-    // Validaciones básicas
-    if (!formattedData.name) {
-      throw new Error("El nombre es requerido");
-    }
-    
-    if (!formattedData.species) {
-      throw new Error("La especie es requerida");
-    }
-
-    if (formattedData.species === ESPECIE_MASCOTA.OTRO && !formattedData.otherspecies) {
-      throw new Error("Debe especificar la especie");
-    }
-
     console.log("✅ Datos formateados para enviar:", formattedData);
     return formattedData;
   }
 
   async function handleSubmit(e) {
     e.preventDefault();
+    setIsSubmitting(true);
     setLoading(true);
+    setValidationErrors({});
 
     try {
       console.log("🔍 Datos del formulario ANTES de formatear:", form);
       
-      // Validar y formatear datos
-      const submitData = validateAndFormatData(form);
+      // Primero validar (SOLO EN SUBMIT)
+      validateForm(form);
+      
+      // Luego formatear
+      const submitData = formatDataForBackend(form);
       
       console.log("📤 Enviando datos al servidor:", JSON.stringify(submitData, null, 2));
+      console.log("📅 Fecha formateada para backend:", submitData.birthDate);
 
       const token = localStorage.getItem("token");
       console.log("🔑 Token disponible:", !!token);
+
+      const isConnected = await testConnection();
+      if (!isConnected) {
+        throw new Error("No hay conexión con el backend");
+      }
 
       if (id) {
         await updatePet(id, submitData);
@@ -184,33 +262,56 @@ useEffect(() => {
       console.error("📋 Response data:", error.response?.data);
       console.error("🔧 Response status:", error.response?.status);
       
-      if (error.response?.data) {
+      let errorMessage = "Error al guardar la mascota.\n\n";
+      
+      // Si es error de validación del frontend
+      if (error.message === "Por favor complete los campos obligatorios") {
+        errorMessage = error.message + "\n\nRevise los campos marcados en rojo.";
+        setCurrentTab(1); // Ir a la primera pestaña para mostrar errores
+      } 
+      // Si es error del backend
+      else if (error.response?.data) {
         const errorData = error.response.data;
         console.error("🐛 Error del backend:", errorData);
         
-        let errorMessage = "Error del servidor: ";
-        
-        if (errorData.message) {
-          errorMessage += errorData.message;
+        if (typeof errorData === 'string') {
+          errorMessage += `Detalles: ${errorData}`;
+        } else if (errorData.message) {
+          errorMessage += `Mensaje: ${errorData.message}`;
         } else if (errorData.error) {
-          errorMessage += errorData.error;
+          errorMessage += `Error: ${errorData.error}`;
         } else {
-          errorMessage += JSON.stringify(errorData);
+          errorMessage += `Respuesta: ${JSON.stringify(errorData)}`;
         }
-        
-        alert(errorMessage);
-      } else if (error.message && !error.response) {
-        alert(`Error de validación: ${error.message}`);
+      } else if (error.message) {
+        errorMessage += `Error: ${error.message}`;
       } else {
-        alert("Error al guardar la mascota. Verifica la conexión con el servidor.");
+        errorMessage += "Error desconocido. Verifica la consola para más detalles.";
       }
+      
+      alert(errorMessage);
     } finally {
       setLoading(false);
+      setIsSubmitting(false);
     }
   }
 
-  const nextTab = () => setCurrentTab(prev => Math.min(prev + 1, 3));
-  const prevTab = () => setCurrentTab(prev => Math.max(prev - 1, 1));
+  // Navegación simple sin validación - CORREGIDO
+  const nextTab = () => {
+    // SOLO CAMBIAR PESTAÑA, SIN VALIDACIÓN
+    setCurrentTab(prev => {
+      const next = prev + 1;
+      return next > 2 ? 2 : next;
+    });
+  };
+
+  const prevTab = () => {
+    // SOLO CAMBIAR PESTAÑA, SIN VALIDACIÓN
+    setCurrentTab(prev => {
+      const prevTab = prev - 1;
+      return prevTab < 1 ? 1 : prevTab;
+    });
+  };
 
   if (loading && id) {
     return (
@@ -225,6 +326,20 @@ useEffect(() => {
       <div className="pet-form-header">
         <h1>{id ? "Editar Mascota" : "Crear Nueva Mascota"}</h1>
         <p>Completa la información de la mascota para {id ? "actualizar" : "agregar"} al sistema</p>
+        
+        <div style={{ 
+          background: '#f8f9fa', 
+          padding: '10px', 
+          borderRadius: '8px', 
+          marginTop: '10px',
+          fontSize: '0.8rem',
+          color: '#666'
+        }}>
+          <strong>Debug Info:</strong> 
+          <br />Token: {localStorage.getItem("token") ? "✅ Presente" : "❌ Ausente"}
+          <br />Backend: http://localhost:9494
+          <br />Formato fecha: dd/MM/yyyy
+        </div>
       </div>
 
       {/* Pestañas */}
@@ -241,12 +356,6 @@ useEffect(() => {
         >
           Características
         </div>
-        <div 
-          className={`pet-form-tab ${currentTab === 3 ? 'active' : ''}`}
-          onClick={() => setCurrentTab(3)}
-        >
-          Información Adicional
-        </div>
       </div>
 
       <form onSubmit={handleSubmit}>
@@ -261,9 +370,12 @@ useEffect(() => {
                 type="text"
                 value={form.name}
                 onChange={handleChange}
-                required
                 placeholder="Ej: Max, Luna, etc."
+                className={validationErrors.name ? 'error' : ''}
               />
+              {validationErrors.name && (
+                <span className="error-message">{validationErrors.name}</span>
+              )}
             </div>
 
             <div className="pet-input-group">
@@ -273,13 +385,16 @@ useEffect(() => {
                 name="species"
                 value={form.species}
                 onChange={handleChange}
-                required
+                className={validationErrors.species ? 'error' : ''}
               >
                 <option value="">Selecciona una especie</option>
                 <option value={ESPECIE_MASCOTA.PERRO}>Perro</option>
                 <option value={ESPECIE_MASCOTA.GATO}>Gato</option>
                 <option value={ESPECIE_MASCOTA.OTRO}>Otro</option>
               </select>
+              {validationErrors.species && (
+                <span className="error-message">{validationErrors.species}</span>
+              )}
             </div>
 
             {form.species === ESPECIE_MASCOTA.OTRO && (
@@ -291,9 +406,12 @@ useEffect(() => {
                   type="text"
                   value={form.otherspecies}
                   onChange={handleChange}
-                  required={form.species === ESPECIE_MASCOTA.OTRO}
                   placeholder="Ej: Conejo, Hámster, etc."
+                  className={validationErrors.otherspecies ? 'error' : ''}
                 />
+                {validationErrors.otherspecies && (
+                  <span className="error-message">{validationErrors.otherspecies}</span>
+                )}
               </div>
             )}
 
@@ -322,6 +440,10 @@ useEffect(() => {
               {form.birthDate && (
                 <small className="age-calculator">
                   Edad aproximada: {calculateAge(form.birthDate) || 0} años
+                  <br />
+                  <span style={{fontSize: '0.7rem', color: '#667eea'}}>
+                    (Se enviará como: {formatDateForBackend(form.birthDate)})
+                  </span>
                 </small>
               )}
             </div>
@@ -402,12 +524,7 @@ useEffect(() => {
                 rows="3"
               />
             </div>
-          </div>
-        </div>
 
-        {/* Pestaña 3: Información Adicional */}
-        <div className={`pet-form-tab-content ${currentTab === 3 ? 'active' : ''}`}>
-          <div className="pet-form-grid-full">
             <div className="pet-input-group">
               <label htmlFor="description">Descripción</label>
               <textarea
@@ -446,31 +563,37 @@ useEffect(() => {
           </div>
         </div>
 
-        {/* Navegación entre pestañas */}
+        {/* Navegación entre pestañas - CORREGIDO */}
         <div className="pet-tab-navigation">
-          {currentTab > 1 ? (
-            <button type="button" className="pet-tab-btn" onClick={prevTab}>
-              Anterior
-            </button>
-          ) : (
-            <button type="button" className="pet-tab-btn" onClick={() => navigate("/")}>
-              Cancelar
-            </button>
-          )}
-          
-          {currentTab < 3 ? (
-            <button type="button" className="pet-tab-btn primary" onClick={nextTab}>
-              Siguiente
-            </button>
-          ) : (
+          <div className="pet-tab-navigation-left">
+            {currentTab > 1 ? (
+              <button type="button" className="pet-tab-btn" onClick={prevTab}>
+                Anterior
+              </button>
+            ) : (
+              <button type="button" className="pet-tab-btn" onClick={() => navigate("/")}>
+                Cancelar
+              </button>
+            )}
+          </div>
+
+          <div className="pet-tab-navigation-center">
+            {currentTab < 2 ? (
+              <button type="button" className="pet-tab-btn primary" onClick={nextTab}>
+                Siguiente
+              </button>
+            ) : null}
+          </div>
+
+          <div className="pet-tab-navigation-right">
             <button 
               type="submit" 
               className="pet-tab-btn primary"
-              disabled={loading}
+              disabled={isSubmitting}
             >
-              {loading ? "Guardando..." : (id ? "Actualizar" : "Crear")} Mascota
+              {isSubmitting ? "Guardando..." : (id ? "Actualizar" : "Crear")} Mascota
             </button>
-          )}
+          </div>
         </div>
       </form>
     </div>

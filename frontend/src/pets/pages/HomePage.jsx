@@ -66,6 +66,23 @@ export default function Home() {
     // O redirigir: navigate(`/mascotas/${mascotaId}`);
   };
 
+  // Función para manejar la adopción
+  const handleAdopt = (mascotaId, mascotaName) => {
+    if (!isAuthenticated) {
+      alert("Debes iniciar sesión para adoptar una mascota");
+      return;
+    }
+    
+    if (userRole !== "ADOPTANTE") {
+      alert(`Los usuarios con rol ${userRole} no pueden adoptar mascotas. Solo los adoptantes pueden realizar adopciones.`);
+      return;
+    }
+    
+    // Aquí puedes implementar la lógica de adopción
+    alert(`¡Iniciando proceso de adopción para ${mascotaName}!`);
+    // Por ejemplo: navigate(`/adopcion/${mascotaId}`);
+  };
+
   const mascotasMostradas = mascotas.slice(0, 3);
 
   const scrollToSection = (sectionId) => {
@@ -82,9 +99,10 @@ export default function Home() {
   };
 
   // Verificar permisos según el rol
-  const canCreatePets = isAuthenticated && (userRole === "ADMIN" || userRole === "VOLUNTARIO");
-  const canEditPets = isAuthenticated && (userRole === "ADMIN" || userRole === "VOLUNTARIO");
+  const canCreatePets = isAuthenticated && (userRole === "ADMIN" || userRole === "REFUGIO");
+  const canEditPets = isAuthenticated && (userRole === "ADMIN" || userRole === "REFUGIO");
   const canDeletePets = isAuthenticated && userRole === "ADMIN";
+  const canAdoptPets = isAuthenticated && userRole === "ADOPTANTE";
 
   return (
     <div className="home-container">
@@ -131,7 +149,7 @@ export default function Home() {
                 
                 {/* Botón para crear mascota - Solo para roles autorizados */}
                 {canCreatePets && (
-                  <Link to="/mascotas/crear">
+                  <Link to="/crear">
                     <button className="auth-btn create-pet-btn">
                       🐾 Crear Mascota
                     </button>
@@ -196,17 +214,6 @@ export default function Home() {
           <div className="section-header">
             <h2>Nuestras Mascotas</h2>
             <p>Conoce a estos increíbles compañeros que buscan un hogar</p>
-            
-            {/* Botón crear mascota en la sección - Solo para roles autorizados */}
-            {canCreatePets && (
-              <div className="create-pet-section">
-                <Link to="/mascotas/crear">
-                  <button className="create-pet-main-btn">
-                    ＋ Agregar Nueva Mascota
-                  </button>
-                </Link>
-              </div>
-            )}
           </div>
 
           {loading ? (
@@ -245,7 +252,7 @@ export default function Home() {
                             </button>
                           )}
                           
-                          {/* Botón editar - Solo para ADMIN y VOLUNTARIO */}
+                          {/* Botón editar - Solo para ADMIN y REFUGIO */}
                           {canEditPets && (
                             <Link to={`/mascotas/editar/${mascota.id}`}>
                               <button 
@@ -269,9 +276,17 @@ export default function Home() {
                           )}
                         </div>
                         
-                        <div className="card-overlay">
-                          <button className="adopt-btn">¡Adóptame!</button>
-                        </div>
+                        {/* Botón Adóptame - Solo para ADOPTANTE */}
+                        {canAdoptPets && (
+                          <div className="card-overlay">
+                            <button 
+                              className="adopt-btn"
+                              onClick={() => handleAdopt(mascota.id, mascota.name)}
+                            >
+                              ¡Adóptame!
+                            </button>
+                          </div>
+                        )}
                       </div>
                       <div className="card-content">
                         <h3>{mascota.name || "Sin nombre"}</h3>
@@ -289,6 +304,24 @@ export default function Home() {
                           {mascota.sterilization && <span className="tag">✂️ Esterilizado</span>}
                           <span className="tag">❤️ Necesita Hogar</span>
                         </div>
+                        
+                        {/* Mensaje informativo para usuarios no adoptantes */}
+                        {isAuthenticated && !canAdoptPets && (
+                          <div className="adoption-info">
+                            <p className="info-text">
+                              ⓘ Solo los adoptantes pueden realizar adopciones
+                            </p>
+                          </div>
+                        )}
+                        
+                        {/* Mensaje para usuarios no autenticados */}
+                        {!isAuthenticated && (
+                          <div className="adoption-info">
+                            <p className="info-text">
+                              ⓘ <Link to="/login">Inicia sesión</Link> como adoptante para adoptar
+                            </p>
+                          </div>
+                        )}
                       </div>
                     </div>
                   ))

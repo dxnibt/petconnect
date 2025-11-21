@@ -39,7 +39,7 @@
   font-weight: 400;
 }
 
-/* Sistema de pestañas */
+/* Sistema de pestañas - MODIFICADO para 2 pestañas */
 .pet-form-tabs {
   display: flex;
   gap: 5px;
@@ -52,7 +52,7 @@
 
 .pet-form-tab {
   flex: 1;
-  min-width: 120px;
+  min-width: 150px; /* Aumentado para mejor distribución */
   padding: 12px 15px;
   background: white;
   border: 2px solid #e9ecef;
@@ -187,12 +187,13 @@
   accent-color: #FF6B6B;
 }
 
-/* Checkbox Group compacto */
+/* Checkbox Group compacto - MODIFICADO para mejor distribución */
 .pet-checkbox-group {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(3, 1fr); /* Cambiado a 3 columnas */
   gap: 12px;
   margin-top: 10px;
+  margin-bottom: 20px;
 }
 
 .pet-checkbox-label {
@@ -220,11 +221,12 @@
   accent-color: #FF6B6B;
 }
 
-/* Sección de características compacta */
+/* Sección de características compacta - MODIFICADO */
 .pet-characteristics-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 15px;
+  grid-template-columns: 1fr;
+  gap: 20px;
+  margin-bottom: 20px;
 }
 
 /* Vista previa de imagen */
@@ -304,6 +306,33 @@
   box-shadow: 0 4px 15px rgba(209, 74, 85, 0.774);
 }
 
+/* Agrega esto a tu petform.css */
+.age-calculator {
+  color: #667eea;
+  font-weight: 500;
+  font-size: 0.8rem;
+  margin-top: 5px;
+  display: block;
+}
+
+.pet-input-group input[type="date"] {
+  /* Asegurar que el date picker funcione bien */
+  position: relative;
+}
+
+.pet-input-group input[type="date"]::-webkit-calendar-picker-indicator {
+  background: transparent;
+  bottom: 0;
+  color: transparent;
+  cursor: pointer;
+  height: auto;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: auto;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .pet-form-container {
@@ -358,32 +387,6 @@
   .pet-form-header h1 {
     font-size: 1.3rem;
   }
-  /* Agrega esto a tu petform.css */
-.age-calculator {
-  color: #667eea;
-  font-weight: 500;
-  font-size: 0.8rem;
-  margin-top: 5px;
-  display: block;
-}
-
-.pet-input-group input[type="date"] {
-  /* Asegurar que el date picker funcione bien */
-  position: relative;
-}
-
-.pet-input-group input[type="date"]::-webkit-calendar-picker-indicator {
-  background: transparent;
-  bottom: 0;
-  color: transparent;
-  cursor: pointer;
-  height: auto;
-  left: 0;
-  position: absolute;
-  right: 0;
-  top: 0;
-  width: auto;
-}
 }
 
 /* Estilos para selects personalizados */
@@ -412,4 +415,18 @@
 
 .pet-form-container::-webkit-scrollbar-thumb:hover {
   background: #FF6B6B;
+}
+
+/* Estilos para mensajes de error */
+.error-message {
+  color: #e74c3c;
+  font-size: 0.75rem;
+  font-weight: 500;
+  margin-top: 4px;
+}
+
+.pet-form-container input.error,
+.pet-form-container select.error {
+  border-color: #e74c3c;
+  box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1);
 }
