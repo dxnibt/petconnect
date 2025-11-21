@@ -240,3 +240,36 @@ option {
 select:invalid {
   color: #aaa;
 }
+
+/* Estilos para el formulario de registro */
+form {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 2rem;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+form h1 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: #333;
+}
+
+form input,
+form select {
+  width: 100%;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 1rem;
+}
+
+form input:focus,
+form select:focus {
+  outline: none;
+  border-color: #ff6b6b;
+}
+
