@@ -8,4 +8,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface AdopcionDataJpaRepository extends JpaRepository<AdopcionData, Long> {
     AdopcionData findByUserIdAndStatus(Long userId, EstadoAdopcion status);
     Page<AdopcionData> findByShelterId(Long shelterId, Pageable pageable);
+    Page<AdopcionData> findByUserId(Long userId, Pageable pageable);
 }

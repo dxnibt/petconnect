@@ -1,9 +1,6 @@
 package com.petconnect.pets.infrastructure.driver_adapters.jpa_repository.mascotas;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.petconnect.pets.domain.model.enums.EstadoMascota;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

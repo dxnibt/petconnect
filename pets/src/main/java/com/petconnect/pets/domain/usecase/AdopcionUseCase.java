@@ -188,4 +188,33 @@ public class AdopcionUseCase {
         gateway.eliminarAdopcion(adopcionId);
     }
 
+    public Adopcion obtenerSolicitudUsuario(Long usuarioId) {
+        // Validar que el usuario existe
+        if (!usuarioGateway.usuarioExiste(usuarioId)) {
+            throw new UsuarioNoEncontradoException("El usuario no existe");
+        }
+
+        // Validar que el usuario tiene rol de ADOPTANTE
+        if (!usuarioGateway.tieneRol(usuarioId, "ADOPTANTE")) {
+            throw new UsuarioNoAutorizadoException("Solo los adoptantes pueden ver sus solicitudes");
+        }
+
+        // Buscar la solicitud EN_PROCESO del usuario
+        return gateway.buscarPorUserIdYEstado(usuarioId, EstadoAdopcion.EN_PROCESO);
+    }
+
+    public List<Adopcion> obtenerTodasSolicitudesUsuario(Long usuarioId, int page, int size) {
+        // Validar que el usuario existe
+        if (!usuarioGateway.usuarioExiste(usuarioId)) {
+            throw new UsuarioNoEncontradoException("El usuario no existe");
+        }
+
+        // Validar que el usuario tiene rol de ADOPTANTE
+        if (!usuarioGateway.tieneRol(usuarioId, "ADOPTANTE")) {
+            throw new UsuarioNoAutorizadoException("Solo los adoptantes pueden ver sus solicitudes");
+        }
+
+        return gateway.buscarTodasPorUserId(usuarioId, page, size);
+    }
+
 }

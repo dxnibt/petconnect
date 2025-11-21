@@ -1,6 +1,5 @@
 package com.petconnect.pets.infrastructure.entry_points;
 
-import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 import com.petconnect.pets.domain.model.Mascota;
 import com.petconnect.pets.domain.usecase.MascotaUseCase;
 import com.petconnect.pets.infrastructure.driver_adapters.jpa_repository.JwtDto.JwtUserDetails;
@@ -11,12 +10,9 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collection;
 import java.util.List;
 
 @RestController

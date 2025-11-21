@@ -66,6 +66,26 @@ public class AdopcionDataGatewayImpl implements AdopcionGateway {
     }
 
     @Override
+    public List<Adopcion> buscarTodasPorUserId(Long userId, int page, int size) {
+        if (page == -1) {
+            page = currentPage;
+            currentPage++;
+        }
+
+        Pageable pageable = PageRequest.of(page, size);
+        Page<AdopcionData> adopcionData = repository.findByUserId(userId, pageable);
+
+        if (adopcionData.isEmpty()) {
+            currentPage = 0;
+            return List.of();
+        }
+
+        return adopcionData.stream()
+                .map(mapper::toAdopcion)
+                .toList();
+    }
+
+    @Override
     public void eliminarAdopcion(Long adoptionId) {
         repository.deleteById(adoptionId);
     }

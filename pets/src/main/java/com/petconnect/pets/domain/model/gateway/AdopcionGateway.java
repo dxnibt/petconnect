@@ -10,6 +10,7 @@ public interface AdopcionGateway {
     List<Adopcion> buscarPorShelterId(Long shelterId, int page, int size);
     Adopcion obtenerAdopcionPorId(Long adoptionId);
     Adopcion buscarPorUserIdYEstado(Long userId, EstadoAdopcion estado);
+    List<Adopcion> buscarTodasPorUserId(Long userId, int page, int size);
     Adopcion actualizar(Adopcion adopcion);
     void eliminarAdopcion(Long adoptionId);
 }

@@ -118,29 +118,45 @@ public class AdopcionController {
         }
     }
 
-//    // Obtener por ID
-//    @GetMapping("/{id}")
-//    public ResponseEntity<?> obtenerPorId(@PathVariable Long id) {
-//        Adopcion adopcion = useCase.obtenerPorId(id);
-//
-//        if (adopcion == null) {
-//            return new ResponseEntity<>("La solicitud de adopción no existe", HttpStatus.BAD_REQUEST);
-//        }
-//
-//        return new ResponseEntity<>(adopcion, HttpStatus.OK);
-//    }
-//
-//    // Obtener por usuario
-//    @GetMapping("/usuario/{userId}")
-//    public ResponseEntity<?> obtenerPorUsuario(@PathVariable Long userId) {
-//        Adopcion adopcion = useCase.obtenerPorUserId(userId);
-//
-//        if (adopcion == null) {
-//            return new ResponseEntity<>("El usuario no tiene solicitudes de adopción", HttpStatus.BAD_REQUEST);
-//        }
-//
-//        return new ResponseEntity<>(adopcion, HttpStatus.OK);
-//    }
-//
-//
+    @GetMapping("/mis-solicitudes")
+    public ResponseEntity<?> obtenerMisSolicitudes(
+            @RequestParam(defaultValue = "-1") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @AuthenticationPrincipal JwtUserDetails userDetails) {
+
+        if (userDetails == null) {
+            return new ResponseEntity<>("Token inválido", HttpStatus.UNAUTHORIZED);
+        }
+
+        try {
+            List<Adopcion> solicitudes = useCase.obtenerTodasSolicitudesUsuario(userDetails.getId(), page, size);
+
+            if (solicitudes.isEmpty()) {
+                return new ResponseEntity<>("No solicitudes nuevas", HttpStatus.OK);
+            }
+
+            return new ResponseEntity<>(solicitudes, HttpStatus.OK);
+        } catch (Exception error) {
+            return new ResponseEntity<>(error.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/mi-solicitud-actual")
+    public ResponseEntity<?> obtenerMiSolicitudActual(@AuthenticationPrincipal JwtUserDetails userDetails) {
+        if (userDetails == null) {
+            return new ResponseEntity<>("Token inválido", HttpStatus.UNAUTHORIZED);
+        }
+
+        try {
+            Adopcion adopcion = useCase.obtenerSolicitudUsuario(userDetails.getId());
+
+            if (adopcion == null) {
+                return new ResponseEntity<>("No tienes solicitudes de adopción en proceso", HttpStatus.OK);
+            }
+
+            return new ResponseEntity<>(adopcion, HttpStatus.OK);
+        } catch (Exception error) {
+            return new ResponseEntity<>(error.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
 }
