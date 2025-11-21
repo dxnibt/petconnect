@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { createPet, getPet, updatePet } from "../api/pets";
+import { createPet, getPet, updatePet } from "../../api/pets";
 import "../styles/petform.css";
 
 export default function PetForm() {

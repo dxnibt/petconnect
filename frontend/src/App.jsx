@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import RegisterPage from "./Auth/pages/RegisterPage.jsx";
+import RegisterPage from "./Auth/pages/RegisterPage";
 import RefugioPage from "./Auth/pages/RefugioPage.jsx";
 import AdoptantePage from "./Auth/pages/AdoptantePage.jsx";
 import HomePage from "./pets/pages/HomePage.jsx";
@@ -19,7 +19,6 @@ function App() {
         <Route path="/ver" element={<PetList/>} />
         <Route path= "crear" element={<PetForm/>}/>
         <Route path="/" element={<HomePage/>} />
-        
       </Routes>
     </Router>
   );

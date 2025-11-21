@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { getPet } from "../api/pets";
+import { getPet } from "../../api/pets";
 import "../styles/petdetails.css";
 
 export default function PetDetails() {

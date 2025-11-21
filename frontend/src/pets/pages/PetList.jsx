@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import PetCard from "../components/PetCard";
-import { getPets, deletePet } from "../api/pets";
+import { getPets, deletePet } from "../../api/pets.js";
 import "../styles/petlist.css";
 
 export default function PetList() {
