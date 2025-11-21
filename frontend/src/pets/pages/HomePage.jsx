@@ -6,58 +6,232 @@ import "../styles/home.css";
 
 export default function HomePage() {
   const [mascotas, setMascotas] = useState([]);
-  const [page, setPage] = useState(0);
-  const size = 4; // cantidad de mascotas por página
-  const [totalPages, setTotalPages] = useState(1);
+  const [loading, setLoading] = useState(true);
+  const [activeSection, setActiveSection] = useState("inicio");
 
   useEffect(() => {
-  const fetchMascotas = async () => {
-    try {
-      const response = await axios.get(
-        `http://localhost:9494/api/petconnect/mascotas/List`
-      );
-      // Si tu API devuelve directamente un array:
-      setMascotas(response.data); 
-    } catch (error) {
-      console.error("Error al cargar mascotas:", error);
-    }
-  };
-  fetchMascotas();
-}, [page]);
+    const fetchMascotas = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:9494/api/petconnect/mascotas/List"
+        );
+        console.log("✅ API respondió con:", response);
+        console.log("✅ Datos:", response.data);
 
+        if (Array.isArray(response.data)) {
+          setMascotas(response.data);
+        } else {
+          console.warn("⚠️ La API no devolvió un array:", response.data);
+          setMascotas([]);
+        }
+      } catch (error) {
+        console.error("❌ Error al cargar mascotas:", error);
+        setMascotas([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMascotas();
+  }, []);
+
+  const scrollToSection = (sectionId) => {
+    const element = document.getElementById(sectionId);
+    if (element) element.scrollIntoView({ behavior: "smooth" });
+    setActiveSection(sectionId);
+  };
 
   return (
     <div className="home-container">
-      <header>
-        <h1>PetConnect</h1>
-        <div className="auth-buttons">
-          <Link to="/register"><button>Sign Up/Sign In</button></Link>
+      {/* ✅ HEADER */}
+      <header className="main-header">
+        <div className="header-content">
+          <div className="logo-section">
+            <div className="logo">
+              <span className="paw">🐾</span>
+              <h1>PetConnect</h1>
+            </div>
 
+            <nav className="navigation">
+              <button
+                className={`nav-btn ${activeSection === "inicio" ? "active" : ""}`}
+                onClick={() => scrollToSection("inicio")}
+              >
+                Inicio
+              </button>
+              <button
+                className={`nav-btn ${activeSection === "quienes-somos" ? "active" : ""}`}
+                onClick={() => scrollToSection("quienes-somos")}
+              >
+                Quiénes Somos
+              </button>
+              <button
+                className={`nav-btn ${activeSection === "mascotas" ? "active" : ""}`}
+                onClick={() => scrollToSection("mascotas")}
+              >
+                Mascotas
+              </button>
+            </nav>
+          </div>
+
+          {/* ✅ Botones de autenticación */}
+          <div className="auth-buttons">
+            {!localStorage.getItem("token") ? (
+              <Link to="/register">
+                <button className="auth-btn signin-btn">
+                  Iniciar Sesión / Registrarse
+                </button>
+              </Link>
+            ) : (
+              <button
+                className="auth-btn logout-btn"
+                onClick={() => {
+                  localStorage.removeItem("token");
+                  localStorage.removeItem("role");
+                  window.location.reload();
+                }}
+              >
+                Cerrar Sesión
+              </button>
+            )}
+          </div>
         </div>
       </header>
 
       <main>
-        <h2>Catálogo de Mascotas</h2>
-        <div className="mascotas-grid">
-          {mascotas.length > 0 ? (
-            mascotas.map((mascota) => (
-              <div key={mascota.id} className="mascota-card">
-                <img src={mascota.imageUrl} alt={mascota.name} />
-                <h3>{mascota.name}</h3>
-                <p>{mascota.description}</p>
-              </div>
-            ))
-          ) : (
-            <p>No hay mascotas disponibles.</p>
-          )}
-        </div>
+        {/* ✅ HERO SECTION */}
+        <section id="inicio" className="hero-section">
+          <div className="hero-content">
+            <h2>
+              Conectamos corazones,
+              <br />
+              encontramos hogares
+            </h2>
+            <p>
+              Tu compañero perfecto te está esperando. Descubre mascotas que
+              buscan una segunda oportunidad.
+            </p>
+            <button
+              className="cta-button"
+              onClick={() => scrollToSection("mascotas")}
+            >
+              Ver Mascotas Disponibles
+            </button>
+          </div>
+          <div className="hero-image">
+            <div className="floating-paws">
+              <span>🐾</span>
+              <span>🐾</span>
+              <span>🐾</span>
+            </div>
+          </div>
+        </section>
 
-        <div className="pagination">
-          <button disabled={page === 0} onClick={() => setPage(page - 1)}>Anterior</button>
-          <span>Página {page + 1} de {totalPages}</span>
-          <button disabled={page + 1 >= totalPages} onClick={() => setPage(page + 1)}>Siguiente</button>
-        </div>
+        {/* ✅ FRASE POÉTICA */}
+        <section id="quienes-somos" className="phrase-hero-section">
+          <div className="phrase-hero-image">
+            <img
+              src="https://i.pinimg.com/1200x/7a/ac/7e/7aac7eb9f34a54ec650b7dc0523a33f6.jpg"
+              alt="Cachorro y gatito buscando un hogar"
+            />
+            <div className="phrase-hero-content">
+              <div className="phrase-hero-text">
+                <h2>
+                  Cada mirada merece un hogar,
+                  <br />
+                  cada corazón un amigo.
+                </h2>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ✅ CATÁLOGO DE MASCOTAS */}
+        <section id="mascotas" className="pets-section">
+          <div className="section-header">
+            <h2>Nuestras Mascotas</h2>
+            <p>Conoce a estos increíbles compañeros que buscan un hogar</p>
+          </div>
+
+          {loading ? (
+            <div className="loading-container">
+              <div className="loading-spinner"></div>
+              <p>Cargando mascotas...</p>
+            </div>
+          ) : (
+            <div className="mascotas-grid">
+              {mascotas.length > 0 ? (
+                mascotas.map((mascota, index) => (
+                  <div key={mascota.id || index} className="mascota-card">
+                    <div className="card-image">
+                      <img
+                        src={
+                          mascota.imageUrl ||
+                          "https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=300&h=200&fit=crop"
+                        }
+                        alt={mascota.name || "Mascota"}
+                        onError={(e) => {
+                          e.target.src =
+                            "https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=300&h=200&fit=crop";
+                        }}
+                      />
+                      <div className="card-overlay">
+                        <button className="adopt-btn">¡Adóptame!</button>
+                      </div>
+                    </div>
+                    <div className="card-content">
+                      <h3>{mascota.name || "Sin nombre"}</h3>
+                      <p className="pet-description">
+                        {mascota.description ||
+                          "Esta mascota está buscando un hogar lleno de amor y cuidados."}
+                      </p>
+                      <div className="pet-tags">
+                        <span className="tag">🐕 Mascota</span>
+                        <span className="tag">❤️ Necesita Hogar</span>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="no-pets">
+                  <div className="no-pets-icon">🐾</div>
+                  <h3>No hay mascotas disponibles en este momento</h3>
+                  <p>Pronto tendremos nuevos amigos esperando por un hogar.</p>
+                </div>
+              )}
+            </div>
+          )}
+        </section>
       </main>
+
+      {/* ✅ FOOTER */}
+      <footer className="main-footer">
+        <div className="footer-content">
+          <div className="footer-section">
+            <div className="logo">
+              <span className="paw">🐾</span>
+              <h3>PetConnect</h3>
+            </div>
+            <p>Conectando mascotas con hogares desde 2024</p>
+          </div>
+          <div className="footer-section">
+            <h4>Contacto</h4>
+            <p>info@petconnect.com</p>
+            <p>+57 321 654 9870</p>
+          </div>
+          <div className="footer-section">
+            <h4>Síguenos</h4>
+            <div className="social-links">
+              <span>📘</span>
+              <span>📷</span>
+              <span>🐦</span>
+            </div>
+          </div>
+        </div>
+        <div className="footer-bottom">
+          <p>&copy; 2025 PetConnect. Todos los derechos reservados.</p>
+        </div>
+      </footer>
     </div>
   );
 }

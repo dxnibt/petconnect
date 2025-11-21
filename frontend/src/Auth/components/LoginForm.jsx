@@ -6,28 +6,28 @@ function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
-  const navigate = useNavigate(); // 👈 este hook sirve para navegar
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
       const response = await axios.post(
-        "http://localhost:8080/api/petconnect/usuario/login",
+        "http://localhost:8181/api/petconnect/usuario/login",
         { email, password }
       );
 
-      // Si el login fue exitoso:
+      // ✅ Guardar token y rol en localStorage
       localStorage.setItem("token", response.data.token);
       localStorage.setItem("role", response.data.role);
-
       setMessage("Inicio de sesión exitoso ✅");
 
-      // 🔹 Redirige a la página principal
-      navigate("/"); // 👈 aquí cambias la ruta
+      // ✅ Redirigir al Home después de un momento
+      setTimeout(() => navigate("/"), 800);
     } catch (error) {
+      console.error("❌ Error al iniciar sesión:", error);
       if (error.response) {
-        setMessage(error.response.data);
+        setMessage(error.response.data.message || "Credenciales inválidas");
       } else {
         setMessage("Error al conectar con el servidor");
       }
@@ -35,30 +35,28 @@ function LoginForm() {
   };
 
   return (
-    <div className="login-container">
-      <form onSubmit={handleSubmit} className="login-form">
-        <h2>Iniciar sesión</h2>
+    <form onSubmit={handleSubmit} className="auth-form-content">
+      <h2>Iniciar sesión</h2>
 
-        <input
-          type="email"
-          placeholder="Correo electrónico"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
+      <input
+        type="email"
+        placeholder="Correo electrónico"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        required
+      />
 
-        <input
-          type="password"
-          placeholder="Contraseña"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
+      <input
+        type="password"
+        placeholder="Contraseña"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        required
+      />
 
-        <button type="submit">Ingresar</button>
-        {message && <p className="message">{message}</p>}
-      </form>
-    </div>
+      <button type="submit">Ingresar</button>
+      {message && <p className="message">{message}</p>}
+    </form>
   );
 }
 
