@@ -1,4 +1,4 @@
-package com.petconnect.pets.infrastructure.dtos;
+package com.petconnect.pets.infrastructure.driver_adapters.jpa_repository.dtos;
 
 import lombok.Data;
 

@@ -1,6 +1,7 @@
 package com.petconnect.pets.infrastructure.driver_adapters.jpa_repository.adopcion;
 
 import com.petconnect.pets.domain.model.Adopcion;
+import com.petconnect.pets.domain.model.enums.EstadoAdopcion;
 import com.petconnect.pets.domain.model.gateway.AdopcionGateway;
 import com.petconnect.pets.infrastructure.mapper.AdopcionMapper;
 import lombok.RequiredArgsConstructor;
@@ -26,11 +27,11 @@ public class AdopcionDataGatewayImpl implements AdopcionGateway {
         return mapper.toAdopcion(saved);
     }
 
-    @Override
-    public Adopcion buscarPorUserId(Long userId) {
-        AdopcionData data = repository.findByUserId(userId);
-        return (data != null) ? mapper.toAdopcion(data) : null;
-    }
+//    @Override
+//    public Adopcion buscarPorUserId(Long userId) {
+//        AdopcionData data = repository.findByUserId(userId);
+//        return (data != null) ? mapper.toAdopcion(data) : null;
+//    }
 
     @Override
     public List<Adopcion> buscarPorShelterId(Long shelterId, int page, int size) {
@@ -62,6 +63,12 @@ public class AdopcionDataGatewayImpl implements AdopcionGateway {
         AdopcionData data = mapper.toData(adopcion);
         AdopcionData updated = repository.save(data);
         return mapper.toAdopcion(updated);
+    }
+
+    @Override
+    public Adopcion buscarPorUserIdYEstado(Long userId, EstadoAdopcion estado) {
+        AdopcionData data = repository.findByUserIdAndStatus(userId, estado);
+        return (data != null) ? mapper.toAdopcion(data) : null;
     }
 
     @Override

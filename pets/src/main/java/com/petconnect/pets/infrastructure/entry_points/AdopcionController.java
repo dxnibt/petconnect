@@ -1,10 +1,9 @@
 package com.petconnect.pets.infrastructure.entry_points;
 
-import com.petconnect.pets.domain.exception.*;
 import com.petconnect.pets.domain.model.Adopcion;
 import com.petconnect.pets.domain.usecase.AdopcionUseCase;
 import com.petconnect.pets.infrastructure.driver_adapters.jpa_repository.JwtDto.JwtUserDetails;
-import com.petconnect.pets.infrastructure.dtos.SolicitudAdopcionRequest;
+import com.petconnect.pets.infrastructure.driver_adapters.jpa_repository.dtos.SolicitudAdopcionRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,7 +35,7 @@ public class AdopcionController {
             adopcion.setUserId(userDetails.getId()); // Del token
             adopcion.setPetId(solicitud.getPetId()); // Del body
 
-            // El UseCase se encarga de validar si es adoptante
+            // validar si es adoptante
             Adopcion adopcionCreada = useCase.crear(adopcion);
             return new ResponseEntity<>(adopcionCreada, HttpStatus.OK);
 
@@ -68,6 +67,40 @@ public class AdopcionController {
         }
     }
 
+    @PatchMapping("/{id}/aceptar")
+    public ResponseEntity<?> aceptarAdopcion(
+            @PathVariable Long id,
+            @AuthenticationPrincipal JwtUserDetails userDetails) {
+
+        if (userDetails == null) {
+            return new ResponseEntity<>("Token inválido", HttpStatus.UNAUTHORIZED);
+        }
+
+        try {
+            Adopcion aceptada = useCase.aceptarAdopcion(id, userDetails.getId());
+            return new ResponseEntity<>(aceptada, HttpStatus.OK);
+        } catch (Exception error) {
+            return new ResponseEntity<>(error.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PatchMapping("/{id}/rechazar")
+    public ResponseEntity<?> rechazarAdopcion(
+            @PathVariable Long id,
+            @AuthenticationPrincipal JwtUserDetails userDetails) {
+
+        if (userDetails == null) {
+            return new ResponseEntity<>("Token inválido", HttpStatus.UNAUTHORIZED);
+        }
+
+        try {
+            Adopcion rechazada = useCase.rechazarAdopcion(id, userDetails.getId());
+            return new ResponseEntity<>(rechazada, HttpStatus.OK);
+        } catch (Exception error) {
+            return new ResponseEntity<>(error.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
 //    // Obtener por ID
 //    @GetMapping("/{id}")
 //    public ResponseEntity<?> obtenerPorId(@PathVariable Long id) {
@@ -92,30 +125,6 @@ public class AdopcionController {
 //        return new ResponseEntity<>(adopcion, HttpStatus.OK);
 //    }
 //
-//    // Aceptar solicitud
-//    @PutMapping("/{id}/aceptar")
-//    public ResponseEntity<?> aceptar(@PathVariable Long id) {
-//        try {
-//            Adopcion aceptada = useCase.aceptar(id);
-//            return new ResponseEntity<>(aceptada, HttpStatus.OK);
-//        } catch (AdopcionNoEncontradaException | MascotaNoDisponibleException | MascotaNoEncontradaException |
-//                 ErrorRefugioException e) {
-//            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-//        } catch (Exception e) {
-//            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-//        }
-//    }
-//
-//    // Rechazar solicitud
-//    @PutMapping("/{id}/rechazar")
-//    public ResponseEntity<?> rechazar(@PathVariable Long id) {
-//        try {
-//            Adopcion rechazada = useCase.rechazar(id);
-//            return new ResponseEntity<>(rechazada, HttpStatus.OK);
-//        } catch (Exception e) {
-//            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-//        }
-//    }
 //
 //    // Eliminar solicitud
 //    @DeleteMapping("/delete/{id}")
