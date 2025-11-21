@@ -11,6 +11,7 @@ import com.petconnect.pets.domain.model.gateway.UsuarioGateway;
 import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @RequiredArgsConstructor
 public class AdopcionUseCase {
@@ -57,6 +58,21 @@ public class AdopcionUseCase {
 
         return gateway.crear(adopcion);
     }
+
+    public List<Adopcion> obtenerPorShelterId(Long shelterId, int page, int size) {
+        // Validar que el usuario (refugio) existe
+        if (!usuarioGateway.usuarioExiste(shelterId)) {
+            throw new UsuarioNoEncontradoException("El refugio no existe");
+        }
+
+        // Validar que el usuario tiene rol de REFUGIO
+        if (!usuarioGateway.tieneRol(shelterId, "REFUGIO")) {
+            throw new UsuarioNoAutorizadoException("Solo los refugios pueden ver sus solicitudes");
+        }
+
+        return gateway.buscarPorShelterId(shelterId, page, size);
+    }
+
 
     public Adopcion obtenerPorId(Long id) {
         Adopcion adopcion = gateway.obtenerAdopcionPorId(id);

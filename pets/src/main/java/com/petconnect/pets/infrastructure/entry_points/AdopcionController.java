@@ -11,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/petconnect/adopciones")
 @RequiredArgsConstructor
@@ -43,63 +45,86 @@ public class AdopcionController {
         }
     }
 
-    // Obtener por ID
-    @GetMapping("/{id}")
-    public ResponseEntity<?> obtenerPorId(@PathVariable Long id) {
-        Adopcion adopcion = useCase.obtenerPorId(id);
+    @GetMapping("/refugio/solicitudes")
+    public ResponseEntity<?> obtenerSolicitudesRefugio(
+            @RequestParam(defaultValue = "-1") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @AuthenticationPrincipal JwtUserDetails userDetails) {
 
-        if (adopcion == null) {
-            return new ResponseEntity<>("La solicitud de adopción no existe", HttpStatus.BAD_REQUEST);
+        if (userDetails == null) {
+            return new ResponseEntity<>("Token inválido", HttpStatus.UNAUTHORIZED);
         }
 
-        return new ResponseEntity<>(adopcion, HttpStatus.OK);
-    }
-
-    // Obtener por usuario
-    @GetMapping("/usuario/{userId}")
-    public ResponseEntity<?> obtenerPorUsuario(@PathVariable Long userId) {
-        Adopcion adopcion = useCase.obtenerPorUserId(userId);
-
-        if (adopcion == null) {
-            return new ResponseEntity<>("El usuario no tiene solicitudes de adopción", HttpStatus.BAD_REQUEST);
-        }
-
-        return new ResponseEntity<>(adopcion, HttpStatus.OK);
-    }
-
-    // Aceptar solicitud
-    @PutMapping("/{id}/aceptar")
-    public ResponseEntity<?> aceptar(@PathVariable Long id) {
         try {
-            Adopcion aceptada = useCase.aceptar(id);
-            return new ResponseEntity<>(aceptada, HttpStatus.OK);
-        } catch (AdopcionNoEncontradaException | MascotaNoDisponibleException | MascotaNoEncontradaException |
-                 ErrorRefugioException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        } catch (Exception e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            List<Adopcion> adopciones = useCase.obtenerPorShelterId(userDetails.getId(), page, size);
+
+            if (adopciones.isEmpty()) {
+                return new ResponseEntity<>("No hay más solicitudes de adopción para tu refugio", HttpStatus.OK);
+            }
+
+            return new ResponseEntity<>(adopciones, HttpStatus.OK);
+        } catch (Exception error) {
+            return new ResponseEntity<>(error.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 
-    // Rechazar solicitud
-    @PutMapping("/{id}/rechazar")
-    public ResponseEntity<?> rechazar(@PathVariable Long id) {
-        try {
-            Adopcion rechazada = useCase.rechazar(id);
-            return new ResponseEntity<>(rechazada, HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
-    }
-
-    // Eliminar solicitud
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<?> eliminar(@PathVariable Long id) {
-        try {
-            useCase.eliminar(id);
-            return new ResponseEntity<>("Solicitud de adopción eliminada", HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
-    }
+//    // Obtener por ID
+//    @GetMapping("/{id}")
+//    public ResponseEntity<?> obtenerPorId(@PathVariable Long id) {
+//        Adopcion adopcion = useCase.obtenerPorId(id);
+//
+//        if (adopcion == null) {
+//            return new ResponseEntity<>("La solicitud de adopción no existe", HttpStatus.BAD_REQUEST);
+//        }
+//
+//        return new ResponseEntity<>(adopcion, HttpStatus.OK);
+//    }
+//
+//    // Obtener por usuario
+//    @GetMapping("/usuario/{userId}")
+//    public ResponseEntity<?> obtenerPorUsuario(@PathVariable Long userId) {
+//        Adopcion adopcion = useCase.obtenerPorUserId(userId);
+//
+//        if (adopcion == null) {
+//            return new ResponseEntity<>("El usuario no tiene solicitudes de adopción", HttpStatus.BAD_REQUEST);
+//        }
+//
+//        return new ResponseEntity<>(adopcion, HttpStatus.OK);
+//    }
+//
+//    // Aceptar solicitud
+//    @PutMapping("/{id}/aceptar")
+//    public ResponseEntity<?> aceptar(@PathVariable Long id) {
+//        try {
+//            Adopcion aceptada = useCase.aceptar(id);
+//            return new ResponseEntity<>(aceptada, HttpStatus.OK);
+//        } catch (AdopcionNoEncontradaException | MascotaNoDisponibleException | MascotaNoEncontradaException |
+//                 ErrorRefugioException e) {
+//            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+//        } catch (Exception e) {
+//            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
+//    }
+//
+//    // Rechazar solicitud
+//    @PutMapping("/{id}/rechazar")
+//    public ResponseEntity<?> rechazar(@PathVariable Long id) {
+//        try {
+//            Adopcion rechazada = useCase.rechazar(id);
+//            return new ResponseEntity<>(rechazada, HttpStatus.OK);
+//        } catch (Exception e) {
+//            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+//        }
+//    }
+//
+//    // Eliminar solicitud
+//    @DeleteMapping("/delete/{id}")
+//    public ResponseEntity<?> eliminar(@PathVariable Long id) {
+//        try {
+//            useCase.eliminar(id);
+//            return new ResponseEntity<>("Solicitud de adopción eliminada", HttpStatus.OK);
+//        } catch (Exception e) {
+//            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+//        }
+//    }
 }
