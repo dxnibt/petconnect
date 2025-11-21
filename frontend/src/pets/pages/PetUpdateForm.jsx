@@ -1,4 +1,4 @@
-// src/components/pets/PetUpdateForm.jsx
+// src/pets/pages/PetUpdateForm.jsx
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
@@ -30,6 +30,10 @@ export default function PetUpdateForm() {
   const [loading, setLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  console.log("🎯 PetUpdateForm montado");
+  console.log("📌 Parámetro ID:", id);
+  console.log("🔍 Token disponible:", !!localStorage.getItem("token"));
+
   const [form, setForm] = useState({
     name: "",
     species: "",
@@ -47,14 +51,28 @@ export default function PetUpdateForm() {
   });
 
   useEffect(() => {
-    if (id) loadPet();
+    console.log("🔍 ID de mascota recibido:", id);
+    if (id) {
+      loadPet();
+    } else {
+      console.error("❌ No se recibió ID de mascota");
+      alert("Error: No se especificó qué mascota editar");
+      navigate("/");
+    }
   }, [id]);
 
   async function loadPet() {
     try {
       setLoading(true);
+      console.log("🔄 Cargando mascota con ID:", id);
+      
       const res = await getPet(id);
-      console.log("📥 Datos recibidos del backend:", res.data);
+      console.log("📥 Respuesta completa:", res);
+      console.log("📥 Datos de mascota:", res.data);
+      
+      if (!res.data) {
+        throw new Error("No se recibieron datos de la mascota");
+      }
       
       const petData = {
         ...res.data,
@@ -64,9 +82,13 @@ export default function PetUpdateForm() {
       };
       
       setForm(petData);
+      console.log("✅ Formulario actualizado con datos:", petData);
+      
     } catch (error) {
-      console.error("Error cargando mascota:", error);
-      alert("Error al cargar la mascota");
+      console.error("❌ Error cargando mascota:", error);
+      console.error("📋 Detalles error:", error.response?.data);
+      alert(`Error al cargar la mascota: ${error.message}`);
+      navigate("/");
     } finally {
       setLoading(false);
     }
