@@ -358,6 +358,32 @@
   .pet-form-header h1 {
     font-size: 1.3rem;
   }
+  /* Agrega esto a tu petform.css */
+.age-calculator {
+  color: #667eea;
+  font-weight: 500;
+  font-size: 0.8rem;
+  margin-top: 5px;
+  display: block;
+}
+
+.pet-input-group input[type="date"] {
+  /* Asegurar que el date picker funcione bien */
+  position: relative;
+}
+
+.pet-input-group input[type="date"]::-webkit-calendar-picker-indicator {
+  background: transparent;
+  bottom: 0;
+  color: transparent;
+  cursor: pointer;
+  height: auto;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: auto;
+}
 }
 
 /* Estilos para selects personalizados */

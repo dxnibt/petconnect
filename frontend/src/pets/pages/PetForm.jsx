@@ -33,7 +33,7 @@ export default function PetForm() {
     sterilization: false,
     vaccines: "",
     description: "",
-    imageUrl: ""
+    imageUrl: "",
   });
 
   useEffect(() => {
@@ -44,10 +44,18 @@ export default function PetForm() {
     try {
       setLoading(true);
       const res = await getPet(id);
+      console.log("📥 Datos recibidos del backend:", res.data);
+      
       const petData = {
         ...res.data,
+        // Asegurar que los booleanos no sean null
+        childFriendly: res.data.childFriendly || false,
+        requiresAmpleSpace: res.data.requiresAmpleSpace || false,
+        sterilization: res.data.sterilization || false,
+        // Formatear la fecha para el input
         birthDate: res.data.birthDate ? formatDateForInput(res.data.birthDate) : ""
       };
+      
       setForm(petData);
     } catch (error) {
       console.error("Error cargando mascota:", error);
@@ -59,8 +67,19 @@ export default function PetForm() {
 
   function formatDateForInput(dateString) {
     if (!dateString) return "";
-    const date = new Date(dateString);
-    return date.toISOString().split('T')[0];
+    
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) {
+        console.warn("Fecha inválida:", dateString);
+        return "";
+      }
+      
+      return date.toISOString().split('T')[0];
+    } catch (error) {
+      console.error("Error formateando fecha:", error);
+      return "";
+    }
   }
 
   function handleChange(e) {
@@ -71,15 +90,71 @@ export default function PetForm() {
     }));
   }
 
+  // Función para calcular la edad a partir de la fecha de nacimiento
+  const calculateAge = (birthDate) => {
+    if (!birthDate) return null;
+    const today = new Date();
+    const birth = new Date(birthDate);
+    let age = today.getFullYear() - birth.getFullYear();
+    const monthDiff = today.getMonth() - birth.getMonth();
+    
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+      age--;
+    }
+    return age.toString();
+  };
+
+  // Función para validar y formatear los datos para el backend
+  function validateAndFormatData(formData) {
+    const formattedData = {
+      name: formData.name?.trim(),
+      species: formData.species,
+      otherspecies: formData.species === ESPECIE_MASCOTA.OTRO ? formData.otherspecies?.trim() : null,
+      race: formData.race?.trim() || null,
+      birthDate: formData.birthDate || null,
+      age: calculateAge(formData.birthDate), // Se calcula automáticamente
+      sex: formData.sex || null,
+      childFriendly: Boolean(formData.childFriendly),
+      requiresAmpleSpace: Boolean(formData.requiresAmpleSpace),
+      sterilization: Boolean(formData.sterilization),
+      vaccines: formData.vaccines?.trim() || null,
+      description: formData.description?.trim() || null,
+      imageUrl: formData.imageUrl?.trim() || null,
+      // state: "DISPONIBLE", // Se setea automáticamente en el backend
+      // shelter_Id: null // Se setea automáticamente según el usuario logueado
+    };
+
+    // Validaciones básicas
+    if (!formattedData.name) {
+      throw new Error("El nombre es requerido");
+    }
+    
+    if (!formattedData.species) {
+      throw new Error("La especie es requerida");
+    }
+
+    if (formattedData.species === ESPECIE_MASCOTA.OTRO && !formattedData.otherspecies) {
+      throw new Error("Debe especificar la especie");
+    }
+
+    console.log("✅ Datos formateados para enviar:", formattedData);
+    return formattedData;
+  }
+
   async function handleSubmit(e) {
     e.preventDefault();
     setLoading(true);
 
     try {
-      const submitData = {
-        ...form,
-        otherspecies: form.species === ESPECIE_MASCOTA.OTRO ? form.otherspecies : ""
-      };
+      console.log("🔍 Datos del formulario ANTES de formatear:", form);
+      
+      // Validar y formatear datos
+      const submitData = validateAndFormatData(form);
+      
+      console.log("📤 Enviando datos al servidor:", JSON.stringify(submitData, null, 2));
+
+      const token = localStorage.getItem("token");
+      console.log("🔑 Token disponible:", !!token);
 
       if (id) {
         await updatePet(id, submitData);
@@ -91,8 +166,32 @@ export default function PetForm() {
       
       navigate("/");
     } catch (error) {
-      console.error("Error guardando mascota:", error);
-      alert("Error al guardar la mascota. Por favor intenta nuevamente.");
+      console.error("❌ Error completo:", error);
+      console.error("📋 Response data:", error.response?.data);
+      console.error("🔧 Response status:", error.response?.status);
+      
+      // Mostrar el error específico del backend si está disponible
+      if (error.response?.data) {
+        const errorData = error.response.data;
+        console.error("🐛 Error del backend:", errorData);
+        
+        let errorMessage = "Error del servidor: ";
+        
+        // Dependiendo de cómo tu backend envía los errores
+        if (errorData.message) {
+          errorMessage += errorData.message;
+        } else if (errorData.error) {
+          errorMessage += errorData.error;
+        } else {
+          errorMessage += JSON.stringify(errorData);
+        }
+        
+        alert(errorMessage);
+      } else if (error.message && !error.response) {
+        alert(`Error de validación: ${error.message}`);
+      } else {
+        alert("Error al guardar la mascota. Verifica la conexión con el servidor.");
+      }
     } finally {
       setLoading(false);
     }
@@ -180,7 +279,7 @@ export default function PetForm() {
                   type="text"
                   value={form.otherspecies}
                   onChange={handleChange}
-                  required
+                  required={form.species === ESPECIE_MASCOTA.OTRO}
                   placeholder="Ej: Conejo, Hámster, etc."
                 />
               </div>
@@ -206,7 +305,13 @@ export default function PetForm() {
                 type="date"
                 value={form.birthDate}
                 onChange={handleChange}
+                max={new Date().toISOString().split('T')[0]} // No permitir fechas futuras
               />
+              {form.birthDate && (
+                <small className="age-calculator">
+                  Edad calculada: {calculateAge(form.birthDate) || 0} años
+                </small>
+              )}
             </div>
 
             <div className="pet-input-group full-width">
@@ -281,7 +386,7 @@ export default function PetForm() {
                 name="vaccines"
                 value={form.vaccines}
                 onChange={handleChange}
-                placeholder="Lista de vacunas aplicadas..."
+                placeholder="Lista de vacunas aplicadas (separadas por coma)..."
                 rows="3"
               />
             </div>
@@ -320,6 +425,7 @@ export default function PetForm() {
                     alt="Vista previa" 
                     onError={(e) => {
                       e.target.style.display = 'none';
+                      console.warn("❌ Error cargando imagen:", form.imageUrl);
                     }} 
                   />
                 </div>
