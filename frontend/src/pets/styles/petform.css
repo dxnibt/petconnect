@@ -1,14 +1,389 @@
+/* petform.css */
 .pet-form-container {
+  max-width: 900px;
+  margin: 20px auto;
   padding: 20px;
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  border-radius: 20px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  font-family: 'Montserrat', sans-serif;
+  max-height: 95vh;
+  overflow-y: auto;
 }
 
-.pet-form {
+.pet-form-header {
+  text-align: center;
+  margin-bottom: 25px;
+  position: sticky;
+  top: 0;
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  padding: 15px;
+  border-radius: 15px;
+  z-index: 10;
+}
+
+.pet-form-header h1 {
+  color: #2d3436;
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 5px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.pet-form-header p {
+  color: #636e72;
+  font-size: 0.95rem;
+  font-weight: 400;
+}
+
+/* Sistema de pestañas */
+.pet-form-tabs {
+  display: flex;
+  gap: 5px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  background: #f8f9fa;
+  padding: 8px;
+  border-radius: 12px;
+}
+
+.pet-form-tab {
+  flex: 1;
+  min-width: 120px;
+  padding: 12px 15px;
+  background: white;
+  border: 2px solid #e9ecef;
+  border-radius: 10px;
+  cursor: pointer;
+  text-align: center;
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: #636e72;
+  transition: all 0.3s ease;
+}
+
+.pet-form-tab.active {
+  background: #667eea;
+  color: white;
+  border-color: #667eea;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.pet-form-tab:hover:not(.active) {
+  border-color: #667eea;
+  color: #667eea;
+}
+
+/* Contenido de pestañas */
+.pet-form-tab-content {
+  display: none;
+  animation: fadeIn 0.3s ease;
+}
+
+.pet-form-tab-content.active {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Grid compacto */
+.pet-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.pet-form-grid-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.pet-form-grid-full {
+  grid-template-columns: 1fr;
+}
+
+.pet-input-group {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  max-width: 350px;
+  gap: 6px;
 }
 
-.pet-form input {
+.pet-input-group.full-width {
+  grid-column: 1 / -1;
+}
+
+.pet-input-group label {
+  font-weight: 600;
+  color: #2d3436;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.pet-form-container input,
+.pet-form-container select,
+.pet-form-container textarea {
+  padding: 12px;
+  border: 2px solid #e9ecef;
+  border-radius: 10px;
+  font-size: 14px;
+  background: #f8f9fa;
+  transition: all 0.3s ease;
+  font-family: 'Montserrat', sans-serif;
+  width: 100%;
+}
+
+.pet-form-container input:focus,
+.pet-form-container select:focus,
+.pet-form-container textarea:focus {
+  border-color: #667eea;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  outline: none;
+}
+
+.pet-form-container textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+/* Radio Group compacto */
+.pet-radio-group {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.pet-radio-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  color: #2d3436;
+  font-size: 0.85rem;
+  transition: color 0.3s ease;
   padding: 8px;
+  border-radius: 8px;
+  background: #f8f9fa;
+}
+
+.pet-radio-label:hover {
+  background: #e9ecef;
+  color: #667eea;
+}
+
+.pet-radio-label input[type="radio"] {
+  width: 16px;
+  height: 16px;
+  accent-color: #667eea;
+}
+
+/* Checkbox Group compacto */
+.pet-checkbox-group {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.pet-checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  color: #2d3436;
+  font-size: 0.85rem;
+  transition: color 0.3s ease;
+  padding: 8px;
+  border-radius: 8px;
+  background: #f8f9fa;
+}
+
+.pet-checkbox-label:hover {
+  background: #e9ecef;
+  color: #667eea;
+}
+
+.pet-checkbox-label input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: #667eea;
+}
+
+/* Sección de características compacta */
+.pet-characteristics-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+}
+
+/* Vista previa de imagen */
+.pet-image-preview {
+  text-align: center;
+  margin-top: 10px;
+}
+
+.pet-image-preview img {
+  max-width: 150px;
+  max-height: 150px;
+  border-radius: 10px;
+  border: 2px solid #e9ecef;
+}
+
+/* Botón de envío */
+.pet-submit-btn {
+  width: 100%;
+  padding: 15px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 15px;
+}
+
+.pet-submit-btn:hover:not(.disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+}
+
+.pet-submit-btn.disabled {
+  background: #b2bec3;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Navegación entre pestañas */
+.pet-tab-navigation {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+  gap: 10px;
+}
+
+.pet-tab-btn {
+  padding: 12px 25px;
+  background: #f8f9fa;
+  border: 2px solid #e9ecef;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: #636e72;
+}
+
+.pet-tab-btn:hover {
+  border-color: #667eea;
+  color: #667eea;
+}
+
+.pet-tab-btn.primary {
+  background: #667eea;
+  color: white;
+  border-color: #667eea;
+}
+
+.pet-tab-btn.primary:hover {
+  background: #5a6fd8;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .pet-form-container {
+    margin: 10px;
+    padding: 15px;
+    max-height: 90vh;
+  }
+  
+  .pet-form-tabs {
+    flex-direction: column;
+  }
+  
+  .pet-form-tab {
+    min-width: auto;
+  }
+  
+  .pet-form-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  
+  .pet-radio-group,
+  .pet-checkbox-group {
+    grid-template-columns: 1fr;
+  }
+  
+  .pet-characteristics-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .pet-form-header h1 {
+    font-size: 1.5rem;
+  }
+  
+  .pet-tab-navigation {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 480px) {
+  .pet-form-container {
+    margin: 5px;
+    padding: 12px;
+    border-radius: 15px;
+  }
+  
+  .pet-form-header {
+    margin-bottom: 15px;
+    padding: 10px;
+  }
+  
+  .pet-form-header h1 {
+    font-size: 1.3rem;
+  }
+}
+
+/* Estilos para selects personalizados */
+.pet-form-container select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23667eea' d='M6 8L2 4h8z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: calc(100% - 15px) center;
+  padding-right: 45px;
+}
+
+/* Scrollbar personalizado */
+.pet-form-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.pet-form-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.pet-form-container::-webkit-scrollbar-thumb {
+  background: #667eea;
+  border-radius: 3px;
+}
+
+.pet-form-container::-webkit-scrollbar-thumb:hover {
+  background: #5a6fd8;
 }
