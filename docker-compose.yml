@@ -1,0 +1,32 @@
+version: '3.9'
+
+services:
+  auth:
+    build: ./auth
+    container_name: auth
+    ports:
+      - "8081:8080"
+
+  pets:
+    build: ./pets
+    container_name: pets
+    ports:
+      - "9494:8080"
+
+  chatbot:
+    build: ./chatbot
+    container_name: chatbot
+    ports:
+      - "8282:8080"
+
+  notification:
+    build: ./notification
+    container_name: notification
+    ports:
+      - "8181:8080"
+
+  frontend:
+    build: ./frontend
+    container_name: frontend
+    ports:
+      - "5274:80"
