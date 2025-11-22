@@ -22,7 +22,7 @@ api.interceptors.request.use((config) => {
 
 // Funciones API directamente en el componente
 const getPet = (id) => api.get(`/${id}`);
-const updatePet = (id, data) => api.patch(`/update/${id}`, data);
+const updatePet = (id, data) => api.put(`/update/${id}`, data);
 
 export default function PetUpdateForm() {
   const { id } = useParams();
@@ -109,11 +109,9 @@ export default function PetUpdateForm() {
       childFriendly: Boolean(formData.childFriendly),
       requiresAmpleSpace: Boolean(formData.requiresAmpleSpace),
       sterilization: Boolean(formData.sterilization),
-      vaccines: formData.vaccines?.trim() || null,
-      description: formData.description?.trim() || null,
-      imageUrl: formData.imageUrl?.trim() || null,
-      // La edad se calcula automáticamente en el backend, pero la incluimos por si acaso
-      age: formData.age || null,
+      vaccines: formData.vaccines?.trim() || "",
+      description: formData.description?.trim() || "",
+      imageUrl: formData.imageUrl?.trim() || "",
     };
 
     console.log("✅ Datos formateados para enviar:", formattedData);
@@ -126,15 +124,25 @@ export default function PetUpdateForm() {
     setLoading(true);
 
     try {
+      console.log("🔍 DEBUG - Verificando autenticación:");
+      const token = localStorage.getItem("token");
+      console.log("🔑 Token disponible:", !!token);
+      
+      if (token) {
+        try {
+          const payload = JSON.parse(atob(token.split('.')[1]));
+          console.log("👤 Usuario en token:", payload.sub);
+          console.log("🎭 Roles en token:", payload.roles || payload.authorities || "NO HAY ROLES");
+        } catch (e) {
+          console.log("❌ Error decodificando token:", e);
+        }
+      }
+
       console.log("🔍 Datos del formulario ANTES de formatear:", form);
       
-      // Luego formatear
       const submitData = formatDataForBackend(form);
       
       console.log("📤 Enviando datos al servidor:", JSON.stringify(submitData, null, 2));
-
-      const token = localStorage.getItem("token");
-      console.log("🔑 Token disponible:", !!token);
 
       await updatePet(id, submitData);
       alert("Información de la mascota actualizada exitosamente!");
@@ -144,6 +152,7 @@ export default function PetUpdateForm() {
       console.error("❌ Error completo:", error);
       console.error("📋 Response data:", error.response?.data);
       console.error("🔧 Response status:", error.response?.status);
+      console.error("🔧 Response headers:", error.response?.headers);
       
       let errorMessage = "Error al actualizar la mascota.\n\n";
       
@@ -164,6 +173,65 @@ export default function PetUpdateForm() {
         errorMessage += `Error: ${error.message}`;
       } else {
         errorMessage += "Error desconocido. Verifica la consola para más detalles.";
+      }
+      
+      alert(errorMessage);
+    } finally {
+      setLoading(false);
+      setIsSubmitting(false);
+    }
+  }
+
+  // Función alternativa usando FormData (descomenta si la anterior no funciona)
+  async function handleSubmitAlternative(e) {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setLoading(true);
+
+    try {
+      const token = localStorage.getItem("token");
+      
+      // Crear FormData en lugar de JSON
+      const formData = new FormData();
+      formData.append('childFriendly', form.childFriendly);
+      formData.append('requiresAmpleSpace', form.requiresAmpleSpace);
+      formData.append('sterilization', form.sterilization);
+      formData.append('vaccines', form.vaccines || '');
+      formData.append('description', form.description || '');
+      formData.append('imageUrl', form.imageUrl || '');
+
+      console.log("📤 Enviando FormData:");
+      for (let [key, value] of formData.entries()) {
+        console.log(`  ${key}:`, value);
+      }
+
+      // Usar axios directamente sin el interceptor
+      await axios.patch(`http://localhost:9494/api/petconnect/mascotas/update/${id}`, formData, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+
+      alert("Información de la mascota actualizada exitosamente!");
+      navigate("/");
+    } catch (error) {
+      console.error("❌ Error completo:", error);
+      console.error("📋 Response data:", error.response?.data);
+      
+      let errorMessage = "Error al actualizar la mascota.\n\n";
+      
+      if (error.response?.data) {
+        const errorData = error.response.data;
+        if (typeof errorData === 'string') {
+          errorMessage += `Detalles: ${errorData}`;
+        } else if (errorData.message) {
+          errorMessage += `Mensaje: ${errorData.message}`;
+        } else {
+          errorMessage += `Respuesta: ${JSON.stringify(errorData)}`;
+        }
+      } else {
+        errorMessage += `Error: ${error.message}`;
       }
       
       alert(errorMessage);
@@ -386,6 +454,19 @@ export default function PetUpdateForm() {
           >
             {isSubmitting ? "Guardando..." : "Actualizar Información"}
           </button>
+          
+          {/* Botón alternativo (descomenta si necesitas probar FormData) */}
+          {/*
+          <button 
+            type="button" 
+            className="pet-tab-btn secondary"
+            onClick={handleSubmitAlternative}
+            disabled={isSubmitting}
+            style={{marginLeft: '10px', background: '#ff9800'}}
+          >
+            {isSubmitting ? "Guardando..." : "Probar FormData"}
+          </button>
+          */}
         </div>
       </form>
     </div>

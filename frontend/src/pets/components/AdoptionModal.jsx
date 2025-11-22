@@ -1,4 +1,3 @@
-// src/pets/components/AdoptionModal.jsx
 import { useState } from "react";
 import axios from "axios";
 import "../styles/adoption.css";
@@ -24,7 +23,6 @@ export default function AdoptionModal({ mascota, isOpen, onClose, onSuccess }) {
       // Obtener el ID de la mascota
       const petId = mascota.pet_id || mascota.id || mascota.mascotaId;
 
-      // PRIMERA OPCIÓN: Solo el ID de la mascota
       const adoptionData = {
         petId: petId
       };
@@ -42,31 +40,30 @@ export default function AdoptionModal({ mascota, isOpen, onClose, onSuccess }) {
         }
       );
 
-      console.log("✅ Solicitud enviada exitosamente:", response.data);
-      alert("🎉 ¡Solicitud de adopción enviada exitosamente!\n\nTu solicitud está EN PROCESO. Te contactaremos pronto.");
+      console.log("Solicitud enviada exitosamente:", response.data);
+      alert("¡Solicitud de adopción enviada exitosamente!\n\nTu solicitud está EN PROCESO. Te contactaremos pronto.");
       onSuccess();
       onClose();
       
     } catch (error) {
-      console.error("❌ Error al enviar solicitud:", error);
-      console.log("🔍 Detalles del error:", error.response?.data);
+      console.error("Error al enviar solicitud:", error);
+      console.log("Detalles del error:", error.response?.data);
       
-      // Si falla la primera opción, probar con estructura diferente
       if (error.response?.status === 400) {
         const errorMessage = error.response?.data?.message || "Datos inválidos";
         
         if (errorMessage.includes("shelterId") || errorMessage.includes("no está permitido")) {
-          // Probemos con una estructura alternativa
+ 
           await tryAlternativeStructure(mascota);
         } else {
           alert("Error: " + errorMessage);
         }
       } else if (error.response?.status === 409) {
-        alert("⚠️ Ya tienes una solicitud de adopción pendiente para esta mascota.");
+        alert("Ya tienes una solicitud de adopción pendiente para esta mascota.");
       } else if (error.response?.status === 401) {
-        alert("❌ Sesión expirada. Por favor, inicia sesión nuevamente.");
+        alert("Sesión expirada. Por favor, inicia sesión nuevamente.");
       } else if (error.response?.status === 500) {
-        alert("❌ Error del servidor. Por favor, intenta nuevamente más tarde.");
+        alert("Error del servidor. Por favor, intenta nuevamente más tarde.");
       } else {
         alert("Error al enviar la solicitud: " + (error.response?.data?.message || error.message));
       }
@@ -75,13 +72,11 @@ export default function AdoptionModal({ mascota, isOpen, onClose, onSuccess }) {
     }
   };
 
-  // Función para probar estructuras alternativas
   const tryAlternativeStructure = async (mascota) => {
     try {
       const token = localStorage.getItem("token");
       const petId = mascota.pet_id || mascota.id || mascota.mascotaId;
 
-      // SEGUNDA OPCIÓN: Solo el ID como número
       const adoptionData = petId;
 
       console.log("🔄 Probando estructura alternativa:", adoptionData);
@@ -97,20 +92,18 @@ export default function AdoptionModal({ mascota, isOpen, onClose, onSuccess }) {
         }
       );
 
-      console.log("✅ Solicitud enviada exitosamente (estructura alternativa):", response.data);
-      alert("🎉 ¡Solicitud de adopción enviada exitosamente!\n\nTu solicitud está EN PROCESO. Te contactaremos pronto.");
+      console.log("Solicitud enviada exitosamente (estructura alternativa):", response.data);
+      alert("¡Solicitud de adopción enviada exitosamente!\n\nTu solicitud está EN PROCESO. Te contactaremos pronto.");
       onSuccess();
       onClose();
 
     } catch (secondError) {
-      console.error("❌ Error con estructura alternativa:", secondError);
+      console.error("Error con estructura alternativa:", secondError);
       
-      // TERCERA OPCIÓN: Con nombres de campo en español
       await trySpanishStructure(mascota);
     }
   };
 
-  // Tercera opción: nombres de campo en español
   const trySpanishStructure = async (mascota) => {
     try {
       const token = localStorage.getItem("token");
@@ -134,16 +127,15 @@ export default function AdoptionModal({ mascota, isOpen, onClose, onSuccess }) {
         }
       );
 
-      console.log("✅ Solicitud enviada exitosamente (español):", response.data);
-      alert("🎉 ¡Solicitud de adopción enviada exitosamente!\n\nTu solicitud está EN PROCESO. Te contactaremos pronto.");
+      console.log("Solicitud enviada exitosamente (español):", response.data);
+      alert("¡Solicitud de adopción enviada exitosamente!\n\nTu solicitud está EN PROCESO. Te contactaremos pronto.");
       onSuccess();
       onClose();
 
     } catch (thirdError) {
-      console.error("❌ Error con estructura en español:", thirdError);
+      console.error("Error con estructura en español:", thirdError);
       
-      // Mostrar mensaje de error final
-      alert("❌ No se pudo enviar la solicitud. Por favor, contacta al administrador.\n\nError: " + 
+      alert("No se pudo enviar la solicitud. Por favor, contacta al administrador.\n\nError: " + 
             (thirdError.response?.data?.message || "Estructura de datos no compatible"));
     }
   };

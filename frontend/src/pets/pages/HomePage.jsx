@@ -1,4 +1,3 @@
-// src/pets/pages/HomePage.jsx
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
@@ -13,11 +12,8 @@ export default function Home() {
   const [currentPage, setCurrentPage] = useState(0);
   const [pageSize] = useState(6);
   const [totalPages, setTotalPages] = useState(0);
-  
-  // Estados para el modal de adopción
   const [selectedMascota, setSelectedMascota] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  
   const navigate = useNavigate();
   const { isAuthenticated, userEmail, userRole, logout, userId } = useAuth();
 
@@ -43,7 +39,7 @@ export default function Home() {
         setTotalPages(0);
       }
     } catch (error) {
-      console.error("❌ Error al cargar mascotas:", error);
+      console.error("Error al cargar mascotas:", error);
       setMascotas([]);
       setTotalPages(0);
     } finally {
@@ -51,14 +47,12 @@ export default function Home() {
     }
   };
 
-  // Función para cambiar de página
   const handlePageChange = (newPage) => {
     if (newPage >= 0 && newPage < totalPages) {
       setCurrentPage(newPage);
     }
   };
 
-  // Función para eliminar mascota
   const handleDeleteMascota = async (mascotaId) => {
     if (!mascotaId) {
       alert("Error: ID de mascota no válido");
@@ -85,12 +79,11 @@ export default function Home() {
       alert("Mascota eliminada exitosamente");
       fetchMascotas(currentPage);
     } catch (error) {
-      console.error("❌ Error al eliminar mascota:", error);
+      console.error("Error al eliminar mascota:", error);
       alert("Error al eliminar la mascota: " + (error.response?.data?.message || error.message));
     }
   };
 
-  // Función para manejar la adopción
   const handleAdopt = (mascota) => {
     if (!isAuthenticated) {
       alert("Debes iniciar sesión para adoptar una mascota");
@@ -107,12 +100,10 @@ export default function Home() {
     setIsModalOpen(true);
   };
 
-  // Función cuando la adopción es exitosa
   const handleAdoptionSuccess = () => {
     console.log("Adopción exitosa!");
   };
 
-  // Función para cerrar el modal
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setSelectedMascota(null);
@@ -131,13 +122,29 @@ export default function Home() {
     navigate("/");
   };
 
-  // Verificar permisos según el rol
+  // Funciones para verificar permisos de edición/eliminación - CORREGIDAS
+  const puedeEditarMascota = (mascota) => {
+    if (!isAuthenticated) return false;
+    if (userRole === "ADMIN") return true;
+    if (userRole === "REFUGIO") {
+      return mascota.shelter_Id == userId;
+    }
+    return false;
+  };
+
+  const puedeEliminarMascota = (mascota) => {
+    if (!isAuthenticated) return false;
+    if (userRole === "ADMIN") return true;
+    if (userRole === "REFUGIO") {
+      return mascota.shelter_Id == userId;
+    }
+    return false;
+  };
+
+  // Permisos generales
   const canCreatePets = isAuthenticated && (userRole === "ADMIN" || userRole === "REFUGIO");
-  const canEditPets = isAuthenticated && (userRole === "ADMIN" || userRole === "REFUGIO");
-  const canDeletePets = isAuthenticated && userRole === "ADMIN";
   const canAdoptPets = isAuthenticated && userRole === "ADOPTANTE";
 
-  // Componente de Paginación
   const Pagination = () => {
     if (totalPages <= 1) return null;
 
@@ -183,7 +190,6 @@ export default function Home() {
 
   return (
     <div className="home-container">
-      {/* Header Mejorado */}
       <header className="main-header">
         <div className="header-content">
           <div className="logo-section">
@@ -251,7 +257,6 @@ export default function Home() {
       </header>
 
       <main>
-        {/* Hero Section */}
         <section id="inicio" className="hero-section">
           <div className="hero-content">
             <h2>Conectamos corazones,<br/>encontramos hogares</h2>
@@ -272,7 +277,6 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Sección Frase e Imagen */}
         <section id="quienes-somos" className="phrase-hero-section">
           <div className="phrase-hero-image">
             <img 
@@ -291,7 +295,6 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Catálogo de Mascotas */}
         <section id="mascotas" className="pets-section">
           <div className="section-header">
             <h2>Mascotas Disponibles</h2>
@@ -337,7 +340,7 @@ export default function Home() {
                           />
                           
                           <div className="card-actions">
-                            {canEditPets && (
+                            {puedeEditarMascota(mascota) && (
                               <Link to={`/editar/${mascotaId}`}>
                                 <button 
                                   className="action-btn edit-btn"
@@ -348,7 +351,7 @@ export default function Home() {
                               </Link>
                             )}
                             
-                            {canDeletePets && (
+                            {puedeEliminarMascota(mascota) && (
                               <button 
                                 className="action-btn delete-btn"
                                 onClick={() => handleDeleteMascota(mascotaId)}
@@ -372,6 +375,17 @@ export default function Home() {
                         </div>
                         <div className="card-content">
                           <h3>{mascotaName}</h3>
+                          
+                          {isAuthenticated && userRole === "REFUGIO" && (
+                            <div className="pet-ownership-indicator">
+                              {mascota.shelter_Id == userId ? (
+                                <span className="owned-badge">✅ Tu mascota</span>
+                              ) : (
+                                <span className="not-owned-badge">🔒 Mascota de otro refugio</span>
+                              )}
+                            </div>
+                          )}
+                          
                           <p className="pet-species">
                             {mascota.species === 'PERRO' ? '🐕 Perro' : 
                              mascota.species === 'GATO' ? '🐈 Gato' : 
@@ -424,10 +438,8 @@ export default function Home() {
                 )}
               </div>
 
-              {/* Paginación */}
               <Pagination />
 
-              {/* Botón "Ver todas las mascotas" */}
               <div className="show-more-container">
                 <Link to="/mascotas">
                   <button className="show-more-btn">
@@ -468,7 +480,6 @@ export default function Home() {
         </div>
       </footer>
 
-      {/* Modal de Adopción */}
       <AdoptionModal
         mascota={selectedMascota}
         isOpen={isModalOpen}

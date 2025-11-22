@@ -55,21 +55,22 @@ public class MascotaController {
     }
 
     @GetMapping("/List")
-    public ResponseEntity<?> listarMascotas(@RequestParam(defaultValue = "-1") int page, @RequestParam(defaultValue = "2") int size, JwtUserDetails userDetails) {
+    public ResponseEntity<?> listarMascotas(@RequestParam(defaultValue = "-1") int page, @RequestParam(defaultValue = "3") int size, JwtUserDetails userDetails) {
         List<Mascota> mascotas = mascotaUseCase.obtenerTodas(page, size);
         if (mascotas.isEmpty()) {
-            return ResponseEntity.ok("No hay más productos disponibles");
+            return ResponseEntity.ok("No hay más mascotas disponibles");
         }
         return ResponseEntity.ok(mascotas);
     }
 
-    @PatchMapping("/update/{pet_id}")
+    @PutMapping("/update/{pet_id}")
     public ResponseEntity<?> actualizarMascota(
             @PathVariable Long pet_id,
-            @RequestBody ActualizationData data,JwtUserDetails jwtUserDetails) {
+            @RequestBody ActualizationData data,
+            JwtUserDetails jwtUserDetails) {
 
         try {
-            Mascota mascotaActualizada = mascotaUseCase.actualizarMascota(pet_id, data,jwtUserDetails);
+            Mascota mascotaActualizada = mascotaUseCase.actualizarMascota(pet_id, data, jwtUserDetails);
             return ResponseEntity.ok(mascotaActualizada);
 
         } catch (Exception e) {
