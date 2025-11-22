@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import "../styles/home.css";
 import { useAuth } from "../../hooks/useAuth.jsx";
 import AdoptionModal from "../components/AdoptionModal.jsx";
-
+import ChatbotModal from "../components/ChatbotModal.jsx";
 
 export default function Home() {
   const [mascotas, setMascotas] = useState([]);
@@ -15,12 +15,26 @@ export default function Home() {
   const [totalPages, setTotalPages] = useState(0);
   const [selectedMascota, setSelectedMascota] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isChatbotOpen, setIsChatbotOpen] = useState(false);
+  const [showUserMenu, setShowUserMenu] = useState(false);
   const navigate = useNavigate();
   const { isAuthenticated, userEmail, userRole, logout, userId } = useAuth();
 
   useEffect(() => {
     fetchMascotas(currentPage);
   }, [isAuthenticated, currentPage]);
+
+  // Cerrar menú al hacer clic fuera
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (!event.target.closest('.user-profile')) {
+        setShowUserMenu(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const fetchMascotas = async (page = 0) => {
     try {
@@ -110,6 +124,21 @@ export default function Home() {
     setSelectedMascota(null);
   };
 
+  const handleChatbotToggle = () => {
+    if (!isAuthenticated) {
+      alert("Debes iniciar sesión para usar el chatbot");
+      navigate("/login");
+      return;
+    }
+
+    if (userRole !== "REFUGIO" && userRole !== "ADOPTANTE") {
+      alert("Solo los usuarios con rol REFUGIO o ADOPTANTE pueden usar el chatbot");
+      return;
+    }
+
+    setIsChatbotOpen(!isChatbotOpen);
+  };
+
   const scrollToSection = (sectionId) => {
     const element = document.getElementById(sectionId);
     if (element) {
@@ -121,9 +150,14 @@ export default function Home() {
   const handleLogout = () => {
     logout();
     navigate("/");
+    setShowUserMenu(false);
   };
 
-  // Funciones para verificar permisos de edición/eliminación - CORREGIDAS
+  const toggleUserMenu = () => {
+    setShowUserMenu(!showUserMenu);
+  };
+
+  // Funciones para verificar permisos de edición/eliminación
   const puedeEditarMascota = (mascota) => {
     if (!isAuthenticated) return false;
     if (userRole === "ADMIN") return true;
@@ -145,6 +179,7 @@ export default function Home() {
   // Permisos generales
   const canCreatePets = isAuthenticated && (userRole === "ADMIN" || userRole === "REFUGIO");
   const canAdoptPets = isAuthenticated && userRole === "ADOPTANTE";
+  const canUseChatbot = isAuthenticated && (userRole === "REFUGIO" || userRole === "ADOPTANTE");
 
   const Pagination = () => {
     if (totalPages <= 1) return null;
@@ -203,12 +238,14 @@ export default function Home() {
                 className={`nav-btn ${activeSection === 'inicio' ? 'active' : ''}`}
                 onClick={() => scrollToSection('inicio')}
               >
+                <span className="nav-icon">🏠</span>
                 Inicio
               </button>
               <button 
                 className={`nav-btn ${activeSection === 'mascotas' ? 'active' : ''}`}
                 onClick={() => scrollToSection('mascotas')}
               >
+                <span className="nav-icon">🐕</span>
                 Mascotas
               </button>
             </nav>
@@ -216,41 +253,83 @@ export default function Home() {
           
           <div className="auth-buttons">
             {!isAuthenticated ? (
-              <>
+              <div className="auth-buttons-group">
                 <Link to="/register">
-                  <button className="auth-btn signin-btn">Iniciar Sesión</button>
-                </Link>
-                <Link to="/register">
-                  <button className="auth-btn signup-btn">Registrarse</button>
-                </Link>
-              </>
-            ) : (
-              <div className="user-menu">
-                <span className="user-info">
-                  ¡Hola, {userEmail}!
-                  {userRole && <span className="user-role">({userRole})</span>}
-                </span>
-                
-                <Link to="/profile">
-                  <button className="auth-btn profile-btn">
-                    👤 Mi Perfil
+                  <button className="auth-btn signin-btn">
+                    <span className="btn-icon">🔐</span>
+                    Iniciar Sesión
                   </button>
                 </Link>
+                <Link to="/register">
+                  <button className="auth-btn signup-btn">
+                    <span className="btn-icon">👤</span>
+                    Registrarse
+                  </button>
+                </Link>
+              </div>
+            ) : (
+              <div className="user-actions">
+                <div className="user-profile">
+                  <div className="user-badge" onClick={toggleUserMenu}>
+                    <div className="user-avatar">
+                      {userRole === 'ADMIN' ? '👑' : userRole === 'REFUGIO' ? '🏠' : '❤️'}
+                    </div>
+                    <div className="user-details">
+                      <span className="user-email">{userEmail}</span>
+                      <span className="user-role">{userRole}</span>
+                    </div>
+                    <span className="dropdown-arrow">⌄</span>
+                  </div>
 
-                {canCreatePets && (
-                  <Link to="/crear">
-                    <button className="auth-btn create-pet-btn">
-                      🐾 Crear Mascota
-                    </button>
-                  </Link>
-                )}
-                
-                <button 
-                  className="auth-btn logout-btn"
-                  onClick={handleLogout}
-                >
-                  Cerrar Sesión
-                </button>
+                  {showUserMenu && (
+                    <div className="user-dropdown">
+                      <div className="dropdown-section">
+                        <div className="user-info-dropdown">
+                          <div className="user-email-dropdown">{userEmail}</div>
+                          <div className="user-role-dropdown">{userRole}</div>
+                        </div>
+                      </div>
+                      
+                      <div className="dropdown-section">
+                        {canUseChatbot && (
+                          <button 
+                            className="dropdown-btn chatbot-dropdown-btn"
+                            onClick={handleChatbotToggle}
+                          >
+                            <span className="dropdown-icon">🤖</span>
+                            Asistente Virtual
+                          </button>
+                        )}
+
+                        {canCreatePets && (
+                          <Link to="/crear">
+                            <button className="dropdown-btn create-dropdown-btn">
+                              <span className="dropdown-icon">➕</span>
+                              Crear Mascota
+                            </button>
+                          </Link>
+                        )}
+
+                        <Link to="/profile">
+                          <button className="dropdown-btn profile-dropdown-btn">
+                            <span className="dropdown-icon">👤</span>
+                            Mi Perfil
+                          </button>
+                        </Link>
+                      </div>
+                      
+                      <div className="dropdown-section">
+                        <button 
+                          className="dropdown-btn logout-btn"
+                          onClick={handleLogout}
+                        >
+                          <span className="dropdown-icon">🚪</span>
+                          Cerrar Sesión
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
             )}
           </div>
@@ -278,19 +357,34 @@ export default function Home() {
           </div>
         </section>
 
-        <section id="quienes-somos" className="phrase-hero-section">
-          <div className="phrase-hero-image">
-            <img 
-              src="https://i.pinimg.com/1200x/7a/ac/7e/7aac7eb9f34a54ec650b7dc0523a33f6.jpg" 
-              alt="Cachorro y gatito buscando un hogar"
-            />
-            <div className="phrase-hero-content">
-              <div className="phrase-hero-text">
-                <h2>
-                  Cada mirada merece un hogar,
-                  <br />
-                  cada corazón un amigo.
-                </h2>
+        {/* BANNER CON FRASE - MEJORADO */}
+        <section className="phrase-banner-section">
+          <div className="phrase-banner-container">
+            <div className="phrase-banner-image">
+              <img 
+                src="https://i.pinimg.com/1200x/7a/ac/7e/7aac7eb9f34a54ec650b7dc0523a33f6.jpg" 
+                alt="Cachorro y gatito buscando un hogar"
+                loading="lazy"
+              />
+              <div className="image-overlay"></div>
+            </div>
+            <div className="phrase-banner-content">
+              <div className="phrase-banner-text">
+                <div className="phrase-lines">
+                  <h2 className="phrase-main">
+                    Cada mirada merece un hogar,
+                  </h2>
+                  <h2 className="phrase-secondary">
+                    cada corazón un amigo.
+                  </h2>
+                </div>
+                <div className="phrase-cta">
+                  <div className="cta-decoration">
+                    <span className="heart">❤️</span>
+                    <p>CONOCE A TU NUEVO MEJOR AMIGO</p>
+                    <span className="heart">❤️</span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -357,7 +451,7 @@ export default function Home() {
                                 className="action-btn delete-btn"
                                 onClick={() => handleDeleteMascota(mascotaId)}
                                 title="Eliminar mascota"
-                              >
+                                >
                                 🗑️
                               </button>
                             )}
@@ -486,6 +580,11 @@ export default function Home() {
         isOpen={isModalOpen}
         onClose={handleCloseModal}
         onSuccess={handleAdoptionSuccess}
+      />
+
+      <ChatbotModal
+        isOpen={isChatbotOpen}
+        onClose={() => setIsChatbotOpen(false)}
       />
     </div>
   );
