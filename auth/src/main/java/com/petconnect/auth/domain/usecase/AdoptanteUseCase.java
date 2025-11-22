@@ -32,7 +32,7 @@ public class AdoptanteUseCase {
         }
 
         if (!esMayorDeEdad(adoptante.getBirthDate())) {
-            throw new AdoptanteMenorEdadException("El usuario debe ser mayor de edad.");
+            throw new MenorDeEdadException("El usuario debe ser mayor de edad.");
         }
 
         if (adoptante.getMonthlySalary() < salario_minimo) {

@@ -28,7 +28,7 @@ public class AdoptanteController {
             Adoptante adoptante = adoptanteUseCase.guardarAdoptante(nuevoAdoptante);
             return new ResponseEntity<>(adoptante, HttpStatus.CREATED);
 
-        } catch (CamposIncompletosException | AdoptanteMenorEdadException |
+        } catch (CamposIncompletosException | MenorDeEdadException |
                  SalarioNoAprobadoException | FechaNacimientoFuturaException |
                  SalarioMenorIgualCeroException | HorasFueraCasaInvalidasException error) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error.getMessage());
