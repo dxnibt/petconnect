@@ -1,5 +1,6 @@
 package com.petconnect.auth.application.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
@@ -10,25 +11,29 @@ import software.amazon.awssdk.services.sqs.SqsClient;
 @Configuration
 public class AwsConfig {
 
+    @Value("${aws.access.key:}")
+    private String awsAccessKey;
+
+    @Value("${aws.secret.key:}")
+    private String awsSecretKey;
+
+    @Value("${aws.region:us-east-1}")
+    private String awsRegion;
+
     @Bean
     public SqsClient sqsClient() {
-        // Lee las credenciales desde variables de entorno
-        String accessKey = System.getenv("AWS_ACCESS_KEY_ID");
-        String secretKey = System.getenv("AWS_SECRET_ACCESS_KEY");
-        String region = System.getenv("AWS_REGION");
+        // Si no hay credenciales, usa el provider por defecto (para local)
+        if (awsAccessKey.isEmpty() || awsSecretKey.isEmpty()) {
+            return SqsClient.builder()
+                    .region(Region.of(awsRegion))
+                    .build();
+        }
 
         return SqsClient.builder()
-                .region(Region.of(region != null ? region : "us-east-1"))
+                .region(Region.of(awsRegion))
                 .credentialsProvider(
                         StaticCredentialsProvider.create(
-<<<<<<< HEAD
-                                AwsBasicCredentials.create(
-                                        "[AWSACCESSKEY]",
-                                        "[SECRETACCESSKEY]"
-                                )
-=======
-                                AwsBasicCredentials.create(accessKey, secretKey)
->>>>>>> 9792caaa398d6fa8a5907924230055a76da4c622
+                                AwsBasicCredentials.create(awsAccessKey, awsSecretKey)
                         )
                 )
                 .build();

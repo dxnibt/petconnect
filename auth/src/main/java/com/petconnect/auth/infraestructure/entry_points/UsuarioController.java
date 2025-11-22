@@ -2,7 +2,6 @@ package com.petconnect.auth.infraestructure.entry_points;
 
 import com.petconnect.auth.domain.exception.CamposIncompletosException;
 import com.petconnect.auth.domain.exception.ContraseñaIncorrectaException;
-import com.petconnect.auth.domain.exception.RefugioNoEncontradoException;
 import com.petconnect.auth.domain.exception.UsuarioNoEncontradoException;
 import com.petconnect.auth.domain.model.Usuario;
 import com.petconnect.auth.domain.usecase.UsuarioUseCase;

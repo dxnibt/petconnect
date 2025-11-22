@@ -10,7 +10,6 @@ import com.petconnect.auth.domain.model.gateway.RefugioGateway;
 import com.petconnect.auth.infraestructure.driver_adapters.jpa_repository.refugio.RefugioActualizarDto;
 import lombok.RequiredArgsConstructor;
 
-import javax.management.Notification;
 import java.time.LocalDateTime;
 
 @RequiredArgsConstructor
