@@ -519,3 +519,339 @@
 .pc-form-group:has(.pc-readonly-field) {
   opacity: 0.9;
 }
+
+/* 🔴 ZONA DE PELIGRO - ELIMINAR CUENTA */
+.pc-danger-zone {
+  margin-top: 2rem;
+  padding: 1rem;
+  border: 2px solid #f44336;
+  border-radius: 8px;
+  background: #ffebee;
+  text-align: center;
+}
+
+.pc-delete-account-btn {
+  background: #f44336;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+}
+
+.pc-delete-account-btn:hover:not(:disabled) {
+  background: #d32f2f;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(244, 67, 54, 0.3);
+}
+
+.pc-delete-account-btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.pc-danger-note {
+  display: block;
+  margin-top: 0.5rem;
+  color: #d32f2f;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+/* 🔴 MODAL DE CONFIRMACIÓN */
+.pc-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.pc-modal {
+  background: white;
+  border-radius: 12px;
+  max-width: 500px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: pc-modal-appear 0.3s ease;
+}
+
+@keyframes pc-modal-appear {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.pc-modal-header {
+  background: #f44336;
+  color: white;
+  padding: 1.5rem;
+  border-radius: 12px 12px 0 0;
+}
+
+.pc-modal-header h3 {
+  margin: 0;
+  font-size: 1.3rem;
+}
+
+.pc-modal-body {
+  padding: 1.5rem;
+}
+
+.pc-modal-body p {
+  margin-bottom: 1rem;
+  line-height: 1.5;
+}
+
+.pc-modal-body ul {
+  margin: 1rem 0;
+  padding-left: 1.5rem;
+}
+
+.pc-modal-body li {
+  margin-bottom: 0.5rem;
+  color: #666;
+}
+
+.pc-confirmation-input {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  background: #fff3e0;
+  border-radius: 6px;
+  border: 1px solid #ffb74d;
+}
+
+.pc-confirmation-input label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #e65100;
+}
+
+.pc-confirmation-input input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid #ff9800;
+  border-radius: 6px;
+  font-size: 1rem;
+  margin-top: 0.5rem;
+  text-align: center;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.pc-confirmation-input input:focus {
+  outline: none;
+  border-color: #f44336;
+  box-shadow: 0 0 0 3px rgba(244, 67, 54, 0.1);
+}
+
+.pc-modal-actions {
+  padding: 1.5rem;
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  border-top: 1px solid #eee;
+}
+
+.pc-delete-confirm-btn {
+  background: #f44336;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.pc-delete-confirm-btn:hover:not(:disabled) {
+  background: #d32f2f;
+  transform: translateY(-1px);
+}
+
+.pc-delete-confirm-btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Mejoras para mascotas y solicitudes */
+.pc-tab-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.pc-empty-state {
+  text-align: center;
+  padding: 3rem;
+  background: #f8f9fa;
+  border-radius: 12px;
+  border: 2px dashed #dee2e6;
+}
+
+.pc-empty-state p {
+  font-size: 1.1rem;
+  color: #6c757d;
+  margin-bottom: 1.5rem;
+}
+
+.pc-mascotas-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.pc-mascota-card {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.pc-mascota-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+}
+
+.pc-mascota-image img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.pc-mascota-info {
+  padding: 1.5rem;
+}
+
+.pc-mascota-info h4 {
+  margin: 0 0 1rem 0;
+  color: #333;
+  font-size: 1.2rem;
+}
+
+.pc-solicitud-card {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  border-left: 4px solid #007bff;
+}
+
+.pc-solicitud-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.pc-status {
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.pc-status-disponible,
+.pc-status-aprobado {
+  background: #d4edda;
+  color: #155724;
+}
+
+.pc-status-pendiente {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.pc-status-rechazado {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.pc-status-adoptado {
+  background: #e2e3e5;
+  color: #383d41;
+}
+
+.pc-view-btn {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.pc-view-btn:hover {
+  background: #0056b3;
+}
+
+.pc-add-btn {
+  background: #28a745;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.pc-add-btn:hover {
+  background: #218838;
+}
+
+.pc-primary-btn {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.pc-primary-btn:hover {
+  background: #0056b3;
+  color: white;
+  text-decoration: none;
+}
+
+/* Mejoras para el modal de confirmación */
+.pc-confirmation-input input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid #dc3545;
+  border-radius: 6px;
+  font-size: 1rem;
+  margin-top: 0.5rem;
+}
+
+.pc-confirmation-input input:focus {
+  outline: none;
+  border-color: #dc3545;
+  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}

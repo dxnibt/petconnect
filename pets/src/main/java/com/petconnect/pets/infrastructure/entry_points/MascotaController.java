@@ -67,12 +67,11 @@ public class MascotaController {
     public ResponseEntity<?> actualizarMascota(
             @PathVariable Long pet_id,
             @RequestBody ActualizationData data,
-            JwtUserDetails jwtUserDetails) {
+            @AuthenticationPrincipal JwtUserDetails jwtUserDetails) { 
 
         try {
             Mascota mascotaActualizada = mascotaUseCase.actualizarMascota(pet_id, data, jwtUserDetails);
             return ResponseEntity.ok(mascotaActualizada);
-
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

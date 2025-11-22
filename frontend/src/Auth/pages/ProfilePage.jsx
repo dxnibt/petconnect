@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../../hooks/useAuth.jsx";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "../styles/profile.css";
 
 export default function ProfilePage() {
@@ -13,21 +13,23 @@ export default function ProfilePage() {
     userId, 
     updateUserData, 
     userEmail, 
-    loading: authLoading 
+    loading: authLoading,
+    logout 
   } = useAuth();
 
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("perfil");
-  const [mascotas, setMascotas] = useState([]);
-  const [solicitudes, setSolicitudes] = useState([]);
   const [loading, setLoading] = useState(false);
   const [editing, setEditing] = useState(false);
   const [editForm, setEditForm] = useState({});
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [profileData, setProfileData] = useState(null);
+  const [deleteConfirmationText, setDeleteConfirmationText] = useState("");
 
   // 🔹 Cargar perfil real al montar
   useEffect(() => {
     if (isAuthenticated && userId) {
       loadUserProfile();
-      loadAdditionalData();
     }
   }, [isAuthenticated, userId, userRole]);
 
@@ -35,56 +37,41 @@ export default function ProfilePage() {
   const loadUserProfile = async () => {
     try {
       const token = localStorage.getItem("token");
+      console.log("🔍 Cargando perfil para userId:", userId);
+      
       const res = await axios.get(
         `http://localhost:8181/api/petconnect/usuario/${userId}`,
-        { headers: { Authorization: `Bearer ${token}` } }
+        { 
+          headers: { 
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          } 
+        }
       );
 
       console.log("📥 Datos COMPLETOS del usuario:", res.data);
-      console.log("📅 registrationDate:", res.data.registrationDate);
-      console.log("🎂 birthDate:", res.data.birthDate);
       console.log("🔍 Todos los campos disponibles:", Object.keys(res.data));
 
+      // Guardar en ambos estados
+      setProfileData(res.data);
       setEditForm(res.data);
       updateUserData(res.data);
+      
     } catch (error) {
       console.error("❌ Error al cargar perfil:", error);
-    }
-  };
-
-  // 🔹 Cargar datos adicionales según el rol
-  const loadAdditionalData = async () => {
-    if (!userId) return;
-    setLoading(true);
-
-    try {
-      const token = localStorage.getItem("token");
-      if (userRole === "REFUGIO") {
-        const mascotasRes = await axios.get(
-          `http://localhost:8181/api/petconnect/refugio/${userId}`,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        setMascotas(mascotasRes.data || []);
-      } else if (userRole === "ADOPTANTE") {
-        try {
-          const solicitudesRes = await axios.get(
-            `http://localhost:8181/api/petconnect/adoptante/${userId}`,
-            { headers: { Authorization: `Bearer ${token}` } }
-          );
-          setSolicitudes(solicitudesRes.data || []);
-        } catch (solicitudesError) {
-          console.warn("⚠️ No se pudieron cargar las solicitudes:", solicitudesError.message);
-          setSolicitudes([]);
-        }
+      console.error("📋 Detalles del error:", error.response?.data);
+      
+      // Si falla la API, usar datos del contexto
+      if (userData) {
+        setProfileData(userData);
+        setEditForm(userData);
       }
-    } catch (error) {
-      console.error("Error cargando datos adicionales:", error);
-    } finally {
-      setLoading(false);
     }
   };
 
-  // 🔹 Editar perfil - CON PUT
+  
+
+  // 🔹 Editar perfil - CORREGIDO
   const handleEdit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -99,6 +86,7 @@ export default function ProfilePage() {
       let endpoint = "";
       let dataToSend = {};
 
+      // Preparar datos según el rol
       if (userRole === "ADOPTANTE") {
         endpoint = `http://localhost:8181/api/petconnect/adoptantes/update/${userId}`;
         dataToSend = {
@@ -106,17 +94,15 @@ export default function ProfilePage() {
           phoneNumber: editForm.phoneNumber || "",
           city: editForm.city || "",
           address: editForm.address || "",
-          // Documento NO se incluye - no se puede modificar
           gender: editForm.gender || "",
           otherGender: editForm.otherGender || "",
-          // Fecha de nacimiento NO se incluye - no se puede modificar
-          monthlySalary: editForm.monthlySalary || 0,
+          monthlySalary: editForm.monthlySalary ? Number(editForm.monthlySalary) : 0,
           housingType: editForm.housingType || "",
-          hasYard: editForm.hasYard || false,
-          petExperience: editForm.petExperience || false,
-          hasOtherPets: editForm.hasOtherPets || false,
-          hasChildren: editForm.hasChildren || false,
-          hoursAwayFromHome: editForm.hoursAwayFromHome || 0,
+          hasYard: Boolean(editForm.hasYard),
+          petExperience: Boolean(editForm.petExperience),
+          hasOtherPets: Boolean(editForm.hasOtherPets),
+          hasChildren: Boolean(editForm.hasChildren),
+          hoursAwayFromHome: editForm.hoursAwayFromHome ? Number(editForm.hoursAwayFromHome) : 0,
           preferredAnimalType: editForm.preferredAnimalType || "",
           otherPreferredAnimalType: editForm.otherPreferredAnimalType || "",
           preferredPetSize: editForm.preferredPetSize || "",
@@ -130,15 +116,14 @@ export default function ProfilePage() {
           phoneNumber: editForm.phoneNumber || "",
           city: editForm.city || "",
           address: editForm.address || "",
-          description: editForm.description || ""
-          // NIT NO se incluye - no se puede modificar
+          shelterDescription: editForm.shelterDescription || ""
         };
       }
 
       console.log("📤 Enviando PUT a:", endpoint);
       console.log("📦 Datos enviados:", dataToSend);
 
-      // USAMOS PUT EN LUGAR DE PATCH
+      // USAMOS PUT
       const response = await axios.put(endpoint, dataToSend, {
         headers: { 
           Authorization: `Bearer ${token}`,
@@ -155,10 +140,11 @@ export default function ProfilePage() {
       alert("Perfil actualizado exitosamente!");
       
       // Recargar los datos para asegurar consistencia
-      loadUserProfile();
+      await loadUserProfile();
       
     } catch (error) {
       console.error("❌ Error actualizando perfil:", error);
+      console.error("📋 Detalles del error:", error.response?.data);
       
       if (error.code === 'ERR_NETWORK') {
         alert("Error de conexión. Verifica que el servidor esté ejecutándose.");
@@ -262,12 +248,13 @@ export default function ProfilePage() {
 
   // 🔹 Obtener fecha de registro (busca en diferentes campos)
   const getRegistrationDate = () => {
+    const dataSource = profileData || userData;
     const possibleDateFields = [
-      userData?.registrationDate,
-      userData?.createdAt,
-      userData?.createDate,
-      userData?.fechaRegistro,
-      userData?.fechaCreacion
+      dataSource?.registrationDate,
+      dataSource?.createdAt,
+      dataSource?.createDate,
+      dataSource?.fechaRegistro,
+      dataSource?.fechaCreacion
     ];
     
     for (const dateField of possibleDateFields) {
@@ -291,6 +278,11 @@ export default function ProfilePage() {
       style: 'currency',
       currency: 'USD'
     }).format(salary);
+  };
+
+  // 🔹 Obtener datos para mostrar (usa profileData primero, luego userData como fallback)
+  const getDisplayData = () => {
+    return profileData || userData || {};
   };
 
   // 🔹 Validaciones visuales
@@ -318,6 +310,8 @@ export default function ProfilePage() {
       </div>
     );
   }
+
+  const displayData = getDisplayData();
 
   return (
     <div className="pc-profile-container">
@@ -348,6 +342,8 @@ export default function ProfilePage() {
               <div className="pc-registration-date">
                 Miembro desde: {getRegistrationDate()}
               </div>
+
+              
             </div>
           </div>
         </div>
@@ -361,22 +357,6 @@ export default function ProfilePage() {
             >
               👤 Información Personal
             </button>
-            {userRole === "REFUGIO" && (
-              <button 
-                className={`pc-tab-btn ${activeTab === "mascotas" ? "pc-active" : ""}`}
-                onClick={() => setActiveTab("mascotas")}
-              >
-                🐕 Mis Mascotas
-              </button>
-            )}
-            {userRole === "ADOPTANTE" && (
-              <button 
-                className={`pc-tab-btn ${activeTab === "solicitudes" ? "pc-active" : ""}`}
-                onClick={() => setActiveTab("solicitudes")}
-              >
-                📋 Mis Solicitudes
-              </button>
-            )}
           </div>
 
           <div className="pc-profile-content">
@@ -388,22 +368,22 @@ export default function ProfilePage() {
                     <div className="pc-field-group">
                       <h4>Información Básica</h4>
                       <div className="pc-info-grid">
-                        <div className="pc-info-item"><label>Nombre completo:</label><span>{getFullName()}</span></div>
+                        <div className="pc-info-item"><label>Nombre completo:</label><span>{displayData.name || "No especificado"}</span></div>
                         <div className="pc-info-item"><label>Email:</label><span>{userEmail}</span></div>
-                        <div className="pc-info-item"><label>Teléfono:</label><span>{userData?.phoneNumber || "No especificado"}</span></div>
-                        <div className="pc-info-item"><label>Ciudad:</label><span>{userData?.city || "No especificada"}</span></div>
-                        <div className="pc-info-item"><label>Dirección:</label><span>{userData?.address || "No especificada"}</span></div>
+                        <div className="pc-info-item"><label>Teléfono:</label><span>{displayData.phoneNumber || "No especificado"}</span></div>
+                        <div className="pc-info-item"><label>Ciudad:</label><span>{displayData.city || "No especificada"}</span></div>
+                        <div className="pc-info-item"><label>Dirección:</label><span>{displayData.address || "No especificada"}</span></div>
                         
                         {/* Campos no editables según el rol */}
                         {userRole === "ADOPTANTE" && (
                           <>
-                            <div className="pc-info-item"><label>Documento:</label><span>{userData?.document || "No especificado"}</span></div>
-                            <div className="pc-info-item"><label>Fecha de nacimiento:</label><span>{formatDate(userData?.birthDate)}</span></div>
+                            <div className="pc-info-item"><label>Documento:</label><span>{displayData.document || "No especificado"}</span></div>
+                            <div className="pc-info-item"><label>Fecha de nacimiento:</label><span>{formatDate(displayData.birthDate)}</span></div>
                           </>
                         )}
                         
                         {userRole === "REFUGIO" && (
-                          <div className="pc-info-item"><label>NIT:</label><span>{userData?.document || userData?.nit || "No especificado"}</span></div>
+                          <div className="pc-info-item"><label>NIT:</label><span>{displayData.document || displayData.nit || "No especificado"}</span></div>
                         )}
                       </div>
                     </div>
@@ -415,7 +395,7 @@ export default function ProfilePage() {
                         <div className="pc-field-group">
                           <h4>Información Personal</h4>
                           <div className="pc-info-grid">
-                            <div className="pc-info-item"><label>Género:</label><span>{userData?.gender || "No especificado"}</span></div>
+                            <div className="pc-info-item"><label>Género:</label><span>{displayData.gender || "No especificado"}</span></div>
                           </div>
                         </div>
 
@@ -423,9 +403,9 @@ export default function ProfilePage() {
                         <div className="pc-field-group">
                           <h4>Situación Económica y Vivienda</h4>
                           <div className="pc-info-grid">
-                            <div className="pc-info-item"><label>Salario mensual:</label><span>{formatSalary(userData?.monthlySalary)}</span></div>
-                            <div className="pc-info-item"><label>Tipo de vivienda:</label><span>{userData?.housingType || "No especificado"}</span></div>
-                            <div className="pc-info-item"><label>Horas fuera de casa:</label><span>{userData?.hoursAwayFromHome ? `${userData.hoursAwayFromHome} horas` : "No especificado"}</span></div>
+                            <div className="pc-info-item"><label>Salario mensual:</label><span>{formatSalary(displayData.monthlySalary)}</span></div>
+                            <div className="pc-info-item"><label>Tipo de vivienda:</label><span>{displayData.housingType || "No especificado"}</span></div>
+                            <div className="pc-info-item"><label>Horas fuera de casa:</label><span>{displayData.hoursAwayFromHome ? `${displayData.hoursAwayFromHome} horas` : "No especificado"}</span></div>
                           </div>
                         </div>
 
@@ -433,9 +413,9 @@ export default function ProfilePage() {
                         <div className="pc-field-group">
                           <h4>Preferencias de Adopción</h4>
                           <div className="pc-info-grid">
-                            <div className="pc-info-item"><label>Tipo de animal preferido:</label><span>{userData?.preferredAnimalType || "No especificado"}</span></div>
-                            <div className="pc-info-item"><label>Tamaño preferido:</label><span>{userData?.preferredPetSize || "No especificado"}</span></div>
-                            <div className="pc-info-item"><label>Nivel de actividad:</label><span>{userData?.activityLevel || "No especificado"}</span></div>
+                            <div className="pc-info-item"><label>Tipo de animal preferido:</label><span>{displayData.preferredAnimalType || "No especificado"}</span></div>
+                            <div className="pc-info-item"><label>Tamaño preferido:</label><span>{displayData.preferredPetSize || "No especificado"}</span></div>
+                            <div className="pc-info-item"><label>Nivel de actividad:</label><span>{displayData.activityLevel || "No especificado"}</span></div>
                           </div>
                         </div>
 
@@ -443,10 +423,10 @@ export default function ProfilePage() {
                         <div className="pc-field-group">
                           <h4>Situación Familiar y Experiencia</h4>
                           <div className="pc-boolean-grid">
-                            <div className="pc-info-item"><label>¿Tiene patio/jardín?:</label><span>{formatBoolean(userData?.hasYard)}</span></div>
-                            <div className="pc-info-item"><label>¿Experiencia con mascotas?:</label><span>{formatBoolean(userData?.petExperience)}</span></div>
-                            <div className="pc-info-item"><label>¿Tiene otras mascotas?:</label><span>{formatBoolean(userData?.hasOtherPets)}</span></div>
-                            <div className="pc-info-item"><label>¿Tiene niños?:</label><span>{formatBoolean(userData?.hasChildren)}</span></div>
+                            <div className="pc-info-item"><label>¿Tiene patio/jardín?:</label><span>{formatBoolean(displayData.hasYard)}</span></div>
+                            <div className="pc-info-item"><label>¿Experiencia con mascotas?:</label><span>{formatBoolean(displayData.petExperience)}</span></div>
+                            <div className="pc-info-item"><label>¿Tiene otras mascotas?:</label><span>{formatBoolean(displayData.hasOtherPets)}</span></div>
+                            <div className="pc-info-item"><label>¿Tiene niños?:</label><span>{formatBoolean(displayData.hasChildren)}</span></div>
                           </div>
                         </div>
 
@@ -454,7 +434,7 @@ export default function ProfilePage() {
                         <div className="pc-field-group">
                           <h4>Descripción Personal</h4>
                           <div className="pc-info-item pc-full-width">
-                            <span>{userData?.personalDescription || "No hay descripción disponible"}</span>
+                            <span>{displayData.personalDescription || "No hay descripción disponible"}</span>
                           </div>
                         </div>
                       </>
@@ -465,7 +445,7 @@ export default function ProfilePage() {
                         <h4>Información del Refugio</h4>
                         <div className="pc-info-item pc-full-width">
                           <label>Descripción del refugio:</label>
-                          <span>{userData?.description || "No hay descripción disponible"}</span>
+                          <span>{displayData.shelterDescription || "No hay descripción disponible"}</span>
                         </div>
                       </div>
                     )}
@@ -740,8 +720,8 @@ export default function ProfilePage() {
                         <div className="pc-form-group pc-full-width">
                           <label>Descripción del refugio</label>
                           <textarea 
-                            name="description" 
-                            value={editForm.description || ""} 
+                            name="shelterDescription" 
+                            value={editForm.shelterDescription || ""} 
                             onChange={handleInputChange} 
                             rows="4" 
                             placeholder="Describe tu refugio, misión y servicios..."
@@ -767,45 +747,6 @@ export default function ProfilePage() {
                       </button>
                     </div>
                   </form>
-                )}
-              </div>
-            )}
-
-            {/* Otras pestañas */}
-            {activeTab === "mascotas" && userRole === "REFUGIO" && (
-              <div className="pc-tab-content">
-                <h3>Mis Mascotas</h3>
-                {mascotas.length === 0 ? (
-                  <p>No tienes mascotas registradas.</p>
-                ) : (
-                  <div className="pc-mascotas-grid">
-                    {mascotas.map(mascota => (
-                      <div key={mascota.id} className="pc-mascota-card">
-                        <h4>{mascota.nombre}</h4>
-                        <p>Especie: {mascota.especie}</p>
-                        <p>Edad: {mascota.edad}</p>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
-
-            {activeTab === "solicitudes" && userRole === "ADOPTANTE" && (
-              <div className="pc-tab-content">
-                <h3>Mis Solicitudes</h3>
-                {solicitudes.length === 0 ? (
-                  <p>No tienes solicitudes de adopción.</p>
-                ) : (
-                  <div className="pc-solicitudes-list">
-                    {solicitudes.map(solicitud => (
-                      <div key={solicitud.id} className="pc-solicitud-card">
-                        <h4>Solicitud #{solicitud.id}</h4>
-                        <p>Estado: {solicitud.estado}</p>
-                        <p>Fecha: {formatDate(solicitud.fechaSolicitud)}</p>
-                      </div>
-                    ))}
-                  </div>
                 )}
               </div>
             )}
