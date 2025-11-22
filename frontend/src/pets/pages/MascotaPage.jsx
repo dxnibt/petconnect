@@ -208,24 +208,8 @@ export default function MascotaPage() {
             marginBottom: '0.5rem'
           }}>
             <div className="filters-container" style={{ gap: '0.5rem' }}>
-              {/* Barra de búsqueda */}
-              <div className="search-box">
-                <input
-                  type="text"
-                  placeholder="🔍 Buscar por nombre..."
-                  value={searchTerm}
-                  onChange={(e) => {
-                    setSearchTerm(e.target.value);
-                    setCurrentPage(0);
-                  }}
-                  className="search-input"
-                  style={{
-                    padding: '0.5rem 1rem',
-                    fontSize: '0.85rem',
-                    maxWidth: '350px'
-                  }}
-                />
-              </div>
+              
+              
 
               {/* Filtros */}
               <div className="filters-group" style={{ gap: '0.3rem' }}>
@@ -420,13 +404,7 @@ export default function MascotaPage() {
                 <Pagination />
 
                 {/* Volver al inicio */}
-                <div className="back-home-container">
-                  <Link to="/">
-                    <button className="back-home-btn" style={{ fontSize: '0.8rem', padding: '0.6rem 1.2rem' }}>
-                      🏠 Volver al inicio
-                    </button>
-                  </Link>
-                </div>
+                
               </>
             )}
           </section>

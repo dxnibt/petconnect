@@ -210,7 +210,7 @@ export default function Home() {
           <div className="auth-buttons">
             {!isAuthenticated ? (
               <>
-                <Link to="/login">
+                <Link to="/register">
                   <button className="auth-btn signin-btn">Iniciar Sesión</button>
                 </Link>
                 <Link to="/register">
