@@ -5,6 +5,7 @@ import "../styles/home.css";
 import { useAuth } from "../../hooks/useAuth.jsx";
 import AdoptionModal from "../components/AdoptionModal.jsx";
 
+
 export default function Home() {
   const [mascotas, setMascotas] = useState([]);
   const [loading, setLoading] = useState(true);
