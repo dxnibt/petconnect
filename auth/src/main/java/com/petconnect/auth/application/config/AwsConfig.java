@@ -17,8 +17,8 @@ public class AwsConfig {
                 .credentialsProvider(
                         StaticCredentialsProvider.create(
                                 AwsBasicCredentials.create(
-                                        "",
-                                        ""
+                                        "[AWSACCESSKEY]",
+                                        "[SECRETACCESSKEY]"
                                 )
                         )
                 )
