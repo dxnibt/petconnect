@@ -20,7 +20,7 @@ function App() {
           <Route path="/refugio" element={<RefugioPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/adoptante" element={<AdoptantePage />} />
-          <Route path="/editar" element={<PetUpdateForm/>} />
+          <Route path="/editar/:id" element={<PetUpdateForm/>} />
           <Route path="/ver" element={<PetList/>} />
           <Route path= "/crear" element={<PetForm/>}/>
           <Route path= "/profile" element={<ProfilePage/>}/>

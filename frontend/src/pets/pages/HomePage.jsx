@@ -429,7 +429,7 @@ export default function Home() {
 
               {/* Botón "Ver todas las mascotas" */}
               <div className="show-more-container">
-                <Link to="/todas-las-mascotas">
+                <Link to="/mascotas">
                   <button className="show-more-btn">
                     Ver catálogo completo de mascotas
                   </button>
