@@ -12,10 +12,6 @@ public class ChatbotUseCase {
     private final UsuarioGateway usuarioGateway;
 
     public String sendMessage(ChatMessage message) {
-        // Validar que el usuario existe
-        if (!usuarioGateway.usuarioExiste(message.getUserId())) {
-            throw new UsuarioNoEncontradoException("Usuario no encontrado");
-        }
 
         return gateway.sendMessage(message);
     }
