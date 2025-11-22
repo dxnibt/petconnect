@@ -12,14 +12,16 @@ public class AwsConfig {
 
     @Bean
     public SqsClient sqsClient() {
+        // Lee las credenciales desde variables de entorno
+        String accessKey = System.getenv("AWS_ACCESS_KEY_ID");
+        String secretKey = System.getenv("AWS_SECRET_ACCESS_KEY");
+        String region = System.getenv("AWS_REGION");
+
         return SqsClient.builder()
-                .region(Region.US_EAST_1)
+                .region(Region.of(region != null ? region : "us-east-1"))
                 .credentialsProvider(
                         StaticCredentialsProvider.create(
-                                AwsBasicCredentials.create(
-                                        "",
-                                        ""
-                                )
+                                AwsBasicCredentials.create(accessKey, secretKey)
                         )
                 )
                 .build();
