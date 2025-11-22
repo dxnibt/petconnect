@@ -22,24 +22,24 @@ public class AdopcionUseCase {
     private final MascotaGateway mascotaGateway;
     private final UsuarioGateway usuarioGateway;
 
-    public Adopcion crear(Adopcion adopcion) {
+    public Adopcion crear(Long userId, Long petId) {
         // Validar que el usuario existe
-        if (!usuarioGateway.usuarioExiste(adopcion.getUserId())) {
+        if (!usuarioGateway.usuarioExiste(userId)) {
             throw new UsuarioNoEncontradoException("El usuario no existe");
         }
 
         // Validar que el usuario tiene rol de adoptante
-        if (!usuarioGateway.tieneRol(adopcion.getUserId(), "ADOPTANTE")) {
+        if (!usuarioGateway.tieneRol(userId, "ADOPTANTE")) {
             throw new UsuarioNoAdoptanteException("Solo los adoptantes pueden realizar adopciones");
         }
 
-        Adopcion adopcionExistente = gateway.buscarPorUserIdYEstado(adopcion.getUserId(), EstadoAdopcion.EN_PROCESO);
+        Adopcion adopcionExistente = gateway.buscarPorUserIdYEstado(userId, EstadoAdopcion.EN_PROCESO);
         if (adopcionExistente != null) {
             throw new UsuarioProcesoAdopcionException("Ya tienes una solicitud de adopción en proceso");
         }
 
         // Validar mascota
-        Mascota mascota = mascotaGateway.buscarPorId(adopcion.getPetId());
+        Mascota mascota = mascotaGateway.buscarPorId(petId);
         if (mascota == null) {
             throw new MascotaNoEncontradaException("La mascota no existe");
         }
@@ -51,8 +51,10 @@ public class AdopcionUseCase {
         mascota.setState(EstadoMascota.EN_PROCESO);
         mascotaGateway.actualizarMascota(mascota);
 
+        Adopcion adopcion = new Adopcion();
+        adopcion.setUserId(userId);
+        adopcion.setPetId(petId);
         adopcion.setShelterId(mascota.getShelter_Id());
-
 
         // Completar solicitud
         adopcion.setRequestDate(LocalDate.now().toString());

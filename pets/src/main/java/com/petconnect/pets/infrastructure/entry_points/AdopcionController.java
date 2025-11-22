@@ -31,13 +31,7 @@ public class AdopcionController {
         }
 
         try {
-            // Crear objeto Adopcion con datos del JWT y request
-            Adopcion adopcion = new Adopcion();
-            adopcion.setUserId(userDetails.getId()); // Del token
-            adopcion.setPetId(solicitud.getPetId()); // Del body
-
-            // validar si es adoptante
-            Adopcion adopcionCreada = useCase.crear(adopcion);
+            Adopcion adopcionCreada = useCase.crear(userDetails.getId(), solicitud.getPetId());
             return new ResponseEntity<>(adopcionCreada, HttpStatus.OK);
 
         } catch (Exception error) {
