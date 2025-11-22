@@ -1,4 +1,4 @@
-package com.petconnect.chatbot.infrastructure.driver_adapters;
+package com.petconnect.chatbot.Infraestructure.driver_adapters;
 
 import com.petconnect.chatbot.domain.model.ChatMessage;
 import com.petconnect.chatbot.domain.model.gateway.PythonChatbotGateway;
@@ -19,7 +19,7 @@ public class PythonChatbotClient implements PythonChatbotGateway {
     public String sendMessage(ChatMessage msg) {
 
         ResponseEntity<Map> response = restTemplate.postForEntity(
-                "http://192.168.1.8:5000/chat",
+                "https://chatbotsito.onrender.com/chat",
                 Map.of("pregunta", msg.getMessage()),
                 Map.class
         );

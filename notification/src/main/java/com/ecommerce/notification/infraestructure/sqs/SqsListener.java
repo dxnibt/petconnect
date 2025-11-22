@@ -49,7 +49,7 @@ public class SqsListener {
                             smsSender.enviarSms(evento.getMensaje(), evento.getPhoneNumber());
                             emailSender.enviarEmail(evento.getEmail(), evento.getTipo(), evento.getMensaje());
 
-                            // ✅ Eliminar de la cola SOLO si todo salió bien
+                            // Eliminar de la cola SOLO si salió bien
                             sqsClient.deleteMessage(DeleteMessageRequest.builder()
                                     .queueUrl(QUEUE_URL)
                                     .receiptHandle(message.receiptHandle())
@@ -59,7 +59,6 @@ public class SqsListener {
                         } catch (Exception e) {
                             System.err.println("Error procesando mensaje: " + message.messageId());
                             e.printStackTrace();
-                            // (Opcional) podrías reenviar a una Dead Letter Queue
                         }
                     }
                 } catch (Exception generalError) {
