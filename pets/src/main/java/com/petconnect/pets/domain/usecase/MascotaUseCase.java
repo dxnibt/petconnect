@@ -143,7 +143,7 @@ public class MascotaUseCase {
         return userDetails.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .map(r -> r != null && r.startsWith("ROLE_") ? r.substring(5) : r)
-                .anyMatch(rolBuscado::equalsIgnoreCase); // <-- rolBuscado nunca es null
+                .anyMatch(rolBuscado::equalsIgnoreCase); // rolBuscado nunca es null
     }
 
     private String calcularEdad(LocalDate birthDate) {

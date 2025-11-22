@@ -1,4 +1,4 @@
-package com.petconnect.chatbot.Infraestructure.driver_adapters;
+package com.petconnect.chatbot.Infraestructure.driver_adapters.external_repository;
 
 import com.petconnect.chatbot.domain.model.ChatMessage;
 import com.petconnect.chatbot.domain.model.gateway.PythonChatbotGateway;

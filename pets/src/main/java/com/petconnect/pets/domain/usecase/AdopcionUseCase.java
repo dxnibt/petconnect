@@ -169,12 +169,12 @@ public class AdopcionUseCase {
             throw new UsuarioNoAutorizadoException("No puedes eliminar solicitudes de otros usuarios");
         }
 
-        // Validar que el usuario tiene rol de ADOPTANTE
+        // Validar que el usuario tiene rol de adoptante
         if (!usuarioGateway.tieneRol(usuarioId, "ADOPTANTE")) {
             throw new UsuarioNoAutorizadoException("Solo los adoptantes pueden eliminar sus solicitudes");
         }
 
-        // Validar que la adopción está EN_PROCESO
+        // Validar que la adopción está en proceso
         if (adopcion.getStatus() != EstadoAdopcion.EN_PROCESO) {
             throw new IllegalStateException("Solo se pueden eliminar solicitudes en proceso");
         }
@@ -196,12 +196,12 @@ public class AdopcionUseCase {
             throw new UsuarioNoEncontradoException("El usuario no existe");
         }
 
-        // Validar que el usuario tiene rol de ADOPTANTE
+        // Validar que el usuario tiene rol de adoptante
         if (!usuarioGateway.tieneRol(usuarioId, "ADOPTANTE")) {
             throw new UsuarioNoAutorizadoException("Solo los adoptantes pueden ver sus solicitudes");
         }
 
-        // Buscar la solicitud EN_PROCESO del usuario
+        // Buscar la solicitud en proceso del usuario
         return gateway.buscarPorUserIdYEstado(usuarioId, EstadoAdopcion.EN_PROCESO);
     }
 
@@ -237,19 +237,19 @@ public class AdopcionUseCase {
             throw new UsuarioNoAutorizadoException("No puedes ver adopciones de otros refugios");
         }
 
-        // Obtener información COMPLETA de la mascota
+        // Obtener informacion completa de la mascota
         Mascota mascota = mascotaGateway.buscarPorId(adopcion.getPetId());
         if (mascota == null) {
             throw new MascotaNoEncontradaException("La mascota de esta adopción no existe");
         }
 
-        // Obtener información COMPLETA del adoptante
+        // Obtener informacion completa del adoptante
         UsuarioResponse usuarioResponse = usuarioGateway.obtenerUsuarioCompleto(adopcion.getUserId());
         if (usuarioResponse == null) {
             throw new UsuarioNoEncontradoException("El usuario adoptante no existe");
         }
 
-        // Retornar TODOS los datos
+        // Retornar todos los datos
         return crearRespuestaCompleta(adopcion, mascota, usuarioResponse);
     }
 

@@ -1,6 +1,6 @@
-package com.petconnect.pets.infrastructure.security;
+package com.petconnect.chatbot.Infraestructure.security;
 
-import com.petconnect.pets.infrastructure.driver_adapters.jpa_repository.JwtDto.JwtUserDetails;
+import com.petconnect.chatbot.Infraestructure.driver_adapters.jpa_repository.JwtDto.JwtUserDetails;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import jakarta.servlet.FilterChain;
@@ -78,4 +78,3 @@ public class JwtFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 }
-
