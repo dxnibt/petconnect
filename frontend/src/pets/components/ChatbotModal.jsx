@@ -25,39 +25,28 @@ const ChatbotModal = ({ isOpen, onClose }) => {
     scrollToBottom();
   }, [messages]);
 
-  // Función para formatear el texto del bot
   const formatBotResponse = (text) => {
     if (!text) return text;
 
     let formattedText = text;
 
-    // Reemplazar **texto** por <strong>texto</strong>
     formattedText = formattedText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-
-    // Reemplazar * por • para listas
     formattedText = formattedText.replace(/^\s*\*\s+/gm, '• ');
-
-    // Reemplazar números con punto por lista numerada
     formattedText = formattedText.replace(/^\s*(\d+)\.\s+/gm, '<span class="list-number">$1.</span> ');
-
-    // Separar secciones con ---
     formattedText = formattedText.replace(/---+/g, '<div class="section-divider"></div>');
-
-    // Convertir saltos de línea en <br>
     formattedText = formattedText.replace(/\n/g, '<br>');
-
-    // Detectar y formatear títulos
     formattedText = formattedText.replace(/^(.*?:)\s*<br>/g, '<div class="response-title">$1</div>');
 
     return formattedText;
   };
 
-  // Función para detectar si el texto necesita formato especial
   const needsFormatting = (text) => {
+    if (!text || typeof text !== 'string') {
+      return false;
+    }
     return text.includes('**') || text.includes('* ') || text.includes('1.') || text.includes('---');
   };
 
-  // Timer para respuestas lentas
   useEffect(() => {
     let slowResponseTimer;
 
@@ -77,7 +66,6 @@ const ChatbotModal = ({ isOpen, onClose }) => {
 
     if (!inputMessage.trim() || isLoading) return;
 
-    // Agregar mensaje del usuario
     const userMessage = {
       text: inputMessage,
       isBot: false,
@@ -100,6 +88,8 @@ const ChatbotModal = ({ isOpen, onClose }) => {
         message: currentInput
       };
 
+      console.log("Enviando mensaje al chatbot...");
+
       const response = await axios.post(
         `${API_CONFIG.CHATBOT_URL}/api/petconnect/chatbot/send`,
         requestBody,
@@ -109,32 +99,39 @@ const ChatbotModal = ({ isOpen, onClose }) => {
             "Content-Type": "application/json"
           },
           signal: controller.signal,
-          timeout: 25000
+          timeout: 60000
         }
       );
 
       clearTimeout(timeoutId);
 
-      // Formatear la respuesta del bot
-      const botResponse = response.data;
-      const formattedResponse = needsFormatting(botResponse)
-        ? formatBotResponse(botResponse)
-        : botResponse;
+      console.log("Respuesta recibida:", response.data);
+      console.log("Tipo de respuesta:", typeof response.data);
 
-      // Agregar respuesta del bot
+      const botResponse = response.data;
+      const responseText = typeof botResponse === 'string' ? botResponse : String(botResponse);
+
+      console.log("Texto a formatear:", responseText);
+
+      const formattedResponse = needsFormatting(responseText)
+        ? formatBotResponse(responseText)
+        : responseText;
+
       const botMessage = {
-        text: botResponse,
+        text: responseText,
         isBot: true,
         timestamp: new Date(),
         formattedText: formattedResponse,
-        needsFormatting: needsFormatting(botResponse)
+        needsFormatting: needsFormatting(responseText)
       };
 
       setMessages(prev => [...prev, botMessage]);
 
     } catch (error) {
       clearTimeout(timeoutId);
-      console.error("Error al enviar mensaje:", error);
+      console.error("Error completo:", error);
+      console.error("Tipo de error:", typeof error);
+      console.error("Mensaje de error:", error.message);
 
       let errorText = "Lo siento, hubo un error al procesar tu mensaje.";
 
