@@ -3,10 +3,11 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import "../styles/petform.css";
+import API_CONFIG from '../../config/api'
 
 // Configuración de axios directamente en el componente
 const api = axios.create({
-  baseURL: "http://localhost:9494/api/petconnect/mascotas",
+  baseURL: `${API_CONFIG.PETS_URL}/api/petconnect/mascotas`,
   timeout: 10000,
 });
 
@@ -206,7 +207,7 @@ export default function PetUpdateForm() {
       }
 
       // Usar axios directamente sin el interceptor
-      await axios.patch(`http://localhost:9494/api/petconnect/mascotas/update/${id}`, formData, {
+      await axios.patch(`${API_CONFIG.PETS_URL}/api/petconnect/mascotas/update/${id}`, formData, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'multipart/form-data'

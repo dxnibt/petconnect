@@ -5,6 +5,7 @@ import "../styles/home.css";
 import { useAuth } from "../../hooks/useAuth.jsx";
 import AdoptionModal from "../components/AdoptionModal.jsx";
 import ChatbotModal from "../components/ChatbotModal.jsx";
+import API_CONFIG from '../../config/api'
 
 export default function Home() {
   const [mascotas, setMascotas] = useState([]);
@@ -39,7 +40,7 @@ export default function Home() {
   const fetchMascotas = async (page = 0) => {
     try {
       setLoading(true);
-      const response = await axios.get(`http://localhost:9494/api/petconnect/mascotas/List?page=${page}&size=${pageSize}`);
+      const response = await axios.get(`${API_CONFIG.PETS_URL}/api/petconnect/mascotas/List?page=${page}&size=${pageSize}`);
       
       if (Array.isArray(response.data)) {
         setMascotas(response.data);
@@ -85,7 +86,7 @@ export default function Home() {
         return;
       }
 
-      await axios.delete(`http://localhost:9494/api/petconnect/mascotas/delete/${mascotaId}`, {
+      await axios.delete(`${API_CONFIG.PETS_URL}/api/petconnect/mascotas/delete/${mascotaId}`, {
         headers: {
           Authorization: `Bearer ${token}`
         }

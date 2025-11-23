@@ -1,12 +1,13 @@
 // src/pages/RegisterPage.jsx
 import { useState } from "react";
-import { useAuth } from "../../hooks/useAuth"; // 👈 importar el hook de autenticación
+import { useAuth } from "../../hooks/useAuth"; //importar el hook de autenticación
 import RegisterForm from "../components/RegisterForm.jsx";
 import "../styles/register/style1.css";
+import API_CONFIG from '../../config/api'
 
 export default function RegisterPage() {
   const [active, setActive] = useState(false);
-  const { login } = useAuth(); // 👈 usar la función login del contexto
+  const { login } = useAuth(); //usar la función login del contexto
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -15,7 +16,7 @@ export default function RegisterPage() {
     const password = e.target.password.value;
 
     try {
-      const response = await fetch("http://localhost:8181/api/petconnect/usuario/login", {
+      const response = await fetch(`${API_CONFIG.AUTH_URL}/api/petconnect/usuario/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -29,8 +30,8 @@ export default function RegisterPage() {
         // 🔹 Usa el hook para guardar sesión correctamente
         login(data.token, data.email, data.role, data.userId);
 
-        alert("Inicio de sesión exitoso ✅");
-        window.location.href = "/"; // o usa navigate("/") si prefieres
+        alert("Inicio de sesión exitoso");
+        window.location.href = "/";
       } else {
         const error = await response.text();
         alert(error || "Error en el inicio de sesión");
