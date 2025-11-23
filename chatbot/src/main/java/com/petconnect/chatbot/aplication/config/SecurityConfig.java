@@ -41,10 +41,7 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/petconnect/mascotas/List").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/chatbot/chat").hasAnyRole("ADOPTANTE", "REFUGIO", "ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/mascotas/**").hasAnyRole("REFUGIO", "ADMIN")
-                        .anyRequest().authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/chatbot/send").hasAnyRole("ADOPTANTE", "REFUGIO", "ADMIN").anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
