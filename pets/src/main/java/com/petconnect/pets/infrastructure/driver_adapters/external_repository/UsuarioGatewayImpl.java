@@ -3,6 +3,7 @@ package com.petconnect.pets.infrastructure.driver_adapters.external_repository;
 import com.petconnect.pets.domain.model.gateway.UsuarioGateway;
 import com.petconnect.pets.infrastructure.driver_adapters.jpa_repository.dtos.UsuarioResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -12,12 +13,15 @@ import org.springframework.web.client.RestTemplate;
 public class UsuarioGatewayImpl implements UsuarioGateway {
 
     private final RestTemplate restTemplate;
-    
+
+    @Value("${auth.service.url:http://localhost:8181}")
+    private String authServiceUrl;
 
     @Override
     public boolean usuarioExiste(Long userId) {
         try {
-            restTemplate.getForEntity("http://localhost:8181/api/petconnect/usuario/" + userId, Void.class);
+            String url = authServiceUrl + "/api/petconnect/usuario/" + userId;
+            restTemplate.getForEntity(url, Void.class);
             return true;
         } catch (HttpClientErrorException.NotFound e) {
             return false;
@@ -29,10 +33,8 @@ public class UsuarioGatewayImpl implements UsuarioGateway {
     @Override
     public boolean tieneRol(Long userId, String rol) {
         try {
-            UsuarioResponse usuario = restTemplate.getForObject(
-                    "http://localhost:8181/api/petconnect/usuario/" + userId,
-                    UsuarioResponse.class
-            );
+            String url = authServiceUrl + "/api/petconnect/usuario/" + userId;
+            UsuarioResponse usuario = restTemplate.getForObject(url, UsuarioResponse.class);
             return usuario != null && rol.equals(usuario.getRole());
         } catch (HttpClientErrorException.NotFound e) {
             return false;
@@ -44,10 +46,8 @@ public class UsuarioGatewayImpl implements UsuarioGateway {
     @Override
     public UsuarioResponse obtenerUsuarioCompleto(Long userId) {
         try {
-            return restTemplate.getForObject(
-                    "http://localhost:8181/api/petconnect/usuario/" + userId,
-                    UsuarioResponse.class
-            );
+            String url = authServiceUrl + "/api/petconnect/usuario/" + userId;
+            return restTemplate.getForObject(url, UsuarioResponse.class);
         } catch (HttpClientErrorException.NotFound e) {
             return null;
         } catch (Exception error) {

@@ -1,5 +1,6 @@
 // hooks/useAuth.jsx
 import { useState, useEffect, createContext, useContext } from "react";
+import API_CONFIG from "../config/api";
 
 const AuthContext = createContext();
 
@@ -41,7 +42,7 @@ export const AuthProvider = ({ children }) => {
   // 🔹 Obtener datos reales del usuario
   const fetchUserData = async (token, id) => {
     try {
-      const endpoint = `http://localhost:8181/api/petconnect/usuarios/${id}`;
+      const endpoint = `${API_CONFIG.AUTH_URL}/api/petconnect/usuarios/${id}`;
       const res = await fetch(endpoint, {
         headers: { Authorization: `Bearer ${token}` },
       });

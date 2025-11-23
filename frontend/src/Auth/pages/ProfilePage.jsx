@@ -4,6 +4,7 @@ import { useAuth } from "../../hooks/useAuth.jsx";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import "../styles/profile.css";
+import API_CONFIG from '../../config/api'
 
 export default function ProfilePage() {
   const { 
@@ -40,7 +41,7 @@ export default function ProfilePage() {
       console.log("🔍 Cargando perfil para userId:", userId);
       
       const res = await axios.get(
-        `http://localhost:8181/api/petconnect/usuario/${userId}`,
+          `${API_CONFIG.AUTH_URL}/api/petconnect/usuario/${userId}`,
         { 
           headers: { 
             Authorization: `Bearer ${token}`,
@@ -88,7 +89,7 @@ export default function ProfilePage() {
 
       // Preparar datos según el rol
       if (userRole === "ADOPTANTE") {
-        endpoint = `http://localhost:8181/api/petconnect/adoptantes/update/${userId}`;
+        endpoint = `${API_CONFIG.AUTH_URL}/api/petconnect/adoptantes/update/${userId}`;
         dataToSend = {
           name: editForm.name || "",
           phoneNumber: editForm.phoneNumber || "",
@@ -110,7 +111,7 @@ export default function ProfilePage() {
           personalDescription: editForm.personalDescription || ""
         };
       } else if (userRole === "REFUGIO") {
-        endpoint = `http://localhost:8181/api/petconnect/refugios/update/${userId}`;
+        endpoint = `${API_CONFIG.AUTH_URL}/api/petconnect/refugios/update/${userId}`;
         dataToSend = {
           name: editForm.name || "",
           phoneNumber: editForm.phoneNumber || "",

@@ -1,5 +1,6 @@
 package com.ecommerce.notification.application.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
@@ -12,45 +13,81 @@ import software.amazon.awssdk.services.sqs.SqsClient;
 @Configuration
 public class AwsConfig {
 
+    @Value("${aws.access.key:}")
+    private String awsAccessKey;
+
+    @Value("${aws.secret.key:}")
+    private String awsSecretKey;
+
+    @Value("${aws.region:us-east-1}")
+    private String awsRegion;
+
     @Bean
     public SqsClient sqsClient() {
+        Region region = Region.of(awsRegion);
+
+        if (awsAccessKey.isEmpty() || awsSecretKey.isEmpty()) {
+            return SqsClient.builder()
+                    .region(region)
+                    .build();
+        }
+
         return SqsClient.builder()
-                .region(Region.US_EAST_1)
+                .region(region)
                 .credentialsProvider(
                         StaticCredentialsProvider.create(
                                 AwsBasicCredentials.create(
-                                        "",
-                                        ""
+                                        awsAccessKey,
+                                        awsSecretKey
                                 )
                         )
-                )                .build();
+                )
+                .build();
     }
 
     @Bean
     public SnsClient snsClient() {
+        Region region = Region.of(awsRegion);
+
+        if (awsAccessKey.isEmpty() || awsSecretKey.isEmpty()) {
+            return SnsClient.builder()
+                    .region(region)
+                    .build();
+        }
+
         return SnsClient.builder()
-                .region(Region.US_EAST_1)
+                .region(region)
                 .credentialsProvider(
                         StaticCredentialsProvider.create(
                                 AwsBasicCredentials.create(
-                                        "",
-                                        ""
+                                        awsAccessKey,
+                                        awsSecretKey
                                 )
                         )
-                )                .build();
-    }
-    @Bean
-    public SesClient sesClient() {
-        return SesClient.builder()
-                .region(Region.US_EAST_1)
-                .credentialsProvider(
-                        StaticCredentialsProvider.create(
-                                AwsBasicCredentials.create(
-                                        "",
-                                        ""
-                                )
-                        )
-                )                .build();
+                )
+                .build();
     }
 
+    @Bean
+    public SesClient sesClient() {
+        Region region = Region.of(awsRegion);
+
+        if (awsAccessKey.isEmpty() || awsSecretKey.isEmpty()) {
+            return SesClient.builder()
+                    .region(region)
+                    .build();
+        }
+
+        return SesClient.builder()
+                .region(region)
+                .credentialsProvider(
+                        StaticCredentialsProvider.create(
+                                AwsBasicCredentials.create(
+                                        awsAccessKey,
+                                        awsSecretKey
+                                )
+                        )
+                )
+                .build();
+    }
 }

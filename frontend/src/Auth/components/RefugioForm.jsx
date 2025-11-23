@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import "../styles/refugio/refugio.css";
+import API_CONFIG from '../../config/api'
 
 function RefugioForm() {
   const [datosBasicos, setDatosBasicos] = useState({});
@@ -34,7 +35,7 @@ function RefugioForm() {
 
     try {
       const response = await axios.post(
-        "http://localhost:8181/api/petconnect/refugios/save",
+        `${API_CONFIG.AUTH_URL}/api/petconnect/refugios/save`,
         refugio
       );
       alert("Refugio registrado con éxito!");

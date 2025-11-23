@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import "../styles/adoption.css";
+import API_CONFIG from '../../config/api'
 
 export default function AdoptionModal({ mascota, isOpen, onClose, onSuccess }) {
   const [loading, setLoading] = useState(false);
@@ -30,7 +31,7 @@ export default function AdoptionModal({ mascota, isOpen, onClose, onSuccess }) {
       console.log("📤 Enviando solicitud de adopción:", adoptionData);
 
       const response = await axios.post(
-        "http://localhost:9494/api/petconnect/adopciones/save",
+        `${API_CONFIG.PETS_URL}/api/petconnect/adopciones/save`,
         adoptionData,
         {
           headers: {
@@ -82,7 +83,7 @@ export default function AdoptionModal({ mascota, isOpen, onClose, onSuccess }) {
       console.log("🔄 Probando estructura alternativa:", adoptionData);
 
       const response = await axios.post(
-        "http://localhost:9494/api/petconnect/adopciones/save",
+        `${API_CONFIG.PETS_URL}/api/petconnect/adopciones/save`,
         adoptionData,
         {
           headers: {
@@ -117,7 +118,7 @@ export default function AdoptionModal({ mascota, isOpen, onClose, onSuccess }) {
       console.log("🔄 Probando estructura en español:", adoptionData);
 
       const response = await axios.post(
-        "http://localhost:9494/api/petconnect/adopciones/save",
+        `${API_CONFIG.PETS_URL}/api/petconnect/adopciones/save`,
         adoptionData,
         {
           headers: {

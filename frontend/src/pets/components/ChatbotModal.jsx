@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import axios from "axios";
 import "../styles/chatbot.css";
+import API_CONFIG from '../../config/api'
 
 const ChatbotModal = ({ isOpen, onClose }) => {
   const [messages, setMessages] = useState([
@@ -59,7 +60,7 @@ const ChatbotModal = ({ isOpen, onClose }) => {
   // Timer para respuestas lentas
   useEffect(() => {
     let slowResponseTimer;
-    
+
     if (isLoading) {
       slowResponseTimer = setTimeout(() => {
         setIsSlowResponse(true);
@@ -73,7 +74,7 @@ const ChatbotModal = ({ isOpen, onClose }) => {
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
-    
+
     if (!inputMessage.trim() || isLoading) return;
 
     // Agregar mensaje del usuario
@@ -94,13 +95,13 @@ const ChatbotModal = ({ isOpen, onClose }) => {
 
     try {
       const token = localStorage.getItem("token");
-      
+
       const requestBody = {
         message: currentInput
       };
 
       const response = await axios.post(
-        "http://localhost:8282/api/petconnect/chatbot/send",
+        `${API_CONFIG.CHATBOT_URL}/api/petconnect/chatbot/send`,
         requestBody,
         {
           headers: {
@@ -116,7 +117,7 @@ const ChatbotModal = ({ isOpen, onClose }) => {
 
       // Formatear la respuesta del bot
       const botResponse = response.data;
-      const formattedResponse = needsFormatting(botResponse) 
+      const formattedResponse = needsFormatting(botResponse)
         ? formatBotResponse(botResponse)
         : botResponse;
 
@@ -130,13 +131,13 @@ const ChatbotModal = ({ isOpen, onClose }) => {
       };
 
       setMessages(prev => [...prev, botMessage]);
-      
+
     } catch (error) {
       clearTimeout(timeoutId);
       console.error("Error al enviar mensaje:", error);
-      
+
       let errorText = "Lo siento, hubo un error al procesar tu mensaje.";
-      
+
       if (error.code === 'ECONNABORTED' || error.name === 'AbortError') {
         errorText = "La respuesta está tomando demasiado tiempo. Por favor, intenta con una pregunta más específica o vuelve a intentarlo.";
       } else if (error.response) {
@@ -158,9 +159,9 @@ const ChatbotModal = ({ isOpen, onClose }) => {
   };
 
   const formatTime = (date) => {
-    return date.toLocaleTimeString('es-ES', { 
-      hour: '2-digit', 
-      minute: '2-digit' 
+    return date.toLocaleTimeString('es-ES', {
+      hour: '2-digit',
+      minute: '2-digit'
     });
   };
 
@@ -193,7 +194,7 @@ const ChatbotModal = ({ isOpen, onClose }) => {
             <h3>Asistente Virtual</h3>
           </div>
           <div className="chatbot-actions">
-            <button 
+            <button
               className="clear-btn"
               onClick={clearChat}
               title="Limpiar conversación"
@@ -212,7 +213,7 @@ const ChatbotModal = ({ isOpen, onClose }) => {
             >
               <div className="message-content">
                 {message.needsFormatting ? (
-                  <div 
+                  <div
                     className="formatted-response"
                     dangerouslySetInnerHTML={{ __html: message.formattedText }}
                   />
@@ -225,7 +226,7 @@ const ChatbotModal = ({ isOpen, onClose }) => {
               </div>
             </div>
           ))}
-          
+
           {isLoading && (
             <>
               <div className="message bot-message">
@@ -237,7 +238,7 @@ const ChatbotModal = ({ isOpen, onClose }) => {
                   </div>
                 </div>
               </div>
-              
+
               {isSlowResponse && (
                 <div className="message bot-message">
                   <div className="message-content slow-response-message">
@@ -247,7 +248,7 @@ const ChatbotModal = ({ isOpen, onClose }) => {
               )}
             </>
           )}
-          
+
           <div ref={messagesEndRef} />
         </div>
 
@@ -262,8 +263,8 @@ const ChatbotModal = ({ isOpen, onClose }) => {
               disabled={isLoading}
               autoFocus
             />
-            <button 
-              type="submit" 
+            <button
+              type="submit"
               disabled={!inputMessage.trim() || isLoading}
               className="send-btn"
             >

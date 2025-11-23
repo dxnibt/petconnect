@@ -5,6 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import "../styles/home.css";
 import { useAuth } from "../../hooks/useAuth.jsx";
 import AdoptionModal from "../components/AdoptionModal.jsx";
+import API_CONFIG from '../../config/api'
 
 export default function MascotaPage() {
   const [mascotas, setMascotas] = useState([]);
@@ -28,7 +29,7 @@ export default function MascotaPage() {
   const fetchAllMascotas = async () => {
     try {
       setLoading(true);
-      const response = await axios.get("http://localhost:9494/api/petconnect/mascotas/List?page=-1&size=1000");
+      const response = await axios.get(`${API_CONFIG.PETS_URL}/api/petconnect/mascotas/List?page=-1&size=1000`);
       
       if (Array.isArray(response.data)) {
         const mascotasOrdenadas = response.data.sort((a, b) => {

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import "../styles/adoptante/adoptante.css";
+import API_CONFIG from '../../config/api'
 
 function AdoptanteForm() {
   const [datosBasicos, setDatosBasicos] = useState({});
@@ -55,10 +56,10 @@ function AdoptanteForm() {
 
     try {
       const response = await axios.post(
-        "http://localhost:8181/api/petconnect/adoptantes/save",
+          `${API_CONFIG.AUTH_URL}/api/petconnect/adoptantes/save`,
         adoptante
       );
-      alert("✅ Adoptante registrado con éxito!");
+      alert("Adoptante registrado con éxito!");
       console.log(response.data);
       localStorage.removeItem("datosBasicos");
       setForm({

@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { AuthProvider } from "./hooks/useAuth.jsx"; // Asegúrate de que la ruta sea correcta
+import { AuthProvider } from "./hooks/useAuth.jsx";
 import RegisterPage from "./Auth/pages/RegisterPage.jsx";
 import RefugioPage from "./Auth/pages/RefugioPage.jsx";
 import AdoptantePage from "./Auth/pages/AdoptantePage.jsx";

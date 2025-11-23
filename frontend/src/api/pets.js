@@ -1,8 +1,9 @@
 // api/pets.js
 import axios from "axios";
+import API_CONFIG from "../config/api";
 
 const api = axios.create({
-  baseURL: "http://localhost:9494/mascotas",
+  baseURL: `${API_CONFIG.PETS_URL}/mascotas`,
 });
 
 api.interceptors.request.use((config) => {
