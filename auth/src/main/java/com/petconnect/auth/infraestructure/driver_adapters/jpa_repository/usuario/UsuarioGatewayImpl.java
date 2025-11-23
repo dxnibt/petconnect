@@ -24,14 +24,6 @@ public class UsuarioGatewayImpl implements UsuarioGateway {
     }
 
     @Override
-    public void eliminarPorId(Long id) {
-        if (!repository.existsById(id)) {
-            throw new IllegalArgumentException("El usuario no existe");
-        }
-        repository.deleteById(id);
-    }
-
-    @Override
     public Usuario buscarPorEmail(String email) {
         return repository.findByEmail(email)
                 .map(usuarioMapper::toUsuario)
