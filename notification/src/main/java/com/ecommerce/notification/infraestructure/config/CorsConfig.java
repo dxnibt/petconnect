@@ -1,4 +1,4 @@
-package com.petconnect.chatbot.Infraestructure.config;
+package com.ecommerce.notification.infraestructure.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,7 +17,7 @@ public class CorsConfig {
                                 "http://localhost:5173",
                                 "https://petconnect-nu.vercel.app"
                         )
-                        .allowedMethods("GET", "POST", "PUT", "DELETE")
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH")
                         .allowedHeaders("*")
                         .allowCredentials(true);
             }
