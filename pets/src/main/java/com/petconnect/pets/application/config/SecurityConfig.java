@@ -28,7 +28,10 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.configurationSource(request -> {
                     CorsConfiguration config = new CorsConfiguration();
-                    config.setAllowedOrigins(List.of("http://localhost:5173"));
+                    config.setAllowedOrigins(List.of(
+                            "http://localhost:5173",
+                            "https://petconnect-nu.vercel.app"
+                    ));
                     config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH"));
                     config.setAllowedHeaders(List.of("*"));
                     config.setAllowCredentials(true);
@@ -38,10 +41,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/petconnect/mascotas/List").permitAll()
-                        // **CORRECCIÓN: Usar hasRole (automáticamente agrega ROLE_) o hasAuthority con el nombre completo**
                         .requestMatchers(HttpMethod.POST, "/mascotas/**").hasAnyRole("REFUGIO", "ADMIN")
-                        // O alternativamente:
-                        // .requestMatchers(HttpMethod.POST, "/mascotas/**").hasAnyAuthority("ROLE_REFUGIO", "ROLE_ADMIN")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
