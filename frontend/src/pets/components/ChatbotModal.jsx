@@ -105,13 +105,25 @@ const ChatbotModal = ({ isOpen, onClose }) => {
 
       clearTimeout(timeoutId);
 
-      console.log("Respuesta recibida:", response.data);
-      console.log("Tipo de respuesta:", typeof response.data);
+      console.log("Respuesta completa:", response);
+      console.log("Respuesta data:", response.data);
 
       const botResponse = response.data;
-      const responseText = typeof botResponse === 'string' ? botResponse : String(botResponse);
 
-      console.log("Texto a formatear:", responseText);
+      let responseText;
+      if (typeof botResponse === 'string') {
+        responseText = botResponse;
+      } else if (botResponse.message) {
+        responseText = botResponse.message;
+      } else if (botResponse.respuesta) {
+        responseText = botResponse.respuesta;
+      } else if (botResponse.text) {
+        responseText = botResponse.text;
+      } else {
+        responseText = JSON.stringify(botResponse);
+      }
+
+      console.log("Texto extraído:", responseText);
 
       const formattedResponse = needsFormatting(responseText)
         ? formatBotResponse(responseText)
@@ -130,8 +142,6 @@ const ChatbotModal = ({ isOpen, onClose }) => {
     } catch (error) {
       clearTimeout(timeoutId);
       console.error("Error completo:", error);
-      console.error("Tipo de error:", typeof error);
-      console.error("Mensaje de error:", error.message);
 
       let errorText = "Lo siento, hubo un error al procesar tu mensaje.";
 
