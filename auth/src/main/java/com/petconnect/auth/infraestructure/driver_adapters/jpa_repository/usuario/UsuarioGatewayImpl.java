@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
@@ -19,8 +18,12 @@ public class UsuarioGatewayImpl implements UsuarioGateway {
     @Override
     public Usuario buscarPorId(Long id) {
         return repository.findById(id)
-                .map(usuarioData -> usuarioMapper.toUsuario(usuarioData))
-                .orElseThrow(() -> new RuntimeException());
+                .map(usuarioMapper::toUsuario)
+                .orElse(null);
+    }
+    @Override
+    public void eliminarPorId(Long id) {
+        repository.deleteById(id);
     }
 
     @Override

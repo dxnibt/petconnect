@@ -1,6 +1,7 @@
 package com.petconnect.auth.infraestructure.entry_points;
 
 import com.petconnect.auth.domain.exception.CamposIncompletosException;
+import com.petconnect.auth.domain.exception.EmailDuplicadoException;
 import com.petconnect.auth.domain.exception.RefugioNoEncontradoException;
 import com.petconnect.auth.domain.model.Refugio;
 import com.petconnect.auth.domain.usecase.RefugioUseCase;
@@ -29,8 +30,8 @@ public class RefugioController {
             Refugio refugio = refugioUseCase.guardarRefugio(nuevoRefugio);
             return new ResponseEntity<>(refugio, HttpStatus.CREATED);
 
-        } catch (CamposIncompletosException error){
-            return new ResponseEntity<>(error.getMessage(),HttpStatus.BAD_REQUEST);
+        } catch (CamposIncompletosException | EmailDuplicadoException error) {
+            return new ResponseEntity<>(error.getMessage(), HttpStatus.BAD_REQUEST);
 
         } catch (Exception e) {
             return new ResponseEntity<>("Error al guardar refugio: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -47,7 +48,7 @@ public class RefugioController {
         } catch (RefugioNoEncontradoException error) {
             return ResponseEntity.badRequest().body(error.getMessage());
         } catch (Exception e) {
-        return new ResponseEntity<>("Error al guardar refugio: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Error al guardar refugio: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

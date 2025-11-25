@@ -2,6 +2,7 @@ package com.petconnect.auth.domain.usecase;
 
 import com.petconnect.auth.domain.exception.CamposIncompletosException;
 import com.petconnect.auth.domain.exception.ContraseñaIncorrectaException;
+import com.petconnect.auth.domain.exception.EmailDuplicadoException;
 import com.petconnect.auth.domain.exception.UsuarioNoEncontradoException;
 import com.petconnect.auth.domain.model.Usuario;
 import com.petconnect.auth.domain.model.gateway.AdoptanteGateway;
@@ -44,16 +45,9 @@ public class UsuarioUseCase {
         Usuario usuario = usuarioGateway.buscarPorId(id);
 
         if (usuario == null) {
-            throw new UsuarioNoEncontradoException("Usuario no encontrado");
+            throw new UsuarioNoEncontradoException("Usuario no encontrado con ID: " + id);
         }
-
-        switch (usuario.getRole()) {
-            case REFUGIO:
-                refugioGateway.eliminarPorId(id);
-            case ADOPTANTE:
-                adoptanteGateway.eliminarPorId(id);
-
-        }
+        usuarioGateway.eliminarPorId(id);
     }
 
     public Usuario loginUsuario(LoginDto dto){
@@ -103,6 +97,13 @@ public class UsuarioUseCase {
         }
     }
 
+    public void validarEmailUnico(String email, Long id) {
+        Usuario usuarioExistente = usuarioGateway.buscarPorEmail(email);
 
-
+        if (usuarioExistente != null) {
+            if (id == null || !usuarioExistente.getId().equals(id)) {
+                throw new EmailDuplicadoException("El email ya está registrado en el sistema");
+            }
+        }
+    }
 }

@@ -31,6 +31,7 @@ public class AdoptanteUseCase {
             throw new CamposIncompletosException("Por favor, complete todos los campos");
         }
 
+        usuarioUseCase.validarEmailUnico(adoptante.getEmail(), null);
         if (!esMayorDeEdad(adoptante.getBirthDate())) {
             throw new MenorDeEdadException("El usuario debe ser mayor de edad.");
         }
@@ -68,15 +69,16 @@ public class AdoptanteUseCase {
         return adoptanteGateway.guardarAdoptante(adoptante);
     }
 
-    public Adoptante actualizarAdoptante(Long id, AdoptanteActualizarDto dto){
+    public Adoptante actualizarAdoptante(Long id, AdoptanteActualizarDto dto) {
         Adoptante adoptante = adoptanteGateway.buscarPorId(id);
         if (adoptante == null) {
             throw new AdoptanteNoEncontradoException("Adoptante no encontrado");
         }
-        actualizarAdoptanteDto(adoptante, dto);
-        if (dto.getUsuarioActualizarDto() != null) {
-            usuarioUseCase.actualizarUsuarioDto(adoptante, dto.getUsuarioActualizarDto());
+        if (dto.getEmail() != null && !dto.getEmail().equals(adoptante.getEmail())) {
+            usuarioUseCase.validarEmailUnico(dto.getEmail(), id);
         }
+        actualizarAdoptanteDto(adoptante, dto);
+        usuarioUseCase.actualizarUsuarioDto(adoptante, dto);
         return adoptanteGateway.actualizarAdoptante(adoptante);
     }
 

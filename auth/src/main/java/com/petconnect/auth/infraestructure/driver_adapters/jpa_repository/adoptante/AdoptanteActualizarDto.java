@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AdoptanteActualizarDto {
+public class AdoptanteActualizarDto extends UsuarioActualizarDto {
 
     @DecimalMin(value = "1423500", message = "Debe tener ingresos al menos del salario mínimo vigente")
     private Double monthlySalary;
@@ -41,7 +41,5 @@ public class AdoptanteActualizarDto {
 
     @Size(min = 10, message = "La descripción es demasiado corta")
     private String personalDescription;
-
-    private UsuarioActualizarDto usuarioActualizarDto;
 
 }

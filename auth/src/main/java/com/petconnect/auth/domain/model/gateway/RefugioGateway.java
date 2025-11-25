@@ -8,7 +8,6 @@ public interface RefugioGateway {
 
     Refugio guardarRefugio(Refugio refugio);
     Refugio buscarPorId(Long id);
-    void eliminarPorId(Long id);
     Refugio actualizarRefugio(Refugio refugio);
     List<Refugio> listarNoAprobados(boolean aprobado, int page, int size);
 }

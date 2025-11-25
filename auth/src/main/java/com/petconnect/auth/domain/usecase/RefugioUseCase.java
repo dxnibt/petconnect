@@ -9,7 +9,6 @@ import com.petconnect.auth.domain.model.gateway.NotificationGateway;
 import com.petconnect.auth.domain.model.gateway.RefugioGateway;
 import com.petconnect.auth.infraestructure.driver_adapters.jpa_repository.refugio.RefugioActualizarDto;
 import lombok.RequiredArgsConstructor;
-
 import java.time.LocalDateTime;
 
 @RequiredArgsConstructor
@@ -21,11 +20,10 @@ public class RefugioUseCase {
     private final NotificationGateway notificationGateway;
 
     public Refugio guardarRefugio(Refugio refugio) {
-
         if (!usuarioUseCase.isValidUsuario(refugio) || !isValidRefugio(refugio)) {
             throw new CamposIncompletosException("Por favor, complete todos los campos");
         }
-
+        usuarioUseCase.validarEmailUnico(refugio.getEmail(), null);
         refugio.setAprobado(false);
 
         String passwordEncrypt = encrypterGateway.encrypt(refugio.getPassword());
@@ -40,7 +38,6 @@ public class RefugioUseCase {
 
         notificationGateway.enviarMensaje(mensajeNotificacion);
         return refugioGateway.guardarRefugio(refugio);
-
     }
 
     public Refugio actualizarRefugio(Long id, RefugioActualizarDto dto) {
@@ -48,22 +45,23 @@ public class RefugioUseCase {
         if (refugio == null) {
             throw new RefugioNoEncontradoException("Refugio no encontrado");
         }
-        actualizarRefugioDto(refugio, dto);
-        if (dto.getUsuarioActualizarDto() != null) {
-            usuarioUseCase.actualizarUsuarioDto(refugio, dto.getUsuarioActualizarDto());
+        if (dto.getEmail() != null && !dto.getEmail().equals(refugio.getEmail())) {
+            usuarioUseCase.validarEmailUnico(dto.getEmail(), id);
         }
+        actualizarRefugioDto(refugio, dto);
+        usuarioUseCase.actualizarUsuarioDto(refugio, dto);
 
         return refugioGateway.actualizarRefugio(refugio);
     }
 
-    private boolean isValidRefugio(Refugio refugio){
-        return  refugio.getNit() != null &&
+    private boolean isValidRefugio(Refugio refugio) {
+        return refugio.getNit() != null &&
                 refugio.getWebsite() != null &&
                 refugio.getSupportDocument() != null &&
                 refugio.getShelterDescription() != null;
     }
 
-    private void actualizarRefugioDto(Refugio refugio, RefugioActualizarDto dto){
+    private void actualizarRefugioDto(Refugio refugio, RefugioActualizarDto dto) {
 
         if (dto.getWebsite() != null) refugio.setWebsite(dto.getWebsite());
         if (dto.getShelterDescription() != null) refugio.setShelterDescription(dto.getShelterDescription());

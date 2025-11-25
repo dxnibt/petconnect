@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class RefugioActualizarDto {
+public class RefugioActualizarDto extends UsuarioActualizarDto{
 
     @Pattern(regexp = "^(https?:\\/\\/)?([\\w\\-]+\\.)+[\\w\\-]+(\\/[^\\s]*)?$", message = "La URL proporcionada no es válida")
     private String website;
@@ -18,6 +18,5 @@ public class RefugioActualizarDto {
     @Size(min = 20, message = "La descripción es demasiado corta")
     private String shelterDescription;
 
-    private UsuarioActualizarDto usuarioActualizarDto;
 
 }

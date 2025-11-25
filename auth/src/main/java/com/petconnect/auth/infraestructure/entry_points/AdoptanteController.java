@@ -21,16 +21,16 @@ public class AdoptanteController {
     private final AdoptanteUseCase adoptanteUseCase;
 
     @PostMapping("/save")
-    public ResponseEntity<?> saveAdoptante(@Valid @RequestBody AdoptanteData adoptanteData){
+    public ResponseEntity<?> saveAdoptante(@Valid @RequestBody AdoptanteData adoptanteData) {
 
-        try{
+        try {
             Adoptante nuevoAdoptante = adoptanteMapper.toAdoptante(adoptanteData);
             Adoptante adoptante = adoptanteUseCase.guardarAdoptante(nuevoAdoptante);
             return new ResponseEntity<>(adoptante, HttpStatus.CREATED);
 
         } catch (CamposIncompletosException | MenorDeEdadException |
                  SalarioNoAprobadoException | FechaNacimientoFuturaException |
-                 SalarioMenorIgualCeroException | HorasFueraCasaInvalidasException error) {
+                 SalarioMenorIgualCeroException | HorasFueraCasaInvalidasException | EmailDuplicadoException error) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error.getMessage());
 
         } catch (Exception e) {
@@ -51,6 +51,5 @@ public class AdoptanteController {
         } catch (Exception e) {
             return new ResponseEntity<>("Error al guardar adoptante: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
     }
 }

@@ -41,14 +41,6 @@ public class AdoptanteGatewayImpl implements AdoptanteGateway {
     }
 
     @Override
-    public void eliminarPorId(Long id) {
-        if (!repository.existsById(id)) {
-            throw new IllegalArgumentException("El usuario no existe");
-        }
-        repository.deleteById(id);
-    }
-
-    @Override
     public Adoptante actualizarAdoptante(Adoptante adoptante) {
         Optional<AdoptanteData> emailExiste = repository.findByEmail(adoptante.getEmail());
         if (emailExiste.isPresent() && !emailExiste.get().getId().equals(adoptante.getId())) {

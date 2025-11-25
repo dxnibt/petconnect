@@ -12,7 +12,6 @@ public class RefugioMapper {
         Refugio refugio = new Refugio(
                 refugioData.getNit(),
                 refugioData.getWebsite(),
-                refugioData.getCurrentPets(),
                 refugioData.getSupportDocument(),
                 refugioData.isAprobado(),
                 refugioData.getShelterDescription()
@@ -36,7 +35,6 @@ public class RefugioMapper {
         RefugioData refugioData = new RefugioData(
                 refugio.getNit(),
                 refugio.getWebsite(),
-                refugio.getCurrentPets(),
                 refugio.getSupportDocument(),
                 refugio.isAprobado(),
                 refugio.getShelterDescription()

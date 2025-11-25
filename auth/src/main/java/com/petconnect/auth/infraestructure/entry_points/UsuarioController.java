@@ -36,13 +36,14 @@ public class UsuarioController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteUsuario(@PathVariable Long id) {
-
         try {
             usuarioUseCase.eliminarUsuario(id);
             return new ResponseEntity<>("Usuario eliminado", HttpStatus.OK);
 
-        } catch (RuntimeException error) {
+        } catch (UsuarioNoEncontradoException error) {
             return new ResponseEntity<>(error.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (RuntimeException error) {
+            return new ResponseEntity<>(error.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

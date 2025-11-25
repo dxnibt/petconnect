@@ -25,9 +25,6 @@ public class RefugioData extends UsuarioData {
     @Pattern(regexp = "^(https?:\\/\\/)?([\\w\\-]+\\.)+[\\w\\-]+(\\/[^\\s]*)?$", message = "La URL proporcionada no es válida")
     private String website;
 
-    @Column(nullable = false)
-    private Integer currentPets = 0;
-
     @Column(length = 500)
     private String supportDocument;
 
