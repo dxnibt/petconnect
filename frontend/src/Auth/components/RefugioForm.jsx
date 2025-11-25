@@ -101,7 +101,7 @@ function RefugioForm() {
       console.log("📤 JSON a enviar:", JSON.stringify(refugioData, null, 2));
 
       const response = await axios.post(
-        ${API_CONFIG.AUTH_URL}/api/petconnect/refugios/save,
+        `${API_CONFIG.AUTH_URL}/api/petconnect/refugios/save`,
         refugioData,
         {
           headers: {
