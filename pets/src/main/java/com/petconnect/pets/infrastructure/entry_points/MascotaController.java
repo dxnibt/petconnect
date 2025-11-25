@@ -79,7 +79,7 @@ public class MascotaController {
 
 
     @DeleteMapping("/delete/{pet_id}")
-    public ResponseEntity<String> deleteMascota(@PathVariable Long pet_id, JwtUserDetails jwtUserDetails){
+    public ResponseEntity<String> deleteMascota(@PathVariable Long pet_id, @AuthenticationPrincipal JwtUserDetails jwtUserDetails){
         try {
             mascotaUseCase.eliminarMascota(pet_id,jwtUserDetails);
             return new ResponseEntity<>("Mascota Eliminada", HttpStatus.OK);

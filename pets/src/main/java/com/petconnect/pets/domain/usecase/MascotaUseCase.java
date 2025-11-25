@@ -4,7 +4,6 @@ import com.petconnect.pets.domain.exception.*;
 import com.petconnect.pets.domain.model.Mascota;
 import com.petconnect.pets.domain.model.enums.EstadoMascota;
 import com.petconnect.pets.domain.model.gateway.MascotaGateway;
-import com.petconnect.pets.domain.model.gateway.UsuarioGateway;
 import com.petconnect.pets.infrastructure.driver_adapters.jpa_repository.JwtDto.JwtUserDetails;
 import com.petconnect.pets.infrastructure.driver_adapters.jpa_repository.mascotas.ActualizationData;
 import lombok.RequiredArgsConstructor;
@@ -97,13 +96,13 @@ public class MascotaUseCase {
         return mascotaGateway.actualizarMascota(mascota);
     }
 
-    public void eliminarMascota(Long id_mascota, JwtUserDetails userDetails) {
+    public void eliminarMascota(Long pet_id, JwtUserDetails userDetails) {
         validarAcceso(userDetails, "eliminar");
-        Mascota mascota = mascotaGateway.buscarPorId(id_mascota);
+        Mascota mascota = mascotaGateway.buscarPorId(pet_id);
         if (mascota == null) {
-            throw new MascotaNoEncontradaException("Mascota con id " + id_mascota + " no existe");
+            throw new MascotaNoEncontradaException("Mascota con id " + pet_id + " no existe");
         }
-        mascotaGateway.eliminar(id_mascota);
+        mascotaGateway.eliminar(pet_id);
     }
 
 
