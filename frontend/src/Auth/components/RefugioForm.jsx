@@ -50,7 +50,7 @@ function RefugioForm() {
     const missingFields = requiredFields.filter(field => !form[field]?.trim());
 
     if (missingFields.length > 0) {
-      alert(Por favor completa los siguientes campos: ${missingFields.join(', ')});
+      alert(`Por favor completa los siguientes campos: ${missingFields.join(', ')}`);
       return false;
     }
 
@@ -148,7 +148,7 @@ function RefugioForm() {
             } else if (typeof error.response.data === 'object') {
               // Mostrar errores específicos del backend
               Object.entries(error.response.data).forEach(([key, value]) => {
-                errorMessage += \n• ${key}: ${value};
+                errorMessage += `\n• ${key}: ${value}`;
               });
             }
           } else {
@@ -390,7 +390,7 @@ function RefugioForm() {
 
             <button
               type="submit"
-              className={submit-btn ${!acceptedPolicy || loading ? "disabled" : ""}}
+              className={`submit-btn ${!acceptedPolicy || loading ? "disabled" : ""}`}
               disabled={!acceptedPolicy || loading}
             >
               {loading ? (
