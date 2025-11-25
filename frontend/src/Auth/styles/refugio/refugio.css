@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap');
 
+/* 🔧 RESET Y CONFIGURACIÓN GENERAL */
 .refugio-container * {
   box-sizing: border-box;
   margin: 0;
@@ -8,29 +9,32 @@
 }
 
 .refugio-container {
-  background: linear-gradient(to right, #e2e2e2, #c9d6ff);
+
   min-height: 100vh;
   display: flex;
   justify-content: center;
-  align-items: center;
-}
-
-/* 🩷 Contenedor principal del formulario */
-.refugio-container .form-container {
-  background-color: #fff;
-  border-radius: 20px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
-  padding: 40px;
+  align-items: flex-start;
+  padding: 40px 20px;
   width: 100%;
-  max-width: 550px;
-  animation: fadeIn 0.6s ease-in-out;
 }
 
-/* ✨ Animación suave al entrar */
-@keyframes fadeIn {
+/* 🎯 CONTENEDOR DEL FORMULARIO */
+.refugio-container .form-container {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+  padding: 40px 35px;
+  width: 100%;
+  max-width: 500px;
+  animation: slideUp 0.6s ease-out;
+  margin: 0 auto;
+}
+
+@keyframes slideUp {
   from {
     opacity: 0;
-    transform: translateY(15px);
+    transform: translateY(30px);
   }
   to {
     opacity: 1;
@@ -38,168 +42,205 @@
   }
 }
 
-/* 🔹 Título */
+/* 🏷 TÍTULO */
 .refugio-container .form-container h2 {
   text-align: center;
-  color: #ff6b6b;
-  margin-bottom: 25px;
+  color: #ff5252;
+  margin-bottom: 30px;
   font-weight: 600;
+  font-size: 28px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-/* 📝 Etiquetas */
+/* 📝 ETIQUETAS DE FORMULARIO */
 .refugio-container label {
   display: block;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
   font-size: 14px;
   font-weight: 500;
-  color: #444;
+  color: #2d3748;
+  transition: color 0.3s ease;
 }
 
-/* 🔘 Campos de texto */
+.refugio-container label:hover {
+  color: #ff5252;
+}
+
+/* 🎛 CAMPOS DE FORMULARIO */
 .refugio-container input,
-.refugio-container textarea {
+.refugio-container textarea,
+.refugio-container select {
   width: 100%;
-  padding: 10px 15px;
-  margin-bottom: 18px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 20px;
+  border: 2px solid #e2e8f0;
+  border-radius: 10px;
   font-size: 14px;
   outline: none;
-  background-color: #f8f8f8;
+  background-color: #f8fafc;
   transition: all 0.3s ease;
+  resize: vertical;
 }
 
-/* 💡 Efectos de foco */
 .refugio-container input:focus,
-.refugio-container textarea:focus {
-  border-color: #ff6b6b;
-  box-shadow: 0 0 8px rgba(255, 107, 107, 0.3);
+.refugio-container textarea:focus,
+.refugio-container select:focus {
+  border-color: #ff5252;
+  box-shadow: 0 0 0 3px rgba(255, 82, 82, 0.1);
   background-color: #fff;
+  transform: translateY(-2px);
 }
 
-/* 🪶 Textarea */
+.refugio-container input:hover,
+.refugio-container textarea:hover,
+.refugio-container select:hover {
+  border-color: #cbd5e0;
+}
+
+/* 📄 TEXTAREA ESPECÍFICO */
 .refugio-container textarea {
-  resize: none;
-  height: 100px;
-  line-height: 1.4;
+  min-height: 100px;
+  line-height: 1.5;
+  resize: vertical;
 }
 
-/* 🧡 Botón */
-.refugio-container button {
-  background-color: #ff6b6b;
+/* 🔘 BOTÓN PRINCIPAL */
+.refugio-container button[type="submit"] {
+  background: linear-gradient(135deg, #ff5252, #ff7b7b);
   color: #fff;
   border: none;
-  border-radius: 8px;
-  padding: 12px 20px;
+  border-radius: 10px;
+  padding: 14px 24px;
   font-weight: 600;
+  font-size: 16px;
   text-transform: uppercase;
+  letter-spacing: 0.5px;
   cursor: pointer;
   width: 100%;
   transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(255, 82, 82, 0.3);
+  margin-top: 10px;
 }
 
-.refugio-container button:hover {
-  background-color: #ff4040;
-  box-shadow: 0 4px 10px rgba(255, 107, 107, 0.4);
+.refugio-container button[type="submit"]:hover:not(.disabled) {
+  background: linear-gradient(135deg, #ff3838, #ff6b6b);
+  box-shadow: 0 6px 20px rgba(255, 82, 82, 0.4);
+  transform: translateY(-2px);
 }
 
-.refugio-container button:active {
-  transform: scale(0.98);
+.refugio-container button[type="submit"]:active:not(.disabled) {
+  transform: translateY(0);
+  box-shadow: 0 2px 10px rgba(255, 82, 82, 0.3);
 }
 
-.refugio-container button.disabled {
-  background-color: #ccc;
+.refugio-container button[type="submit"].disabled {
+  background: #cbd5e0;
   cursor: not-allowed;
   box-shadow: none;
+  transform: none;
 }
 
-.refugio-container button.disabled:hover {
-  background-color: #ccc;
-  box-shadow: none;
+/* 🚫 ESTADOS DE VALIDACIÓN */
+.refugio-container input:invalid:not(:focus):not(:placeholder-shown),
+.refugio-container textarea:invalid:not(:focus):not(:placeholder-shown) {
+  border-color: #ff5252;
+  background-color: #ffeaea;
 }
 
-/* 🩵 Mensajes de validación */
-.refugio-container input:invalid,
-.refugio-container textarea:invalid {
-  border-color: #ff9e9e;
-}
-
-/* 🌟 Sección de Política */
+/* 📜 SECCIÓN DE POLÍTICA */
 .refugio-container .policy-section {
-  background: linear-gradient(135deg, #f8f9ff 0%, #f0f2ff 100%);
-  border: 2px solid #e0e7ff;
-  border-radius: 12px;
-  padding: 20px;
-  margin: 25px 0;
+  background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+  border: 2px solid #e2e8f0;
+  border-radius: 15px;
+  padding: 25px;
+  margin: 30px 0;
   transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.refugio-container .policy-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: linear-gradient(to bottom, #ff5252, #ff7b7b);
 }
 
 .refugio-container .policy-section:hover {
-  border-color: #ff6b6b;
-  box-shadow: 0 4px 12px rgba(255, 107, 107, 0.1);
+  border-color: #ff5252;
+  box-shadow: 0 8px 25px rgba(255, 82, 82, 0.15);
+  transform: translateY(-2px);
 }
 
 .refugio-container .policy-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 15px;
+  margin-bottom: 20px;
 }
 
 .refugio-container .policy-header h3 {
-  color: #4a5568;
-  font-size: 16px;
+  color: #2d3748;
+  font-size: 18px;
   font-weight: 600;
 }
 
 .refugio-container .policy-toggle {
-  background: #667eea;
+  background: linear-gradient(135deg, #ff5252, #ff7b7b);
   color: white;
   border: none;
-  padding: 6px 12px;
-  border-radius: 6px;
+  padding: 8px 16px;
+  border-radius: 8px;
   font-size: 12px;
+  font-weight: 500;
   cursor: pointer;
   transition: all 0.3s ease;
-  width: auto;
-  text-transform: none;
+  box-shadow: 0 2px 8px rgba(255, 82, 82, 0.3);
 }
 
 .refugio-container .policy-toggle:hover {
-  background: #5a67d8;
-  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+  background: linear-gradient(135deg, #ff3838, #ff6b6b);
+  box-shadow: 0 4px 12px rgba(255, 82, 82, 0.4);
+  transform: translateY(-1px);
 }
 
 .refugio-container .policy-content {
   background: white;
   border: 1px solid #e2e8f0;
-  border-radius: 8px;
+  border-radius: 10px;
   padding: 20px;
   margin-bottom: 20px;
-  max-height: 300px;
+  max-height: 250px;
   overflow-y: auto;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .refugio-container .policy-text {
-  font-size: 12px;
+  font-size: 13px;
   line-height: 1.6;
   color: #4a5568;
 }
 
 .refugio-container .policy-text p {
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 
 .refugio-container .policy-title {
-  font-weight: 600;
+  font-weight: 700;
   color: #2d3748;
-  font-size: 13px;
-  margin-bottom: 12px !important;
+  font-size: 14px;
+  margin-bottom: 15px !important;
+  text-align: center;
 }
 
-/* ✅ Checkbox personalizado */
+/* ✅ CHECKBOX PERSONALIZADO */
 .refugio-container .policy-acceptance {
-  margin-top: 15px;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #e2e8f0;
 }
 
 .refugio-container .checkbox-label {
@@ -208,9 +249,14 @@
   cursor: pointer;
   font-size: 14px;
   font-weight: 500;
-  color: #4a5568;
+  color: #2d3748;
   position: relative;
-  padding-left: 30px;
+  padding-left: 35px;
+  transition: color 0.3s ease;
+}
+
+.refugio-container .checkbox-label:hover {
+  color: #ff5252;
 }
 
 .refugio-container .checkbox-label input {
@@ -225,31 +271,33 @@
   position: absolute;
   left: 0;
   top: 0;
-  height: 20px;
-  width: 20px;
-  background-color: #f8f8f8;
-  border: 2px solid #ddd;
-  border-radius: 4px;
+  height: 22px;
+  width: 22px;
+  background-color: #f8fafc;
+  border: 2px solid #cbd5e0;
+  border-radius: 6px;
   transition: all 0.3s ease;
 }
 
 .refugio-container .checkbox-label:hover input ~ .checkmark {
-  border-color: #ff6b6b;
+  border-color: #ff5252;
+  background-color: #ffeaea;
 }
 
 .refugio-container .checkbox-label input:checked ~ .checkmark {
-  background-color: #ff6b6b;
-  border-color: #ff6b6b;
+  background: linear-gradient(135deg, #ff5252, #ff7b7b);
+  border-color: #ff5252;
+  box-shadow: 0 2px 8px rgba(255, 82, 82, 0.3);
 }
 
 .refugio-container .checkmark:after {
   content: "";
   position: absolute;
   display: none;
-  left: 6px;
-  top: 2px;
-  width: 4px;
-  height: 8px;
+  left: 7px;
+  top: 3px;
+  width: 5px;
+  height: 10px;
   border: solid white;
   border-width: 0 2px 2px 0;
   transform: rotate(45deg);
@@ -259,21 +307,175 @@
   display: block;
 }
 
-/* 🎨 Scrollbar personalizado para la política */
+/* 🖼 VISTA PREVIA DE IMAGEN */
+.refugio-container .image-preview {
+  margin: 15px 0 25px 0;
+  text-align: center;
+  padding: 15px;
+  background: linear-gradient(135deg, #f7fafc, #edf2f7);
+  border-radius: 10px;
+  border: 2px dashed #cbd5e0;
+  transition: all 0.3s ease;
+}
+
+.refugio-container .image-preview:hover {
+  border-color: #ff5252;
+  background: linear-gradient(135deg, #ffeaea, #ffd6d6);
+}
+
+.refugio-container .image-preview label {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 14px;
+  color: #4a5568;
+  font-weight: 600;
+}
+
+.refugio-container .image-preview img {
+  max-width: 180px;
+  max-height: 180px;
+  border-radius: 10px;
+  border: 3px solid #e2e8f0;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.refugio-container .image-preview img:hover {
+  border-color: #ff5252;
+  transform: scale(1.05);
+  box-shadow: 0 6px 20px rgba(255, 82, 82, 0.2);
+}
+
+/* 🎨 SCROLLBAR PERSONALIZADO */
 .refugio-container .policy-content::-webkit-scrollbar {
-  width: 6px;
+  width: 8px;
 }
 
 .refugio-container .policy-content::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 3px;
+  background: #f1f5f9;
+  border-radius: 4px;
 }
 
 .refugio-container .policy-content::-webkit-scrollbar-thumb {
-  background: #ff6b6b;
-  border-radius: 3px;
+  background: linear-gradient(to bottom, #ff5252, #ff7b7b);
+  border-radius: 4px;
 }
 
 .refugio-container .policy-content::-webkit-scrollbar-thumb:hover {
-  background: #ff4040;
+  background: linear-gradient(to bottom, #ff3838, #ff6b6b);
+}
+
+/* 📱 RESPONSIVE DESIGN */
+@media (max-width: 768px) {
+  .refugio-container {
+    padding: 20px 15px;
+    align-items: flex-start;
+  }
+
+  .refugio-container .form-container {
+    padding: 30px 20px;
+    margin: 0;
+  }
+
+  .refugio-container .form-container h2 {
+    font-size: 24px;
+    margin-bottom: 25px;
+  }
+
+  .refugio-container .policy-header {
+    flex-direction: column;
+    gap: 10px;
+    text-align: center;
+  }
+
+  .refugio-container .image-preview img {
+    max-width: 140px;
+    max-height: 140px;
+  }
+}
+
+@media (max-width: 480px) {
+  .refugio-container {
+    padding: 15px 10px;
+    min-height: 100vh;
+  }
+
+  .refugio-container .form-container {
+    padding: 25px 15px;
+  }
+
+  .refugio-container .form-container h2 {
+    font-size: 22px;
+  }
+
+  .refugio-container input,
+  .refugio-container textarea,
+  .refugio-container select {
+    padding: 10px 14px;
+    font-size: 13px;
+  }
+}
+
+/* 🔥 GARANTIZAR QUE OCUPE TODA LA ALTURA */
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.refugio-container {
+  min-height: 100vh;
+  height: auto;
+}
+
+.datos-basicos-info {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 25px;
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+}
+
+.datos-basicos-info h3 {
+  margin: 0 0 15px 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 10px;
+}
+
+.info-item {
+  font-size: 14px;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  backdrop-filter: blur(10px);
+}
+
+.loading-spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid #ffffff;
+  border-radius: 50%;
+  border-top-color: transparent;
+  animation: spin 1s linear infinite;
+  margin-right: 10px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.image-error {
+  color: #ff6b6b;
+  font-size: 14px;
+  font-weight: 500;
+  padding:10px;
 }
